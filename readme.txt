@@ -5,11 +5,11 @@ Tags: barbas, connect, central, remote, api
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.1.6
+Stable tag: 0.1.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Site agent for Barbas Central: pairing keys, secure REST API, and bridge stubs for Activity Reports.
+Site agent for Barbas Central: pairing keys, secure REST API, and Activity Reports bridge.
 
 == Description ==
 
@@ -18,7 +18,7 @@ Barbas Connect turns each WordPress site into a secure agent for Barbas Central.
 * Connections screen: generate pairing key, copy once, rotate, disconnect / disconnect all.
 * Own REST namespace (/wp-json/barbas-connect/v1/...) -- never exposes generic /wp/v2.
 * Pairing key is separate from the Barbas Update license token.
-* Health discovery endpoint; HMAC-protected capability and activity bridge stubs.
+* Health discovery endpoint; HMAC-protected capabilities and Activity Reports bridge.
 * Updates via Settings -> Barbas Update (Connect tab).
 
 == Installation ==
@@ -42,9 +42,13 @@ GET /wp-json/barbas-connect/v1/health -- public discovery (version, site URL, co
 
 = Does it dump WP Activity Log data? =
 
-No. Activity bridge routes are stubs until Barbas Central + Activity Reports integration is ready. No raw WSAL dump.
+HMAC endpoints expose summarized Activity Reports data (users + productivity report) for Barbas Central. No raw WSAL admin dump.
 
 == Changelog ==
+
+= 0.1.7 =
+* Implement Activity Reports bridge: GET /activity/users and GET /activity/report (json/html/csv).
+* Resolve users by email or username for multi-site Central reports.
 
 = 0.1.6 =
 * Clarify connections-screen description (no third-party worker branding).
@@ -74,6 +78,9 @@ No. Activity bridge routes are stubs until Barbas Central + Activity Reports int
 * Initial MVP: connections UI, REST health + HMAC scaffolding, Activity Reports bridge stubs, Barbas Update hub (tab connect).
 
 == Upgrade Notice ==
+
+= 0.1.7 =
+Activity Reports bridge for Barbas Central multi-site productivity reports.
 
 = 0.1.6 =
 Cleaner plugin details (fixed zip name) and aligned Site status URL fields.

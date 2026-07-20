@@ -2,8 +2,8 @@
 /*
 Plugin Name: Barbas Connect
 Plugin URI: https://github.com/Barbas-Digital/barbas-connect
-Description: Site agent for Barbas Central: secure REST API, pairing keys, and bridge stubs for Activity Reports. Updates via Settings -> Barbas Update.
-Version: 0.1.6
+Description: Site agent for Barbas Central: secure REST API, pairing keys, and Activity Reports bridge. Updates via Settings -> Barbas Update.
+Version: 0.1.7
 Requires at least: 5.8
 Requires PHP: 7.4
 Author: Guilherme Souza
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 define('BARBAS_CONNECT_PLUGIN_FILE', __FILE__);
-define('BARBAS_CONNECT_VERSION', '0.1.6');
+define('BARBAS_CONNECT_VERSION', '0.1.7');
 define('BARBAS_CONNECT_DIR', plugin_dir_path(__FILE__));
 define('BARBAS_CONNECT_URL', plugin_dir_url(__FILE__));
 define('BARBAS_CONNECT_REST_NS', 'barbas-connect/v1');
@@ -38,6 +38,7 @@ $barbas_connect_includes = array(
     'includes/barbas-update-checker.php',
     'includes/barbas-connect-connections.php',
     'includes/barbas-connect-hmac.php',
+    'includes/barbas-connect-activity.php',
     'includes/barbas-connect-rest.php',
     'includes/barbas-connect-admin.php',
 );

@@ -65,6 +65,29 @@ function barbas_connect_register_rest_routes() {
             'methods'             => WP_REST_Server::READABLE,
             'callback'            => 'barbas_connect_rest_activity_report',
             'permission_callback' => 'barbas_connect_rest_permission_hmac',
+            'args'                => array(
+                'user'   => array(
+                    'required'          => true,
+                    'type'              => 'string',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'from'   => array(
+                    'required'          => false,
+                    'type'              => 'string',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'to'     => array(
+                    'required'          => false,
+                    'type'              => 'string',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'format' => array(
+                    'required'          => false,
+                    'type'              => 'string',
+                    'default'           => 'json',
+                    'sanitize_callback' => 'sanitize_key',
+                ),
+            ),
         )
     );
 }
@@ -172,64 +195,4 @@ function barbas_connect_rest_capabilities(WP_REST_Request $request) {
     );
 }
 
-/**
- * Stub: activity users bridge.
- *
- * @param WP_REST_Request $request Request.
- * @return WP_REST_Response
- */
-function barbas_connect_rest_activity_users(WP_REST_Request $request) {
-    unset($request);
-    if (!barbas_connect_activity_reports_available()) {
-        return new WP_REST_Response(
-            array(
-                'ok'      => false,
-                'code'    => 'activity_reports_missing',
-                'message' => 'Barbas Activity Reports is not active on this site.',
-                'ready'   => false,
-            ),
-            501
-        );
-    }
-
-    return new WP_REST_Response(
-        array(
-            'ok'      => false,
-            'code'    => 'not_ready',
-            'message' => 'Activity users bridge is not implemented yet.',
-            'ready'   => false,
-        ),
-        501
-    );
-}
-
-/**
- * Stub: activity report bridge.
- *
- * @param WP_REST_Request $request Request.
- * @return WP_REST_Response
- */
-function barbas_connect_rest_activity_report(WP_REST_Request $request) {
-    unset($request);
-    if (!barbas_connect_activity_reports_available()) {
-        return new WP_REST_Response(
-            array(
-                'ok'      => false,
-                'code'    => 'activity_reports_missing',
-                'message' => 'Barbas Activity Reports is not active on this site.',
-                'ready'   => false,
-            ),
-            501
-        );
-    }
-
-    return new WP_REST_Response(
-        array(
-            'ok'      => false,
-            'code'    => 'not_ready',
-            'message' => 'Activity report bridge is not implemented yet.',
-            'ready'   => false,
-        ),
-        501
-    );
-}
+// Activity users + report callbacks live in barbas-connect-activity.php.

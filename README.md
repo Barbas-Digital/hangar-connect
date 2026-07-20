@@ -1,11 +1,11 @@
 # Barbas Connect
 
-![Version](https://img.shields.io/badge/Version-0.1.6-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.7-blue.svg)
 ![WordPress](https://img.shields.io/badge/Tested%20up%20to-7.0-green.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)
 ![License](https://img.shields.io/badge/License-GPLv2%20or%20Later-orange.svg)
 
-WordPress site agent for **Barbas Central**: pairing keys, own REST API, and bridge stubs for Activity Reports.
+WordPress site agent for **Barbas Central**: pairing keys, own REST API, and Activity Reports bridge for Barbas Central.
 
 Admin UI source strings are English (i18n); languages/barbas-connect-pt_BR.mo provides Portuguese (Brazil).
 
@@ -14,7 +14,7 @@ Admin UI source strings are English (i18n); languages/barbas-connect-pt_BR.mo pr
 - **Settings -> Barbas Connect** -- connections list, generate pairing key (copy once), rotate, disconnect / disconnect all.
 - REST namespace /wp-json/barbas-connect/v1/... (never /wp/v2).
 - Pairing secret encrypted at rest (OpenSSL AES via Barbas Update crypto); distinct from hub license token.
-- GET /health public discovery; POST /pair for Central handshake; HMAC-protected /capabilities and activity stubs.
+- GET /health public discovery; POST /pair for Central handshake; HMAC-protected /capabilities and Activity Reports bridge (/activity/users, /activity/report).
 - **Settings -> Barbas Update** -- license tab **Connect** (BARBAS_LICENSE_TOKEN_CONNECT).
 
 ## Installation
@@ -35,15 +35,15 @@ Admin UI source strings are English (i18n); languages/barbas-connect-pt_BR.mo pr
 define('BARBAS_LICENSE_TOKEN_CONNECT', 'github_pat_...');
 ```
 
-## REST routes (v0.1.6)
+## REST routes (v0.1.7)
 
 | Method | Route | Auth |
 |--------|-------|------|
 | GET | /barbas-connect/v1/health | Public |
 | POST | /barbas-connect/v1/pair | Public (one-time pairing key) |
 | GET | /barbas-connect/v1/capabilities | HMAC |
-| GET | /barbas-connect/v1/activity/users | HMAC (stub) |
-| GET | /barbas-connect/v1/activity/report | HMAC (stub) |
+| GET | /barbas-connect/v1/activity/users | HMAC |
+| GET | /barbas-connect/v1/activity/report | HMAC (query: user, from, to, format) |
 
 HMAC headers: X-Barbas-Connect-Id, X-Barbas-Connect-Timestamp, X-Barbas-Connect-Nonce, X-Barbas-Connect-Signature.
 
@@ -64,6 +64,7 @@ barbas-connect/
 |   |-- barbas-connect-admin.php
 |   |-- barbas-connect-connections.php
 |   |-- barbas-connect-hmac.php
+|   |-- barbas-connect-activity.php
 |   |-- barbas-connect-rest.php
 |   |-- barbas-update-*.php
 |   \-- ...
@@ -79,7 +80,7 @@ WordPress 5.8+, PHP 7.4+, OpenSSL for secure pairing key storage.
 
 ## Changelog
 
-### 0.1.6
+### 0.1.7
 - Clarify connections-screen description (no third-party worker branding).
 - Fix Installation zip filename encoding (barbas-connect.zip).
 - Align Site URL and Health endpoint value boxes in Site status.
