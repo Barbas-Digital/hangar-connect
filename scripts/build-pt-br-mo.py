@@ -70,8 +70,8 @@ PAIRS = [
     ("No", "N\u00e3o"),
     ("New connection", "Nova conex\u00e3o"),
     (
-        "Creates a pairing key for Barbas Console. This is not your Barbas Update license token.",
-        "Cria uma chave de pareamento para o Barbas Console. Esta n\u00e3o \u00e9 a chave de licen\u00e7a do Barbas Update.",
+        "Creates a pairing key for Barbas Console.",
+        "Cria uma chave de pareamento para o Barbas Console.",
     ),
     ("Label (optional)", "R\u00f3tulo (opcional)"),
     ("e.g. Production Console", "ex.: Console de produ\u00e7\u00e3o"),
@@ -131,7 +131,7 @@ def main() -> None:
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M%z")
     po = polib.POFile()
     po.metadata = {
-        "Project-Id-Version": "Barbas Connect 0.1.3",
+        "Project-Id-Version": "Barbas Connect 0.1.4",
         "Report-Msgid-Bugs-To": "https://www.barbas.digital",
         "POT-Creation-Date": now,
         "PO-Revision-Date": now,

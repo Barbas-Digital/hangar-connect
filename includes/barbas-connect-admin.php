@@ -348,7 +348,7 @@ function barbas_connect_render_admin_page() {
     echo '<section class="barbas-connect-card">';
     echo '<h2>' . esc_html__('New connection', 'barbas-connect') . '</h2>';
     echo '<p>' . esc_html__(
-        'Creates a pairing key for Barbas Console. This is not your Barbas Update license token.',
+        'Creates a pairing key for Barbas Console.',
         'barbas-connect'
     ) . '</p>';
     echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="barbas-connect-form">';

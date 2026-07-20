@@ -1,6 +1,6 @@
 # Barbas Connect
 
-![Version](https://img.shields.io/badge/Version-0.1.3-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.4-blue.svg)
 ![WordPress](https://img.shields.io/badge/Tested%20up%20to-7.0-green.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)
 ![License](https://img.shields.io/badge/License-GPLv2%20or%20Later-orange.svg)
@@ -35,7 +35,7 @@ Admin UI source strings are English (i18n); `languages/barbas-connect-pt_BR.mo` 
 define('BARBAS_UPDATE_TOKEN_CONNECT', 'github_pat_...');
 ```
 
-## REST routes (v0.1.3)
+## REST routes (v0.1.4)
 
 | Method | Route | Auth |
 |--------|-------|------|
@@ -78,6 +78,9 @@ barbas-connect/
 WordPress 5.8+, PHP 7.4+, OpenSSL for secure pairing key storage.
 
 ## Changelog
+
+### 0.1.4
+- New connection card: drop the Barbas Update license disclaimer; keep a short pairing-key explanation.
 
 ### 0.1.3
 - Plugin list name without hyphen (Barbas Connect).
