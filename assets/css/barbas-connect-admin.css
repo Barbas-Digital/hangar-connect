@@ -14,7 +14,7 @@
 .barbas-connect-header {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: flex-start;
+	align-items: center;
 	justify-content: space-between;
 	gap: 16px 24px;
 	margin-bottom: 20px;
@@ -206,6 +206,11 @@
 	overflow: hidden;
 }
 
+.barbas-connect-table th,
+.barbas-connect-table td {
+	vertical-align: middle;
+}
+
 .barbas-connect-table th {
 	font-weight: 600;
 	color: #384a2f;
@@ -237,11 +242,20 @@
 	color: #00813c;
 }
 
-.barbas-connect-actions {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
+/* Keep table-cell display so vertical-align: middle works vs multi-line Label. */
+.barbas-connect-table td.barbas-connect-actions {
+	vertical-align: middle;
+}
+
+.barbas-connect-actions .barbas-connect-inline-form {
+	display: inline-flex;
 	align-items: center;
+	margin: 0 8px 0 0;
+	vertical-align: middle;
+}
+
+.barbas-connect-actions .barbas-connect-inline-form:last-child {
+	margin-right: 0;
 }
 
 .barbas-connect-inline-form {

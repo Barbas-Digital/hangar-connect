@@ -70,6 +70,42 @@ function barbas_connect_admin_enqueue($hook) {
 add_action('admin_enqueue_scripts', 'barbas_connect_admin_enqueue');
 
 /**
+ * Whether the current request is the Barbas Connect settings screen.
+ *
+ * @return bool
+ */
+function barbas_connect_is_admin_page() {
+    if (!is_admin()) {
+        return false;
+    }
+
+    $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+    if ($screen && isset($screen->id) && $screen->id === 'settings_page_' . BARBAS_CONNECT_MENU_SLUG) {
+        return true;
+    }
+
+    // Early fallback before get_current_screen() is available.
+    return isset($_GET['page']) && sanitize_key(wp_unslash((string) $_GET['page'])) === BARBAS_CONNECT_MENU_SLUG;
+}
+
+/**
+ * Remove third-party admin notices on the Connect screen (Barbas Update hub pattern).
+ * Own notices are rendered inline in barbas_connect_render_admin_page().
+ */
+function barbas_connect_suppress_third_party_notices() {
+    if (!barbas_connect_is_admin_page()) {
+        return;
+    }
+
+    remove_all_actions('admin_notices');
+    remove_all_actions('all_admin_notices');
+    remove_all_actions('network_admin_notices');
+    remove_all_actions('user_admin_notices');
+}
+add_action('in_admin_header', 'barbas_connect_suppress_third_party_notices', 999);
+add_action('admin_head', 'barbas_connect_suppress_third_party_notices', 1);
+
+/**
  * Plugin row action links.
  *
  * @param string[] $links Existing links.

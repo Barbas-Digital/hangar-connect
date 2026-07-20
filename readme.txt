@@ -5,7 +5,7 @@ Tags: barbas, connect, central, remote, api
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.1.7
+Stable tag: 0.1.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,6 +46,11 @@ HMAC endpoints expose summarized Activity Reports data (users + productivity rep
 
 == Changelog ==
 
+= 0.1.8 =
+* Vertically center Connections table cells (status, dates, actions vs two-line label).
+* Align version pill with the page header title block.
+* Suppress third-party admin notices on the Barbas Connect settings screen.
+
 = 0.1.7 =
 * Implement Activity Reports bridge: GET /activity/users and GET /activity/report (json/html/csv).
 * Resolve users by email or username for multi-site Central reports.
@@ -78,6 +83,9 @@ HMAC endpoints expose summarized Activity Reports data (users + productivity rep
 * Initial MVP: connections UI, REST health + HMAC scaffolding, Activity Reports bridge stubs, Barbas Update hub (tab connect).
 
 == Upgrade Notice ==
+
+= 0.1.8 =
+Connections table alignment polish and cleaner Connect admin screen (no foreign notices).
 
 = 0.1.7 =
 Activity Reports bridge for Barbas Central multi-site productivity reports.

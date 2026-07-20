@@ -1,6 +1,6 @@
 # Barbas Connect
 
-![Version](https://img.shields.io/badge/Version-0.1.7-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.8-blue.svg)
 ![WordPress](https://img.shields.io/badge/Tested%20up%20to-7.0-green.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)
 ![License](https://img.shields.io/badge/License-GPLv2%20or%20Later-orange.svg)
@@ -35,7 +35,7 @@ Admin UI source strings are English (i18n); languages/barbas-connect-pt_BR.mo pr
 define('BARBAS_LICENSE_TOKEN_CONNECT', 'github_pat_...');
 ```
 
-## REST routes (v0.1.7)
+## REST routes (v0.1.8)
 
 | Method | Route | Auth |
 |--------|-------|------|
@@ -80,7 +80,16 @@ WordPress 5.8+, PHP 7.4+, OpenSSL for secure pairing key storage.
 
 ## Changelog
 
+### 0.1.8
+- Vertically center Connections table cells (status, dates, actions vs two-line label).
+- Align version pill with the page header title block.
+- Suppress third-party admin notices on the Barbas Connect settings screen.
+
 ### 0.1.7
+- Implement Activity Reports bridge: GET /activity/users and GET /activity/report (json/html/csv).
+- Resolve users by email or username for multi-site Central reports.
+
+### 0.1.6
 - Clarify connections-screen description (no third-party worker branding).
 - Fix Installation zip filename encoding (barbas-connect.zip).
 - Align Site URL and Health endpoint value boxes in Site status.
