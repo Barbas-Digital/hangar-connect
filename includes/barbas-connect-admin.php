@@ -264,7 +264,7 @@ function barbas_connect_render_admin_page() {
     echo '<p class="barbas-connect-eyebrow">' . esc_html__('Barbas Digital', 'barbas-connect') . '</p>';
     echo '<h1>' . esc_html__('Barbas Connect', 'barbas-connect') . '</h1>';
     echo '<p class="barbas-connect-lead">' . esc_html__(
-        'Connect this site to Barbas Console. Generate a pairing key, paste it in the Console, then manage or revoke connections here.',
+        'Connect this site to Barbas Central. Generate a pairing key, paste it in Barbas Central, then manage or revoke connections here.',
         'barbas-connect'
     ) . '</p>';
     echo '</div>';
@@ -307,7 +307,7 @@ function barbas_connect_render_admin_page() {
             echo '<section class="barbas-connect-card barbas-connect-card--reveal" aria-live="polite">';
             echo '<h2>' . esc_html__('Your pairing key', 'barbas-connect') . '</h2>';
             echo '<p>' . esc_html__(
-                'Copy this key into Barbas Console. For security it is shown only once.',
+                'Copy this key into Barbas Central. For security it is shown only once.',
                 'barbas-connect'
             ) . '</p>';
             echo '<div class="barbas-connect-key-row">';
@@ -336,7 +336,7 @@ function barbas_connect_render_admin_page() {
         ? esc_html__('Available', 'barbas-connect')
         : esc_html__('Not installed / inactive', 'barbas-connect');
     echo '</dd></div>';
-    echo '<div><dt>' . esc_html__('Connected to Console', 'barbas-connect') . '</dt><dd>';
+    echo '<div><dt>' . esc_html__('Connected to Central', 'barbas-connect') . '</dt><dd>';
     echo barbas_connect_has_active_connection()
         ? esc_html__('Yes', 'barbas-connect')
         : esc_html__('No', 'barbas-connect');
@@ -348,7 +348,7 @@ function barbas_connect_render_admin_page() {
     echo '<section class="barbas-connect-card">';
     echo '<h2>' . esc_html__('New connection', 'barbas-connect') . '</h2>';
     echo '<p>' . esc_html__(
-        'Creates a pairing key for Barbas Console.',
+        'Creates a pairing key for Barbas Central.',
         'barbas-connect'
     ) . '</p>';
     echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="barbas-connect-form">';
@@ -357,7 +357,7 @@ function barbas_connect_render_admin_page() {
     echo '<input type="hidden" name="barbas_connect_action" value="generate" />';
     echo '<p class="barbas-connect-field">';
     echo '<label for="barbas-connect-label">' . esc_html__('Label (optional)', 'barbas-connect') . '</label>';
-    echo '<input type="text" class="regular-text" id="barbas-connect-label" name="connection_label" maxlength="80" placeholder="' . esc_attr__('e.g. Production Console', 'barbas-connect') . '" />';
+    echo '<input type="text" class="regular-text" id="barbas-connect-label" name="connection_label" maxlength="80" placeholder="' . esc_attr__('e.g. Production', 'barbas-connect') . '" />';
     echo '</p>';
     echo '<p><button type="submit" class="button button-primary">' . esc_html__('Generate pairing key', 'barbas-connect') . '</button></p>';
     echo '</form>';

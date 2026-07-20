@@ -71,7 +71,7 @@ function barbas_connect_register_rest_routes() {
 add_action('rest_api_init', 'barbas_connect_register_rest_routes');
 
 /**
- * Capability map advertised to Console.
+ * Capability map advertised to Central.
  *
  * @return array<string, bool>
  */
@@ -121,7 +121,7 @@ function barbas_connect_rest_health() {
 }
 
 /**
- * POST /pair — one-time handshake with Console using plaintext pairing key.
+ * POST /pair — one-time handshake with Central using plaintext pairing key.
  *
  * Body JSON: { "pairing_key": "bc_..." }
  * Returns connection_id for subsequent HMAC calls (secret = pairing key).

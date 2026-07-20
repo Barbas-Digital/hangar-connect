@@ -24,7 +24,7 @@ if (!function_exists('barbas_connect_filter_plugins_list')) {
 
         $plugins[ $basename ]['Name'] = __('Barbas Connect', 'barbas-connect');
         $plugins[ $basename ]['Description'] = __(
-            'Site agent for Barbas Console: secure REST API, pairing keys, and bridge stubs for Activity Reports.',
+            'Site agent for Barbas Central: secure REST API, pairing keys, and bridge stubs for Activity Reports.',
             'barbas-connect'
         );
 

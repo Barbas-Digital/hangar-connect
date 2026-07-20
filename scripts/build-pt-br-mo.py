@@ -11,8 +11,8 @@ PAIRS = [
         "Barbas Connect",
     ),
     (
-        "Site agent for Barbas Console: secure REST API, pairing keys, and bridge stubs for Activity Reports.",
-        "Agente do site para o Barbas Console: API REST segura, chaves de pareamento e stubs de ponte para Activity Reports.",
+        "Site agent for Barbas Central: secure REST API, pairing keys, and bridge stubs for Activity Reports.",
+        "Agente do site para o Barbas Central: API REST segura, chaves de pareamento e stubs de ponte para Activity Reports.",
     ),
     (
         "Missing files in includes/ or lib/. Delete the plugin folder and install via Plugins \u2192 Add New \u2192 Upload Plugin (barbas-connect.zip).",
@@ -34,8 +34,8 @@ PAIRS = [
     ("Unknown", "Desconhecido"),
     ("Barbas Digital", "Barbas Digital"),
     (
-        "Connect this site to Barbas Console. Generate a pairing key, paste it in the Console, then manage or revoke connections here.",
-        "Conecte este site ao Barbas Console. Gere uma chave de pareamento, cole no Console e gerencie ou revogue as conex\u00f5es aqui.",
+        "Connect this site to Barbas Central. Generate a pairing key, paste it in Barbas Central, then manage or revoke connections here.",
+        "Conecte este site ao Barbas Central. Gere uma chave de pareamento, cole no Barbas Central e gerencie ou revogue as conex\u00f5es aqui.",
     ),
     ("v%s", "v%s"),
     (
@@ -54,8 +54,8 @@ PAIRS = [
     ("Something went wrong.", "Algo deu errado."),
     ("Your pairing key", "Sua chave de pareamento"),
     (
-        "Copy this key into Barbas Console. For security it is shown only once.",
-        "Cole esta chave no Barbas Console. Por seguran\u00e7a, ela \u00e9 exibida apenas uma vez.",
+        "Copy this key into Barbas Central. For security it is shown only once.",
+        "Cole esta chave no Barbas Central. Por seguran\u00e7a, ela \u00e9 exibida apenas uma vez.",
     ),
     ("Copy", "Copiar"),
     ("Hide key", "Ocultar chave"),
@@ -65,16 +65,16 @@ PAIRS = [
     ("Activity Reports", "Activity Reports"),
     ("Available", "Dispon\u00edvel"),
     ("Not installed / inactive", "N\u00e3o instalado / inativo"),
-    ("Connected to Console", "Conectado ao Console"),
+    ("Connected to Central", "Conectado ao Central"),
     ("Yes", "Sim"),
     ("No", "N\u00e3o"),
     ("New connection", "Nova conex\u00e3o"),
     (
-        "Creates a pairing key for Barbas Console.",
-        "Cria uma chave de pareamento para o Barbas Console.",
+        "Creates a pairing key for Barbas Central.",
+        "Cria uma chave de pareamento para o Barbas Central.",
     ),
     ("Label (optional)", "R\u00f3tulo (opcional)"),
-    ("e.g. Production Console", "ex.: Console de produ\u00e7\u00e3o"),
+    ("e.g. Production", "ex.: Produ\u00e7\u00e3o"),
     ("Generate pairing key", "Gerar chave de pareamento"),
     (
         "Disconnect all connections? Pairing keys will stop working.",

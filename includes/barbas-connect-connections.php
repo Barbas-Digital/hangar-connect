@@ -365,7 +365,7 @@ function barbas_connect_get_connection_secret($connection_id) {
 }
 
 /**
- * Complete Console pairing: match plaintext key to a pending connection.
+ * Complete Central pairing: match plaintext key to a pending connection.
  *
  * @param string $pairing_key Plaintext key (bc_...).
  * @return array<string,mixed>|WP_Error Public connection row on success.

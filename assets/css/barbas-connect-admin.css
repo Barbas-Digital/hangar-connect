@@ -99,9 +99,25 @@
 
 .barbas-connect-status-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-	gap: 14px 20px;
+	grid-template-columns: 1fr;
+	gap: 12px 16px;
 	margin: 0;
+}
+
+@media (min-width: 782px) {
+	.barbas-connect-status-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	/* Site URL full width */
+	.barbas-connect-status-grid > div:first-child {
+		grid-column: 1 / -1;
+	}
+
+	/* Connected to Central on its own row */
+	.barbas-connect-status-grid > div:nth-child(4) {
+		grid-column: 1 / -1;
+	}
 }
 
 .barbas-connect-status-grid dt {
@@ -141,6 +157,24 @@
 	border: 1px solid #c3cfc0;
 	border-radius: 6px;
 	word-break: break-all;
+}
+
+.barbas-connect-form {
+	margin: 0;
+}
+
+.barbas-connect-form > p:last-child {
+	margin-bottom: 0;
+}
+
+.barbas-connect-form input.regular-text {
+	width: 100%;
+	max-width: 28rem;
+	box-sizing: border-box;
+}
+
+.barbas-connect-field {
+	margin: 0 0 12px;
 }
 
 .barbas-connect-field label {

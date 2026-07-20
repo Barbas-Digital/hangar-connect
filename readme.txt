@@ -1,29 +1,29 @@
 === Barbas Connect ===
 Contributors: gsouza
 Donate link: https://www.barbas.digital
-Tags: barbas, connect, console, remote, api
+Tags: barbas, connect, central, remote, api
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.1.4
+Stable tag: 0.1.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Site agent for Barbas Console: pairing keys, secure REST API, and bridge stubs for Activity Reports.
+Site agent for Barbas Central: pairing keys, secure REST API, and bridge stubs for Activity Reports.
 
 == Description ==
 
-Barbas Connect turns each WordPress site into a secure agent for Barbas Console.
+Barbas Connect turns each WordPress site into a secure agent for Barbas Central.
 
 * ManageWP Worker-like connections screen: generate pairing key, copy once, rotate, disconnect / disconnect all.
-* Own REST namespace (`/wp-json/barbas-connect/v1/...`) -- never exposes generic `/wp/v2`.
+* Own REST namespace (/wp-json/barbas-connect/v1/...) -- never exposes generic /wp/v2.
 * Pairing key is separate from the Barbas Update license token.
 * Health discovery endpoint; HMAC-protected capability and activity bridge stubs.
 * Updates via **Settings -> Barbas Update** (Connect tab).
 
 == Installation ==
 
-1. Plugins -> Add New -> Upload Plugin -> `barbas-connect.zip`
+1. Plugins -> Add New -> Upload Plugin -> arbas-connect.zip
 2. Activate
 3. Settings -> Barbas Connect -> Generate pairing key
 4. Settings -> Barbas Update -> Connect -> save and validate license (for updates)
@@ -34,17 +34,21 @@ Always install via WordPress (not hosting file manager only).
 
 = Is the pairing key the same as the update license? =
 
-No. The pairing key authenticates Console API calls. The license under Barbas Update is only for GitHub plugin updates (`BARBAS_UPDATE_TOKEN_CONNECT`).
+No. The pairing key authenticates Central API calls. The license under Barbas Update is only for GitHub plugin updates (BARBAS_UPDATE_TOKEN_CONNECT).
 
 = Where is the health endpoint? =
 
-`GET /wp-json/barbas-connect/v1/health` -- public discovery (version, site URL, connected flag, capabilities). No secrets.
+GET /wp-json/barbas-connect/v1/health -- public discovery (version, site URL, connected flag, capabilities). No secrets.
 
 = Does it dump WP Activity Log data? =
 
-No. Activity bridge routes are stubs until the Console + Activity Reports integration is ready. No raw WSAL dump.
+No. Activity bridge routes are stubs until Barbas Central + Activity Reports integration is ready. No raw WSAL dump.
 
 == Changelog ==
+
+= 0.1.5 =
+* Rename user-facing Barbas Console references to Barbas Central.
+* Site status card layout: stacked responsive grid; tighter New connection form.
 
 = 0.1.4 =
 * New connection card: remove Barbas Update license disclaimer; keep short pairing-key copy.
@@ -59,12 +63,15 @@ No. Activity bridge routes are stubs until the Console + Activity Reports integr
 * Fix README encoding (Installation file line / replacement characters).
 
 = 0.1.1 =
-* POST /pair for Console pairing handshake.
+* POST /pair for Central pairing handshake.
 
 = 0.1.0 =
-* Initial MVP: connections UI, REST health + HMAC scaffolding, Activity Reports bridge stubs, Barbas Update hub (tab `connect`).
+* Initial MVP: connections UI, REST health + HMAC scaffolding, Activity Reports bridge stubs, Barbas Update hub (tab connect).
 
 == Upgrade Notice ==
+
+= 0.1.5 =
+Barbas Central naming in UI/docs and improved Site status card layout.
 
 = 0.1.4 =
 Simpler new-connection copy (no license disclaimer on the pairing card).
@@ -76,7 +83,7 @@ UI polish: plugin name, hub footer branding, site-title label fallback, and Port
 README encoding fix (clean install docs in the release zip).
 
 = 0.1.1 =
-Adds POST /pair for Barbas Console handshake.
+Adds POST /pair for Barbas Central handshake.
 
 = 0.1.0 =
 First public MVP scaffold for Barbas Connect.
