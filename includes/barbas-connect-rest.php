@@ -99,11 +99,16 @@ add_action('rest_api_init', 'barbas_connect_register_rest_routes');
  * @return array<string, bool>
  */
 function barbas_connect_capabilities_map() {
-    $ar = barbas_connect_activity_reports_available();
+    $ar     = barbas_connect_activity_reports_available();
+    $loaded = $ar && function_exists('barbas_connect_activity_ensure_loaded')
+        ? barbas_connect_activity_ensure_loaded()
+        : false;
     return array(
-        'activity_reports' => $ar,
-        'activity_users'   => $ar,
-        'activity_report'  => $ar,
+        'activity_reports'       => $ar,
+        'activity_users'         => $ar && $loaded,
+        'activity_report'        => $ar && $loaded,
+        'activity_bridge_ready'  => $ar && $loaded,
+        'activity_bridge_version'=> BARBAS_CONNECT_VERSION,
     );
 }
 

@@ -452,8 +452,20 @@ function barbas_connect_activity_reports_available() {
     if (defined('BARBAS_ACTIVITY_REPORTS_VERSION') || defined('WSALR_VERSION')) {
         return true;
     }
+    if (function_exists('wsalr_known_users') && function_exists('wsalr_build_report')) {
+        return true;
+    }
     if (!function_exists('is_plugin_active')) {
         require_once ABSPATH . 'wp-admin/includes/plugin.php';
     }
-    return is_plugin_active('barbas-activity-reports/barbas-activity-reports.php');
+    $slugs = array(
+        'barbas-activity-reports/barbas-activity-reports.php',
+        'barbas-activity-reports-main/barbas-activity-reports.php',
+    );
+    foreach ($slugs as $slug) {
+        if (is_plugin_active($slug)) {
+            return true;
+        }
+    }
+    return false;
 }

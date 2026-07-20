@@ -1,6 +1,6 @@
 # Barbas Connect
 
-![Version](https://img.shields.io/badge/Version-0.1.8-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.9-blue.svg)
 ![WordPress](https://img.shields.io/badge/Tested%20up%20to-7.0-green.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)
 ![License](https://img.shields.io/badge/License-GPLv2%20or%20Later-orange.svg)
@@ -35,7 +35,7 @@ Admin UI source strings are English (i18n); languages/barbas-connect-pt_BR.mo pr
 define('BARBAS_LICENSE_TOKEN_CONNECT', 'github_pat_...');
 ```
 
-## REST routes (v0.1.8)
+## REST routes (v0.1.9)
 
 | Method | Route | Auth |
 |--------|-------|------|
@@ -48,6 +48,8 @@ define('BARBAS_LICENSE_TOKEN_CONNECT', 'github_pat_...');
 HMAC headers: X-Barbas-Connect-Id, X-Barbas-Connect-Timestamp, X-Barbas-Connect-Nonce, X-Barbas-Connect-Signature.
 
 POST /pair body: { "pairing_key": "bc_..." } -> { ok, connection_id, site_url, site_name }.
+
+Activity bridge requires **Barbas Activity Reports** active (+ WP Activity Log tables). Responses include `bridge_version` and `ready: true` when live (Connect < 0.1.7 returned a 501 stub).
 
 ## Folder structure
 
@@ -62,9 +64,9 @@ barbas-connect/
 |   \-- img/
 |-- includes/
 |   |-- barbas-connect-admin.php
+|   |-- barbas-connect-activity.php
 |   |-- barbas-connect-connections.php
 |   |-- barbas-connect-hmac.php
-|   |-- barbas-connect-activity.php
 |   |-- barbas-connect-rest.php
 |   |-- barbas-update-*.php
 |   \-- ...
@@ -76,9 +78,14 @@ barbas-connect/
 
 ## Requirements
 
-WordPress 5.8+, PHP 7.4+, OpenSSL for secure pairing key storage.
+WordPress 5.8+, PHP 7.4+, OpenSSL for secure pairing key storage. Barbas Activity Reports for productivity bridges.
 
 ## Changelog
+
+### 0.1.9
+- Harden Activity Reports bridge loader (full AR include order, WSAL table checks, bridge_version).
+- Advertise activity_bridge_ready in /health and /capabilities.
+- Sites on Connect < 0.1.7 still hit the old 501 stub -- update required for Central reports.
 
 ### 0.1.8
 - Vertically center Connections table cells (status, dates, actions vs two-line label).
@@ -96,7 +103,7 @@ WordPress 5.8+, PHP 7.4+, OpenSSL for secure pairing key storage.
 
 ### 0.1.5
 - Rename user-facing Barbas Console references to Barbas Central.
-- Site status card: responsive stacked grid (URL full width; health + Activity Reports; Connected to Central).
+- Site status card: responsive stacked grid.
 - Tighten New connection form spacing.
 
 ### 0.1.4

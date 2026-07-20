@@ -1,12 +1,40 @@
 <?php
 /**
  * Activity Reports bridge for Barbas Central (HMAC-protected REST).
+ *
+ * Real implementation: calls wsalr_known_users() / wsalr_build_report() from
+ * Barbas Activity Reports (not a 501 stub).
  */
 
 defined('ABSPATH') || exit;
 
 /**
- * Ensure Activity Reports helpers are loaded.
+ * Resolve Activity Reports plugin directory.
+ *
+ * @return string Absolute path with trailing slash, or empty.
+ */
+function barbas_connect_activity_reports_dir() {
+    if (defined('WSALR_DIR') && is_string(WSALR_DIR) && WSALR_DIR !== '') {
+        return trailingslashit(WSALR_DIR);
+    }
+    if (defined('BARBAS_ACTIVITY_REPORTS_PLUGIN_FILE')) {
+        return trailingslashit(plugin_dir_path(BARBAS_ACTIVITY_REPORTS_PLUGIN_FILE));
+    }
+
+    $candidates = array(
+        WP_PLUGIN_DIR . '/barbas-activity-reports/',
+        WP_PLUGIN_DIR . '/barbas-activity-reports-main/',
+    );
+    foreach ($candidates as $dir) {
+        if (is_readable($dir . 'barbas-activity-reports.php')) {
+            return trailingslashit($dir);
+        }
+    }
+    return '';
+}
+
+/**
+ * Ensure Activity Reports helpers are loaded (same include order as AR bootstrap).
  *
  * @return bool
  */
@@ -14,23 +42,32 @@ function barbas_connect_activity_ensure_loaded() {
     if (!barbas_connect_activity_reports_available()) {
         return false;
     }
-    if (function_exists('wsalr_known_users') && function_exists('wsalr_build_report')) {
+    if (function_exists('wsalr_known_users') && function_exists('wsalr_build_report') && function_exists('wsalr_tables')) {
         return true;
     }
 
-    $candidates = array(
-        WP_PLUGIN_DIR . '/barbas-activity-reports/includes/data.php',
-        WP_PLUGIN_DIR . '/barbas-activity-reports/includes/analytics.php',
-        WP_PLUGIN_DIR . '/barbas-activity-reports/includes/admin.php',
-        WP_PLUGIN_DIR . '/barbas-activity-reports/includes/report.php',
+    $dir = barbas_connect_activity_reports_dir();
+    if ($dir === '') {
+        return false;
+    }
+
+    $files = array(
+        'includes/events.php',
+        'includes/data.php',
+        'includes/analytics.php',
+        'includes/report.php',
+        'includes/admin.php',
     );
-    foreach ($candidates as $file) {
+    foreach ($files as $rel) {
+        $file = $dir . $rel;
         if (is_readable($file)) {
             require_once $file;
         }
     }
 
-    return function_exists('wsalr_known_users') && function_exists('wsalr_build_report');
+    return function_exists('wsalr_known_users')
+        && function_exists('wsalr_build_report')
+        && function_exists('wsalr_tables');
 }
 
 /**
@@ -121,10 +158,22 @@ function barbas_connect_rest_activity_users(WP_REST_Request $request) {
             array(
                 'ok'      => false,
                 'code'    => 'activity_bridge_unavailable',
-                'message' => 'Activity Reports helpers could not be loaded.',
+                'message' => 'Activity Reports helpers could not be loaded. Update Barbas Connect and Activity Reports.',
                 'ready'   => false,
             ),
             500
+        );
+    }
+
+    if (!wsalr_tables()) {
+        return new WP_REST_Response(
+            array(
+                'ok'      => false,
+                'code'    => 'wsal_tables_missing',
+                'message' => 'WP Activity Log tables not found on this site.',
+                'ready'   => false,
+            ),
+            503
         );
     }
 
@@ -139,11 +188,13 @@ function barbas_connect_rest_activity_users(WP_REST_Request $request) {
 
     return new WP_REST_Response(
         array(
-            'ok'        => true,
-            'ready'     => true,
-            'site_url'  => home_url('/'),
-            'site_name' => get_bloginfo('name'),
-            'users'     => $users,
+            'ok'             => true,
+            'ready'          => true,
+            'bridge_version' => BARBAS_CONNECT_VERSION,
+            'site_url'       => home_url('/'),
+            'site_name'      => get_bloginfo('name'),
+            'users'          => $users,
+            'users_count'    => count($users),
         ),
         200
     );
@@ -166,10 +217,22 @@ function barbas_connect_rest_activity_report(WP_REST_Request $request) {
             array(
                 'ok'      => false,
                 'code'    => 'activity_bridge_unavailable',
-                'message' => 'Activity Reports helpers could not be loaded.',
+                'message' => 'Activity Reports helpers could not be loaded. Update Barbas Connect and Activity Reports.',
                 'ready'   => false,
             ),
             500
+        );
+    }
+
+    if (!wsalr_tables()) {
+        return new WP_REST_Response(
+            array(
+                'ok'      => false,
+                'code'    => 'wsal_tables_missing',
+                'message' => 'WP Activity Log tables not found on this site.',
+                'ready'   => false,
+            ),
+            503
         );
     }
 
@@ -209,15 +272,16 @@ function barbas_connect_rest_activity_report(WP_REST_Request $request) {
         $html = wsalr_render_report_html($analysis, $meta);
         return new WP_REST_Response(
             array(
-                'ok'           => true,
-                'ready'        => true,
-                'format'       => 'html',
-                'site_url'     => home_url('/'),
-                'site_name'    => get_bloginfo('name'),
-                'events_count' => $events_count,
-                'totals'       => $totals,
-                'meta'         => $meta,
-                'html'         => $html,
+                'ok'             => true,
+                'ready'          => true,
+                'bridge_version' => BARBAS_CONNECT_VERSION,
+                'format'         => 'html',
+                'site_url'       => home_url('/'),
+                'site_name'      => get_bloginfo('name'),
+                'events_count'   => $events_count,
+                'totals'         => $totals,
+                'meta'           => $meta,
+                'html'           => $html,
             ),
             200
         );
@@ -267,13 +331,14 @@ function barbas_connect_rest_activity_report(WP_REST_Request $request) {
 
         return new WP_REST_Response(
             array(
-                'ok'           => true,
-                'ready'        => true,
-                'format'       => 'csv',
-                'site_url'     => home_url('/'),
-                'site_name'    => get_bloginfo('name'),
-                'events_count' => $events_count,
-                'csv'          => $csv_rows,
+                'ok'             => true,
+                'ready'          => true,
+                'bridge_version' => BARBAS_CONNECT_VERSION,
+                'format'         => 'csv',
+                'site_url'       => home_url('/'),
+                'site_name'      => get_bloginfo('name'),
+                'events_count'   => $events_count,
+                'csv'            => $csv_rows,
             ),
             200
         );
@@ -287,15 +352,16 @@ function barbas_connect_rest_activity_report(WP_REST_Request $request) {
 
     return new WP_REST_Response(
         array(
-            'ok'           => true,
-            'ready'        => true,
-            'format'       => 'json',
-            'site_url'     => home_url('/'),
-            'site_name'    => get_bloginfo('name'),
-            'events_count' => $events_count,
-            'totals'       => $totals,
-            'analysis'     => $analysis_out,
-            'meta'         => $meta,
+            'ok'             => true,
+            'ready'          => true,
+            'bridge_version' => BARBAS_CONNECT_VERSION,
+            'format'         => 'json',
+            'site_url'       => home_url('/'),
+            'site_name'      => get_bloginfo('name'),
+            'events_count'   => $events_count,
+            'totals'         => $totals,
+            'analysis'       => $analysis_out,
+            'meta'           => $meta,
         ),
         200
     );
