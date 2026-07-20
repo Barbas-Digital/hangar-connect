@@ -5,7 +5,7 @@ Tags: barbas, connect, central, remote, api
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.1.5
+Stable tag: 0.1.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,15 +15,15 @@ Site agent for Barbas Central: pairing keys, secure REST API, and bridge stubs f
 
 Barbas Connect turns each WordPress site into a secure agent for Barbas Central.
 
-* ManageWP Worker-like connections screen: generate pairing key, copy once, rotate, disconnect / disconnect all.
+* Connections screen: generate pairing key, copy once, rotate, disconnect / disconnect all.
 * Own REST namespace (/wp-json/barbas-connect/v1/...) -- never exposes generic /wp/v2.
 * Pairing key is separate from the Barbas Update license token.
 * Health discovery endpoint; HMAC-protected capability and activity bridge stubs.
-* Updates via **Settings -> Barbas Update** (Connect tab).
+* Updates via Settings -> Barbas Update (Connect tab).
 
 == Installation ==
 
-1. Plugins -> Add New -> Upload Plugin -> arbas-connect.zip
+1. Plugins -> Add New -> Upload Plugin -> barbas-connect.zip
 2. Activate
 3. Settings -> Barbas Connect -> Generate pairing key
 4. Settings -> Barbas Update -> Connect -> save and validate license (for updates)
@@ -34,7 +34,7 @@ Always install via WordPress (not hosting file manager only).
 
 = Is the pairing key the same as the update license? =
 
-No. The pairing key authenticates Central API calls. The license under Barbas Update is only for GitHub plugin updates (BARBAS_UPDATE_TOKEN_CONNECT).
+No. The pairing key authenticates Central API calls. The license under Barbas Update is only for GitHub plugin updates (BARBAS_LICENSE_TOKEN_CONNECT).
 
 = Where is the health endpoint? =
 
@@ -45,6 +45,11 @@ GET /wp-json/barbas-connect/v1/health -- public discovery (version, site URL, co
 No. Activity bridge routes are stubs until Barbas Central + Activity Reports integration is ready. No raw WSAL dump.
 
 == Changelog ==
+
+= 0.1.6 =
+* Clarify connections-screen description (no third-party worker branding).
+* Fix Installation zip filename encoding (barbas-connect.zip).
+* Align Site URL and Health endpoint value boxes in Site status.
 
 = 0.1.5 =
 * Rename user-facing Barbas Console references to Barbas Central.
@@ -69,6 +74,9 @@ No. Activity bridge routes are stubs until Barbas Central + Activity Reports int
 * Initial MVP: connections UI, REST health + HMAC scaffolding, Activity Reports bridge stubs, Barbas Update hub (tab connect).
 
 == Upgrade Notice ==
+
+= 0.1.6 =
+Cleaner plugin details (fixed zip name) and aligned Site status URL fields.
 
 = 0.1.5 =
 Barbas Central naming in UI/docs and improved Site status card layout.

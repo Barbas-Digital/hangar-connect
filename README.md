@@ -1,6 +1,6 @@
 # Barbas Connect
 
-![Version](https://img.shields.io/badge/Version-0.1.5-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.6-blue.svg)
 ![WordPress](https://img.shields.io/badge/Tested%20up%20to-7.0-green.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)
 ![License](https://img.shields.io/badge/License-GPLv2%20or%20Later-orange.svg)
@@ -15,12 +15,12 @@ Admin UI source strings are English (i18n); languages/barbas-connect-pt_BR.mo pr
 - REST namespace /wp-json/barbas-connect/v1/... (never /wp/v2).
 - Pairing secret encrypted at rest (OpenSSL AES via Barbas Update crypto); distinct from hub license token.
 - GET /health public discovery; POST /pair for Central handshake; HMAC-protected /capabilities and activity stubs.
-- **Settings -> Barbas Update** -- license tab **Connect** (BARBAS_UPDATE_TOKEN_CONNECT).
+- **Settings -> Barbas Update** -- license tab **Connect** (BARBAS_LICENSE_TOKEN_CONNECT).
 
 ## Installation
 
 1. WordPress -> **Plugins -> Add New -> Upload Plugin**
-2. File: arbas-connect.zip
+2. File: barbas-connect.zip
 3. **Activate**
 4. **Settings -> Barbas Connect** -> generate a pairing key
 
@@ -31,11 +31,11 @@ Admin UI source strings are English (i18n); languages/barbas-connect-pt_BR.mo pr
 
 **Safe option (wp-config.php):**
 
-`php
-define('BARBAS_UPDATE_TOKEN_CONNECT', 'github_pat_...');
-`
+```php
+define('BARBAS_LICENSE_TOKEN_CONNECT', 'github_pat_...');
+```
 
-## REST routes (v0.1.5)
+## REST routes (v0.1.6)
 
 | Method | Route | Auth |
 |--------|-------|------|
@@ -51,7 +51,7 @@ POST /pair body: { "pairing_key": "bc_..." } -> { ok, connection_id, site_url, s
 
 ## Folder structure
 
-`
+```
 barbas-connect/
 |-- barbas-connect.php
 |-- readme.txt
@@ -71,13 +71,18 @@ barbas-connect/
 |-- lib/
 |   \-- plugin-update-checker/
 \-- scripts/
-`
+```
 
 ## Requirements
 
 WordPress 5.8+, PHP 7.4+, OpenSSL for secure pairing key storage.
 
 ## Changelog
+
+### 0.1.6
+- Clarify connections-screen description (no third-party worker branding).
+- Fix Installation zip filename encoding (barbas-connect.zip).
+- Align Site URL and Health endpoint value boxes in Site status.
 
 ### 0.1.5
 - Rename user-facing Barbas Console references to Barbas Central.
@@ -97,7 +102,7 @@ WordPress 5.8+, PHP 7.4+, OpenSSL for secure pairing key storage.
 - Fix README encoding (corrupted Installation line / replacement characters).
 
 ### 0.1.1
-- POST /pair handshake for Barbas Central (match pending c_... key -> connection_id).
+- POST /pair handshake for Barbas Central (match pending bc_... key -> connection_id).
 
 ### 0.1.0
 - Initial MVP scaffold: admin connections UI, REST health + HMAC helpers, Activity Reports bridge stubs, Barbas Update hub tab connect.

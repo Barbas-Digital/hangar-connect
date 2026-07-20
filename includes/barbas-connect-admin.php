@@ -329,8 +329,8 @@ function barbas_connect_render_admin_page() {
     echo '<section class="barbas-connect-card">';
     echo '<h2>' . esc_html__('Site status', 'barbas-connect') . '</h2>';
     echo '<dl class="barbas-connect-status-grid">';
-    echo '<div><dt>' . esc_html__('Site URL', 'barbas-connect') . '</dt><dd><code>' . esc_html(home_url('/')) . '</code></dd></div>';
-    echo '<div><dt>' . esc_html__('Health endpoint', 'barbas-connect') . '</dt><dd><code class="barbas-connect-mono">' . esc_html($health_url) . '</code></dd></div>';
+    echo '<div><dt>' . esc_html__('Site URL', 'barbas-connect') . '</dt><dd><code class="barbas-connect-status-value">' . esc_html(home_url('/')) . '</code></dd></div>';
+    echo '<div><dt>' . esc_html__('Health endpoint', 'barbas-connect') . '</dt><dd><code class="barbas-connect-status-value">' . esc_html($health_url) . '</code></dd></div>';
     echo '<div><dt>' . esc_html__('Activity Reports', 'barbas-connect') . '</dt><dd>';
     echo barbas_connect_activity_reports_available()
         ? esc_html__('Available', 'barbas-connect')
