@@ -1,4 +1,8 @@
-# Barbas - Connect
+# -*- coding: utf-8 -*-
+"""Write barbas-connect README.md as UTF-8 (no BOM), ASCII-safe arrows."""
+from pathlib import Path
+
+readme = r"""# Barbas - Connect
 
 ![Version](https://img.shields.io/badge/Version-0.1.2-blue.svg)
 ![WordPress](https://img.shields.io/badge/Tested%20up%20to-7.0-green.svg)
@@ -91,3 +95,17 @@ WordPress 5.8+, PHP 7.4+, OpenSSL for secure pairing key storage.
 ## Next
 
 Use with Barbas Console SaaS for multi-site jobs and Activity Reports bridges.
+"""
+
+path = Path(__file__).resolve().parents[1] / "README.md"
+# UTF-8 no BOM
+path.write_bytes(readme.encode("utf-8"))
+print("wrote", path, "bytes", path.stat().st_size)
+# sanity: no U+FFFD, no BOM
+raw = path.read_bytes()
+assert not raw.startswith(b"\xef\xbb\xbf"), "BOM present"
+text = raw.decode("utf-8")
+assert "\ufffd" not in text, "U+FFFD found"
+assert "File: `barbas-connect.zip`" in text
+assert "arbas-connect" not in text.replace("barbas-connect", "")
+print("encoding OK")

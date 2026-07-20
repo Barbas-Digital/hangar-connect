@@ -5,7 +5,7 @@ Tags: barbas, connect, console, remote, api
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,8 +15,8 @@ Site agent for Barbas Console: pairing keys, secure REST API, and bridge stubs f
 
 Barbas Connect turns each WordPress site into a secure agent for Barbas Console.
 
-* ManageWP Worker–like connections screen: generate pairing key, copy once, rotate, disconnect / disconnect all.
-* Own REST namespace (`/wp-json/barbas-connect/v1/...`) — never exposes generic `/wp/v2`.
+* ManageWP Worker-like connections screen: generate pairing key, copy once, rotate, disconnect / disconnect all.
+* Own REST namespace (`/wp-json/barbas-connect/v1/...`) -- never exposes generic `/wp/v2`.
 * Pairing key is separate from the Barbas Update license token.
 * Health discovery endpoint; HMAC-protected capability and activity bridge stubs.
 * Updates via **Settings -> Barbas Update** (Connect tab).
@@ -38,13 +38,16 @@ No. The pairing key authenticates Console API calls. The license under Barbas Up
 
 = Where is the health endpoint? =
 
-`GET /wp-json/barbas-connect/v1/health` — public discovery (version, site URL, connected flag, capabilities). No secrets.
+`GET /wp-json/barbas-connect/v1/health` -- public discovery (version, site URL, connected flag, capabilities). No secrets.
 
 = Does it dump WP Activity Log data? =
 
 No. Activity bridge routes are stubs until the Console + Activity Reports integration is ready. No raw WSAL dump.
 
 == Changelog ==
+
+= 0.1.2 =
+* Fix README encoding (Installation file line / replacement characters).
 
 = 0.1.1 =
 * POST /pair for Console pairing handshake.
@@ -53,6 +56,9 @@ No. Activity bridge routes are stubs until the Console + Activity Reports integr
 * Initial MVP: connections UI, REST health + HMAC scaffolding, Activity Reports bridge stubs, Barbas Update hub (tab `connect`).
 
 == Upgrade Notice ==
+
+= 0.1.2 =
+README encoding fix (clean install docs in the release zip).
 
 = 0.1.1 =
 Adds POST /pair for Barbas Console handshake.
