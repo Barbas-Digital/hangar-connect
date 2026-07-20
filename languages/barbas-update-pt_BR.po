@@ -1,0 +1,345 @@
+# Copyright (C) 2026 Barbas Digital
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Barbas Update 1.0\n"
+"Report-Msgid-Bugs-To: https://www.barbas.digital\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Domain: barbas-update\n"
+
+msgid "Barbas Digital"
+msgstr "Barbas Digital"
+
+msgid "The brand behind the most impactful websites on the Internet."
+msgstr "A grife dos sites mais impactantes da Internet."
+
+msgid "Please enter a license key."
+msgstr "Informe uma chave de licença."
+
+msgid "Invalid or expired license key."
+msgstr "Chave inválida ou expirada."
+
+msgid "GitHub returned status %d while validating the user."
+msgstr "GitHub respondeu com código %d ao validar o usuário."
+
+msgid "no access or repository not found"
+msgstr "sem acesso ou repositório não encontrado"
+
+msgid "License authenticated but this plugin repository is not accessible."
+msgstr "Token autenticado, mas sem acesso ao repositório deste plugin."
+
+msgid ""
+"License authenticated but one or more plugin repositories are not "
+"accessible."
+msgstr ""
+"Token autenticado, mas sem acesso a um ou mais repositórios dos plugins."
+
+msgid "Valid license (account: %s)."
+msgstr "Licença válida (conta: %s)."
+
+msgid "Valid license."
+msgstr "Licença válida."
+
+msgid "Barbas Update"
+msgstr "Barbas Update"
+
+msgid "Barbas Update: configure the update license for each installed plugin."
+msgstr "Barbas Update: configure a licença de cada plugin instalado."
+
+msgid "Configure"
+msgstr "Configurar"
+
+msgid "You do not have permission to do this."
+msgstr "Sem permissão."
+
+msgid "Invalid tab."
+msgstr "Aba inválida."
+
+msgid "License is defined in wp-config.php."
+msgstr "Licença definida em wp-config.php."
+
+msgid "License removed."
+msgstr "Licença removida."
+
+msgid "License kept."
+msgstr "Licença mantida."
+
+msgid "License saved."
+msgstr "Licença salva."
+
+msgid "Validating license…"
+msgstr "Validando licença…"
+
+msgid "Saving…"
+msgstr "Salvando…"
+
+msgid "Removing…"
+msgstr "Removendo…"
+
+msgid "Remove the license for this plugin?"
+msgstr "Remover a licença deste plugin?"
+
+msgid "Request failed. Please try again."
+msgstr "Falha na requisição. Tente novamente."
+
+msgid "License active"
+msgstr "Licença ativa"
+
+msgid "No license"
+msgstr "Sem licença"
+
+msgid "Leave blank and save to keep the current license."
+msgstr "Deixe em branco e salve para manter a licença atual."
+
+msgid "Current license:"
+msgstr "Licença atual:"
+
+msgid "License is defined in wp-config.php. The field below is ignored."
+msgstr "Licença definida em wp-config.php. O campo abaixo é ignorado."
+
+msgid "License key to receive updates for this plugin."
+msgstr "Chave de licença para receber atualizações deste plugin."
+
+msgid "License key"
+msgstr "Chave de licença"
+
+msgid "Paste your license key"
+msgstr "Cole sua chave de licença"
+
+msgid "Leave blank and save to keep."
+msgstr "Deixe em branco e salve para manter."
+
+msgid "Save"
+msgstr "Salvar"
+
+msgid "Remove"
+msgstr "Remover"
+
+msgid "Validate license"
+msgstr "Validar licença"
+
+msgid ""
+"Manage update licenses for your Barbas plugins. Each tab matches one active "
+"plugin."
+msgstr ""
+"Gerencie as licenças de atualização dos seus plugins Barbas. Cada aba "
+"corresponde a um plugin ativo."
+
+msgid ""
+"Manage update licenses for your Barbas plugins. Use the suite tab for one "
+"key, or configure each plugin."
+msgstr ""
+"Gerencie as licenças de atualização dos seus plugins Barbas. Use a aba suite"
+" para uma chave, ou configure cada plugin."
+
+msgid "A suite license covers all active Barbas plugins on this site."
+msgstr "Uma licença suite cobre todos os plugins Barbas ativos neste site."
+
+msgid "Suite license"
+msgstr "Licença suite"
+
+msgid "One license key for all active Barbas plugins on this site."
+msgstr "Uma chave de licença para todos os plugins Barbas ativos neste site."
+
+msgid "Active plugins covered"
+msgstr "Plugins ativos cobertos"
+
+msgid "This suite license applies only to Barbas plugins active on this site."
+msgstr ""
+"Esta licença suite vale apenas para os plugins Barbas ativos neste site."
+
+msgid "Licensed via suite"
+msgstr "Licenciado via suite"
+
+msgid "Awaiting suite license"
+msgstr "Aguardando licença suite"
+
+msgid "No Barbas plugin with a license panel is active."
+msgstr "Nenhum plugin Barbas com painel de licença está ativo no momento."
+
+msgid "Barbas plugins"
+msgstr "Plugins Barbas"
+
+msgid "Loading plugin panel…"
+msgstr "Carregando painel do plugin…"
+
+msgid "Search plugins…"
+msgstr "Buscar plugins…"
+
+msgid "Showing %1$d of %2$d plugins"
+msgstr "Exibindo %1$d de %2$d plugins"
+
+msgid "No plugins match your search."
+msgstr "Nenhum plugin corresponde à busca."
+
+msgid "Plugins"
+msgstr "Plugins"
+
+msgid ""
+"Manage update licenses for your Barbas plugins. Search and select a plugin "
+"below."
+msgstr ""
+"Gerencie as licenças de atualização dos seus plugins Barbas. Busque e "
+"selecione um plugin abaixo."
+
+msgid ""
+"License is active from wp-config.php. Enter a key below to override it for "
+"this site."
+msgstr ""
+"Licença ativa via wp-config.php. Informe uma chave abaixo para sobrescrever "
+"neste site."
+
+msgid "Dashboard license overrides wp-config.php for this plugin."
+msgstr "A licença do painel sobrescreve o wp-config.php neste plugin."
+
+msgid "License removed from the dashboard and wp-config.php."
+msgstr "Licença removida do painel e do wp-config.php."
+
+msgid ""
+"Remove the license for this plugin? This will also delete it from wp-"
+"config.php if present."
+msgstr ""
+"Remover a licença deste plugin? Isso também apagará a entrada no wp-"
+"config.php, se existir."
+
+msgid ""
+"Token format looks invalid. Paste either a fine-grained token (github_pat_…)"
+" or a classic token (ghp_…), not both prefixes."
+msgstr ""
+"Formato de token inválido. Use token fine-grained (github_pat_…) ou clássico"
+" (ghp_…), sem misturar os prefixos."
+
+msgid ""
+"Token format looks invalid. Remove the extra prefix and keep only one GitHub"
+" token."
+msgstr ""
+"Formato de token inválido. Remova o prefixo extra e use apenas um token "
+"GitHub."
+
+msgid "Check for updates"
+msgstr "Verificar atualizações agora"
+
+msgid "Checking for updates…"
+msgstr "Buscando atualizações…"
+
+msgid "Update check complete. All checked plugins are up to date."
+msgstr "Busca concluída. Todos os plugins verificados estão atualizados."
+
+msgid "Update check complete. Updates available: %s."
+msgstr "Busca concluída. Atualizações disponíveis: %s."
+
+msgid "Could not check: %s."
+msgstr "Não foi possível verificar: %s."
+
+msgid "Could not check for updates. Configure a license first."
+msgstr "Não foi possível buscar atualizações. Configure uma licença primeiro."
+
+msgid "Could not check for updates for one or more plugins."
+msgstr "Não foi possível verificar atualizações em um ou mais plugins."
+
+msgid "Barbas plugins on this site"
+msgstr "Plugins Barbas neste site"
+
+msgid ""
+"Active Barbas plugins covered by the suite license. Versions and updates "
+"appear below."
+msgstr ""
+"Plugins Barbas ativos cobertos pela licença suite. Versões e atualizações "
+"aparecem abaixo."
+
+msgid ""
+"Active Barbas plugins on this site. Configure a license per plugin (or "
+"suite) to check and install updates."
+msgstr ""
+"Plugins Barbas ativos neste site. Configure uma licença por plugin (ou "
+"suite) para buscar e instalar atualizações."
+
+msgid "Up to date"
+msgstr "Atualizado"
+
+msgid "Update available (%s)"
+msgstr "Atualização disponível (%s)"
+
+msgid "Licensed via suite"
+msgstr "Licenciado via suite"
+
+msgid "v%s"
+msgstr "v%s"
+
+msgid "Update"
+msgstr "Atualizar"
+
+msgid "Updating…"
+msgstr "Atualizando…"
+
+msgid "Plugin updated."
+msgstr "Plugin atualizado."
+
+msgid "Could not update the plugin."
+msgstr "Não foi possível atualizar o plugin."
+
+msgid "Invalid plugin."
+msgstr "Plugin inválido."
+
+msgid "No update is available for this plugin."
+msgstr "Nenhuma atualização disponível para este plugin."
+
+msgid "Plugin files updated, but reactivation failed: %s"
+msgstr "Arquivos do plugin atualizados, mas a reativação falhou: %s"
+
+msgid "Update check complete. Updates available:"
+msgstr "Busca concluída. Atualizações disponíveis:"
+
+msgid ""
+"Showing the latest %1$d releases. <a href=\"%2$s\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">View the full changelog on GitHub</a>."
+msgstr ""
+"Exibindo as %1$d versões mais recentes. <a href=\"%2$s\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">Ver o changelog completo no GitHub</a>."
+
+msgid "Showing the latest %d releases."
+msgstr "Exibindo as %d versões mais recentes."
+
+msgid "GitHub Status"
+msgstr "Status do GitHub"
+
+msgid ""
+"GitHub may be experiencing an outage. Check the status page and try again "
+"later."
+msgstr ""
+"O GitHub pode estar com indisponibilidade. Consulte a página de status e "
+"tente novamente mais tarde."
+
+msgid ""
+"Could not reach GitHub (%s). If GitHub is down, check the status page and "
+"try again later."
+msgstr ""
+"Não foi possível contactar o GitHub (%s). Se o GitHub estiver fora, consulte"
+" a página de status e tente mais tarde."
+
+msgid ""
+"GitHub denied access (HTTP 403). The token may lack permission, or the API "
+"rate limit was exceeded. Try again later."
+msgstr ""
+"O GitHub negou o acesso (HTTP 403). O token pode não ter permissão, ou o "
+"limite da API foi excedido. Tente novamente mais tarde."
+
+msgid ""
+"GitHub rate limit reached (HTTP 429). Wait a few minutes and try again."
+msgstr ""
+"Limite de requisições do GitHub atingido (HTTP 429). Aguarde alguns minutos "
+"e tente novamente."
+
+msgid ""
+"GitHub is temporarily unavailable (HTTP %d). This is usually a GitHub "
+"outage, not a problem with your license."
+msgstr ""
+"O GitHub está temporariamente indisponível (HTTP %d). Em geral é uma falha "
+"do GitHub, não um problema na sua licença."
+
+msgid "GitHub returned HTTP %d."
+msgstr "O GitHub respondeu com HTTP %d."

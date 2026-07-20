@@ -1,0 +1,63 @@
+name: Release WordPress ZIP
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: none
+          coverage: none
+
+      - name: Install zip tooling
+        run: sudo apt-get update && sudo apt-get install -y zip unzip rsync
+
+      - name: Validate plugin
+        run: bash scripts/ci-validate.sh
+
+  build-and-release:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build plugin zip
+        run: bash scripts/build-release.sh "${{ github.workspace }}"
+
+      - name: Validate zip root folder
+        run: |
+          set -euo pipefail
+          SLUG='barbas-connect'
+          echo "=== unzip -l (head) ==="
+          unzip -l "$SLUG.zip" | head -n 15
+          FIRST="$(unzip -Z1 "$SLUG.zip" | head -n 1)"
+          echo "First entry: $FIRST"
+          case "$FIRST" in
+            "$SLUG/"|"$SLUG"/*) ;;
+            *) echo "ERROR: root must be $SLUG/, got: $FIRST" >&2; exit 1 ;;
+          esac
+
+      - name: Publish GitHub Release with asset
+        uses: softprops/action-gh-release@v2.5.1
+        with:
+          files: barbas-connect.zip
+          fail_on_unmatched_files: true
+          generate_release_notes: true
+          make_latest: true
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

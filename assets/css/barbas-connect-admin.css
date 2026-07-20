@@ -1,0 +1,257 @@
+/* Barbas Connect — Melapress / Barbas suite admin */
+
+.barbas-connect-wrap {
+	margin: 12px 0 28px;
+	max-width: 880px;
+	box-sizing: border-box;
+}
+
+.barbas-connect-app {
+	font-size: 14px;
+	color: #1d2a1a;
+}
+
+.barbas-connect-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px 24px;
+	margin-bottom: 20px;
+}
+
+.barbas-connect-eyebrow {
+	margin: 0 0 4px;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: #009344;
+}
+
+.barbas-connect-header h1 {
+	margin: 0 0 8px;
+	font-size: 28px;
+	font-weight: 600;
+	color: #384a2f;
+	line-height: 1.2;
+}
+
+.barbas-connect-lead {
+	margin: 0;
+	max-width: 42rem;
+	color: #4a5c42;
+	line-height: 1.5;
+}
+
+.barbas-connect-pill {
+	display: inline-block;
+	padding: 4px 10px;
+	border-radius: 999px;
+	background: rgba(0, 147, 68, 0.12);
+	color: #00813c;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.barbas-connect-notice {
+	margin: 0 0 16px !important;
+}
+
+.barbas-connect-card {
+	background: #fff;
+	border: 1px solid #c3cfc0;
+	border-radius: 8px;
+	padding: 18px 20px 20px;
+	margin-bottom: 16px;
+	box-shadow: 0 1px 3px rgba(56, 74, 47, 0.08);
+}
+
+.barbas-connect-card h2 {
+	margin: 0 0 10px;
+	font-size: 16px;
+	font-weight: 600;
+	color: #384a2f;
+}
+
+.barbas-connect-card p {
+	margin: 0 0 12px;
+	color: #4a5c42;
+}
+
+.barbas-connect-card--reveal {
+	border-color: #009344;
+	box-shadow: 0 0 0 1px rgba(0, 147, 68, 0.18), 0 2px 8px rgba(56, 74, 47, 0.1);
+}
+
+.barbas-connect-card__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	flex-wrap: wrap;
+	margin-bottom: 8px;
+}
+
+.barbas-connect-card__head h2 {
+	margin: 0;
+}
+
+.barbas-connect-status-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 14px 20px;
+	margin: 0;
+}
+
+.barbas-connect-status-grid dt {
+	margin: 0 0 4px;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: #6b7a63;
+}
+
+.barbas-connect-status-grid dd {
+	margin: 0;
+	word-break: break-word;
+}
+
+.barbas-connect-mono,
+.barbas-connect-key {
+	font-family: Consolas, Monaco, monospace;
+	font-size: 12px;
+	user-select: all;
+}
+
+.barbas-connect-key-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+	margin: 12px 0;
+}
+
+.barbas-connect-key {
+	display: block;
+	flex: 1 1 240px;
+	padding: 10px 12px;
+	background: #f4f7f3;
+	border: 1px solid #c3cfc0;
+	border-radius: 6px;
+	word-break: break-all;
+}
+
+.barbas-connect-field label {
+	display: block;
+	margin-bottom: 6px;
+	font-weight: 600;
+	color: #384a2f;
+}
+
+.barbas-connect-table {
+	border: 1px solid #c3cfc0 !important;
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+.barbas-connect-table th {
+	font-weight: 600;
+	color: #384a2f;
+}
+
+.barbas-connect-muted {
+	margin-top: 4px;
+	font-size: 11px;
+	color: #6b7a63;
+}
+
+.barbas-connect-status {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 999px;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+}
+
+.barbas-connect-status--pending {
+	background: rgba(180, 120, 20, 0.12);
+	color: #8a5a00;
+}
+
+.barbas-connect-status--connected {
+	background: rgba(0, 147, 68, 0.12);
+	color: #00813c;
+}
+
+.barbas-connect-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+.barbas-connect-inline-form {
+	display: inline;
+	margin: 0;
+}
+
+.barbas-connect-empty {
+	margin: 8px 0 0 !important;
+	color: #6b7a63;
+}
+
+.barbas-connect-footer {
+	margin-top: 24px;
+	padding-top: 16px;
+	border-top: 1px solid #d5ddd2;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.barbas-connect-footer p {
+	margin: 0;
+	color: #6b7a63;
+}
+
+.barbas-connect-footer a {
+	color: #009344;
+	text-decoration: none;
+}
+
+.barbas-connect-footer a:hover {
+	text-decoration: underline;
+}
+
+@media (max-width: 782px) {
+	.barbas-connect-table thead {
+		display: none;
+	}
+
+	.barbas-connect-table tr {
+		display: block;
+		padding: 12px;
+		border-bottom: 1px solid #c3cfc0;
+	}
+
+	.barbas-connect-table td {
+		display: block;
+		padding: 4px 0 !important;
+		border: 0 !important;
+	}
+
+	.barbas-connect-table td::before {
+		content: attr(data-label);
+		display: block;
+		font-size: 11px;
+		font-weight: 700;
+		text-transform: uppercase;
+		color: #6b7a63;
+		margin-bottom: 2px;
+	}
+}

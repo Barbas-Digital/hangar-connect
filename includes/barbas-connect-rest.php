@@ -1,0 +1,184 @@
+<?php
+/**
+ * REST API for Barbas Connect (own namespace only — never /wp/v2).
+ */
+
+defined('ABSPATH') || exit;
+
+/**
+ * Register routes.
+ */
+function barbas_connect_register_rest_routes() {
+    $ns = BARBAS_CONNECT_REST_NS;
+
+    register_rest_route(
+        $ns,
+        '/health',
+        array(
+            'methods'             => WP_REST_Server::READABLE,
+            'callback'            => 'barbas_connect_rest_health',
+            'permission_callback' => '__return_true',
+        )
+    );
+
+    register_rest_route(
+        $ns,
+        '/capabilities',
+        array(
+            'methods'             => WP_REST_Server::READABLE,
+            'callback'            => 'barbas_connect_rest_capabilities',
+            'permission_callback' => 'barbas_connect_rest_permission_hmac',
+        )
+    );
+
+    register_rest_route(
+        $ns,
+        '/activity/users',
+        array(
+            'methods'             => WP_REST_Server::READABLE,
+            'callback'            => 'barbas_connect_rest_activity_users',
+            'permission_callback' => 'barbas_connect_rest_permission_hmac',
+        )
+    );
+
+    register_rest_route(
+        $ns,
+        '/activity/report',
+        array(
+            'methods'             => WP_REST_Server::READABLE,
+            'callback'            => 'barbas_connect_rest_activity_report',
+            'permission_callback' => 'barbas_connect_rest_permission_hmac',
+        )
+    );
+}
+add_action('rest_api_init', 'barbas_connect_register_rest_routes');
+
+/**
+ * Capability map advertised to Console.
+ *
+ * @return array<string, bool>
+ */
+function barbas_connect_capabilities_map() {
+    $ar = barbas_connect_activity_reports_available();
+    return array(
+        'activity_reports' => $ar,
+        'activity_users'   => $ar,
+        'activity_report'  => $ar,
+    );
+}
+
+/**
+ * GET /health — public discovery (no secrets).
+ *
+ * @return WP_REST_Response
+ */
+function barbas_connect_rest_health() {
+    $connections = barbas_connect_get_all_connections();
+    $pending = 0;
+    $connected = 0;
+    foreach ($connections as $row) {
+        if (($row['status'] ?? '') === 'connected') {
+            $connected++;
+        } elseif (($row['status'] ?? '') === 'pending') {
+            $pending++;
+        }
+    }
+
+    return new WP_REST_Response(
+        array(
+            'ok'           => true,
+            'plugin'       => 'barbas-connect',
+            'version'      => BARBAS_CONNECT_VERSION,
+            'site_url'     => home_url('/'),
+            'site_name'    => get_bloginfo('name'),
+            'connected'    => barbas_connect_has_active_connection(),
+            'connections'  => array(
+                'total'     => count($connections),
+                'pending'   => $pending,
+                'connected' => $connected,
+            ),
+            'capabilities' => barbas_connect_capabilities_map(),
+        ),
+        200
+    );
+}
+
+/**
+ * GET /capabilities — HMAC protected.
+ *
+ * @param WP_REST_Request $request Request.
+ * @return WP_REST_Response
+ */
+function barbas_connect_rest_capabilities(WP_REST_Request $request) {
+    unset($request);
+    return new WP_REST_Response(
+        array(
+            'ok'           => true,
+            'capabilities' => barbas_connect_capabilities_map(),
+            'version'      => BARBAS_CONNECT_VERSION,
+        ),
+        200
+    );
+}
+
+/**
+ * Stub: activity users bridge.
+ *
+ * @param WP_REST_Request $request Request.
+ * @return WP_REST_Response
+ */
+function barbas_connect_rest_activity_users(WP_REST_Request $request) {
+    unset($request);
+    if (!barbas_connect_activity_reports_available()) {
+        return new WP_REST_Response(
+            array(
+                'ok'      => false,
+                'code'    => 'activity_reports_missing',
+                'message' => 'Barbas Activity Reports is not active on this site.',
+                'ready'   => false,
+            ),
+            501
+        );
+    }
+
+    return new WP_REST_Response(
+        array(
+            'ok'      => false,
+            'code'    => 'not_ready',
+            'message' => 'Activity users bridge is not implemented yet.',
+            'ready'   => false,
+        ),
+        501
+    );
+}
+
+/**
+ * Stub: activity report bridge.
+ *
+ * @param WP_REST_Request $request Request.
+ * @return WP_REST_Response
+ */
+function barbas_connect_rest_activity_report(WP_REST_Request $request) {
+    unset($request);
+    if (!barbas_connect_activity_reports_available()) {
+        return new WP_REST_Response(
+            array(
+                'ok'      => false,
+                'code'    => 'activity_reports_missing',
+                'message' => 'Barbas Activity Reports is not active on this site.',
+                'ready'   => false,
+            ),
+            501
+        );
+    }
+
+    return new WP_REST_Response(
+        array(
+            'ok'      => false,
+            'code'    => 'not_ready',
+            'message' => 'Activity report bridge is not implemented yet.',
+            'ready'   => false,
+        ),
+        501
+    );
+}

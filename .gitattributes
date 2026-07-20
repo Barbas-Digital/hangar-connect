@@ -1,0 +1,5 @@
+# Markdown and text: normalize to UTF-8 (no BOM) on Windows checkouts.
+*.md text working-tree-encoding=UTF-8 eol=lf
+*.txt text working-tree-encoding=UTF-8 eol=lf
+*.po text working-tree-encoding=UTF-8 eol=lf
+*.pot text working-tree-encoding=UTF-8 eol=lf

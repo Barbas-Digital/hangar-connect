@@ -1,0 +1,771 @@
+/* Barbas Update — painel admin */
+
+/* Fallback: esconde notices/banners de terceiros só nesta página */
+body.settings_page_barbas-update #wpbody-content > .notice,
+body.settings_page_barbas-update #wpbody-content > .updated,
+body.settings_page_barbas-update #wpbody-content > .error,
+body.settings_page_barbas-update #wpbody-content > .update-nag,
+body.settings_page_barbas-update #wpbody-content > .fs-notice,
+body.settings_page_barbas-update #wpbody-content > [class*="notice-"],
+body.settings_page_barbas-update #wpbody-content > div[class*="banner"]:not(.wrap),
+body.settings_page_barbas-update #wpbody-content > div[id*="notice"]:not(.wrap),
+body.settings_page_barbas-update #wpbody-content > div[class*="promo"]:not(.wrap),
+body.settings_page_barbas-update #wpbody-content > .ha-notice,
+body.settings_page_barbas-update #wpbody-content > .happy-elementor-addons-notice,
+body.settings_page_barbas-update #wpbody-content > .jeg-notice,
+body.settings_page_barbas-update #wpbody-content > .jkit-notice,
+body.settings_page_barbas-update #wpbody-content > .elementor-message {
+    display: none !important;
+}
+
+.barbas-update-wrap {
+    margin-top: 12px;
+    max-width: 720px;
+    box-sizing: border-box;
+}
+
+.barbas-update-wrap > .barbas-update-app {
+    max-width: 100%;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.barbas-update-header {
+    margin-bottom: 28px;
+}
+
+.barbas-update-header__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px 24px;
+}
+
+.barbas-update-header__copy {
+    min-width: 0;
+    flex: 1 1 18rem;
+}
+
+.barbas-update-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    margin-top: 4px;
+}
+
+.barbas-update-header__actions .spinner {
+    float: none;
+    margin: 0;
+}
+
+.barbas-update-header__actions .spinner.is-active {
+    visibility: visible;
+}
+
+.barbas-update-force-check-feedback {
+    display: block;
+    margin-top: 12px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.barbas-update-force-check-feedback:empty {
+    display: none;
+}
+
+.barbas-update-force-check-feedback .barbas-update-msg {
+    display: block;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+}
+
+.barbas-update-force-check-feedback .barbas-update-msg__lead {
+    margin: 0;
+}
+
+.barbas-update-force-check-feedback .barbas-update-msg__list {
+    margin: 8px 0 0;
+    padding: 0 0 0 1.2em;
+    list-style: disc;
+}
+
+.barbas-update-force-check-feedback .barbas-update-msg__list li {
+    margin: 0 0 4px;
+    padding: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.barbas-update-force-check-feedback .barbas-update-msg.is-success {
+    background: #edfaef;
+    color: #1e4620;
+    border: 1px solid #b8e6bf;
+}
+
+.barbas-update-force-check-feedback .barbas-update-msg.is-error {
+    background: #fcf0f1;
+    color: #8a1f2f;
+    border: 1px solid #f1aeb5;
+}
+
+.barbas-update-msg__help {
+    margin: 8px 0 0;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.barbas-update-msg__help a {
+    color: #1e4fa3;
+    text-decoration: underline;
+}
+
+.barbas-update-header h1 {
+    font-size: 1.65rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 8px;
+    padding: 0;
+    line-height: 1.25;
+}
+
+.barbas-update-lead {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: #646970;
+    max-width: 52ch;
+}
+
+/* Tabs — single row; scroll horizontally if many plugins */
+.barbas-update-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0;
+    margin-bottom: 0;
+    padding: 0;
+    border: none;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #c3c4c7 transparent;
+}
+
+.barbas-update-tabs::-webkit-scrollbar {
+    height: 5px;
+}
+
+.barbas-update-tabs::-webkit-scrollbar-thumb {
+    background: #c3c4c7;
+    border-radius: 4px;
+}
+
+.barbas-update-tab {
+    appearance: none;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #50575e;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.3;
+    padding: 10px 16px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.barbas-update-tab:hover {
+    color: #1d2327;
+    background: #f6f7f7;
+}
+
+.barbas-update-tab.is-active {
+    color: #1d2327;
+    background: #fff;
+    border-color: #e0e0e0;
+    border-bottom-color: #fff;
+    box-shadow: 0 -1px 0 #fff;
+    position: relative;
+    z-index: 1;
+}
+
+/* Picker navigation (11+ plugins) */
+.barbas-update-nav--picker {
+    margin-bottom: 0;
+    max-width: min(100%, 420px);
+}
+
+.barbas-update-picker-label {
+    margin-bottom: 8px;
+}
+
+.barbas-update-picker-search {
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 0;
+}
+
+.barbas-update-picker-meta {
+    margin: 0;
+    padding: 8px 12px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #646970;
+    background: #f6f7f7;
+    border: 1px solid #dcdcde;
+    border-top: none;
+}
+
+.barbas-update-picker-list {
+    list-style: none;
+    margin: 0;
+    padding: 4px;
+    max-height: min(320px, 45vh);
+    overflow-y: auto;
+    border: 1px solid #dcdcde;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    background: #fff;
+    -webkit-overflow-scrolling: touch;
+}
+
+.barbas-update-picker-list__item {
+    margin: 0;
+}
+
+.barbas-update-picker-item {
+    appearance: none;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #50575e;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.35;
+    padding: 10px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.barbas-update-picker-item:hover {
+    color: #1d2327;
+    background: #f6f7f7;
+}
+
+.barbas-update-picker-item.is-active {
+    color: #1d2327;
+    background: #f0f6fc;
+    border-color: #c3dafe;
+}
+
+.barbas-update-picker-empty {
+    margin: 8px 0 0;
+    font-size: 13px;
+    color: #646970;
+}
+
+.barbas-update-panel--loading .barbas-update-card--loading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 120px;
+}
+
+.barbas-update-loading {
+    margin: 0;
+    font-size: 14px;
+    color: #646970;
+}
+
+/* Card */
+.barbas-update-panels {
+    position: relative;
+}
+
+.barbas-update-panel {
+    display: none;
+}
+
+.barbas-update-panel.is-active {
+    display: block;
+}
+
+.barbas-update-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 28px 28px 24px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* Tabs mode: square the corner flush with the active edge tab (left or right). */
+.barbas-update-app[data-nav-mode="tabs"] .barbas-update-panels.is-edge-first:not(.is-edge-last) .barbas-update-card {
+    border-radius: 0 12px 12px 12px;
+}
+
+.barbas-update-app[data-nav-mode="tabs"] .barbas-update-panels.is-edge-last:not(.is-edge-first) .barbas-update-card {
+    border-radius: 12px 0 12px 12px;
+}
+
+.barbas-update-card__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.barbas-update-card__title {
+    margin: 0 0 4px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #1d2327;
+}
+
+.barbas-update-card__subtitle {
+    margin: 0;
+    font-size: 13px;
+    color: #646970;
+    line-height: 1.45;
+}
+
+.barbas-update-badge {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: #f0f0f1;
+    color: #787c82;
+}
+
+.barbas-update-badge.is-active {
+    background: #edfaef;
+    color: #1e7e34;
+}
+
+/* Field */
+.barbas-update-field {
+    margin-bottom: 20px;
+}
+
+.barbas-update-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d2327;
+    margin-bottom: 8px;
+}
+
+.barbas-update-input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    font-size: 14px;
+    line-height: 1.4;
+    padding: 11px 14px;
+    border: 1px solid #dcdcde;
+    border-radius: 8px;
+    background: #fff;
+    color: #1d2327;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.barbas-update-input:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: none;
+}
+
+.barbas-update-input:disabled {
+    background: #f6f7f7;
+    color: #a7aaad;
+}
+
+.barbas-update-hint {
+    margin: 10px 0 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #646970;
+}
+
+.barbas-update-hint code {
+    display: inline-block;
+    margin: 0 4px;
+    padding: 2px 8px;
+    font-size: 12px;
+    background: #f6f7f7;
+    border-radius: 4px;
+    border: 1px solid #dcdcde;
+}
+
+/* Alerts & feedback */
+.barbas-update-alert {
+    font-size: 13px;
+    line-height: 1.45;
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.barbas-update-alert--info {
+    background: #f0f6fc;
+    color: #1d4ed8;
+    border: 1px solid #c3dafe;
+}
+
+.barbas-update-feedback {
+    min-height: 0;
+    margin-bottom: 16px;
+}
+
+.barbas-update-feedback:empty {
+    display: none;
+}
+
+.barbas-update-feedback .barbas-update-msg {
+    font-size: 13px;
+    line-height: 1.45;
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin: 0;
+}
+
+.barbas-update-feedback .barbas-update-msg.is-success {
+    background: #edfaef;
+    color: #1e4620;
+    border: 1px solid #b8e6bf;
+}
+
+.barbas-update-feedback .barbas-update-msg.is-error {
+    background: #fcf0f1;
+    color: #8a1f2f;
+    border: 1px solid #f1aeb5;
+}
+
+.barbas-update-feedback ul {
+    margin: 8px 0 0 18px;
+    padding: 0;
+}
+
+/* Actions */
+.barbas-update-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.barbas-update-actions .button-primary {
+    min-height: 36px;
+    padding: 0 18px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.barbas-update-actions .button:not(.button-primary) {
+    min-height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+}
+
+.barbas-update-spinner {
+    float: none;
+    margin: 0;
+    visibility: hidden;
+}
+
+.barbas-update-spinner.is-active {
+    visibility: visible;
+}
+
+.barbas-update-extra {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f1;
+}
+
+/* Brand footer */
+.barbas-update-footer {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid #f0f0f1;
+}
+
+.barbas-update-footer__logo-link {
+    display: block;
+    flex-shrink: 0;
+    line-height: 0;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: opacity 0.15s ease;
+}
+
+.barbas-update-footer__logo-link:hover,
+.barbas-update-footer__logo-link:focus-visible {
+    opacity: 0.85;
+}
+
+.barbas-update-footer__logo {
+    display: block;
+    width: auto;
+    height: 52px;
+    opacity: 0.38;
+    transition: opacity 0.15s ease;
+}
+
+.barbas-update-footer__logo-link:hover .barbas-update-footer__logo,
+.barbas-update-footer__logo-link:focus-visible .barbas-update-footer__logo {
+    opacity: 0.55;
+}
+
+.barbas-update-footer__copy {
+    min-width: 0;
+}
+
+.barbas-update-footer__name {
+    margin: 0 0 3px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+}
+
+.barbas-update-footer__name a {
+    color: #50575e;
+    text-decoration: none;
+    box-shadow: inset 0 -1px 0 transparent;
+    transition: color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.barbas-update-footer__name a:hover,
+.barbas-update-footer__name a:focus-visible {
+    color: #1d2327;
+    box-shadow: inset 0 -1px 0 #c3c4c7;
+}
+
+.barbas-update-footer__tagline {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #a7aaad;
+    max-width: 38ch;
+}
+
+/* Plugins status card (always below license panel) */
+.barbas-update-plugins-status {
+    margin: 24px 0 0;
+    max-width: min(100%, 720px);
+}
+
+.barbas-update-suite-coverage__title {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #1d2327;
+}
+
+.barbas-update-suite-coverage__intro {
+    margin: 0 0 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #646970;
+}
+
+.barbas-update-suite-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.barbas-update-suite-list__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 16px;
+    flex-wrap: wrap;
+    padding: 12px 14px;
+    font-size: 13px;
+    line-height: 1.4;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.barbas-update-suite-list__item:last-child {
+    border-bottom: none;
+}
+
+.barbas-update-plugins-status__main {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    min-width: 0;
+    flex: 1 1 12rem;
+}
+
+.barbas-update-suite-list__label {
+    color: #1d2327;
+    font-weight: 500;
+    min-width: 0;
+}
+
+.barbas-update-plugins-status__version {
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: #646970;
+    font-variant-numeric: tabular-nums;
+}
+
+.barbas-update-plugins-status__meta {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px 10px;
+    flex: 1 1 14rem;
+}
+
+.barbas-update-suite-list__status {
+    flex-shrink: 0;
+    color: #646970;
+    font-size: 12px;
+}
+
+.barbas-update-suite-list__status.is-ok {
+    color: #00a32a;
+}
+
+.barbas-update-suite-list__status.is-update {
+    color: #b26200;
+    font-weight: 600;
+}
+
+.barbas-update-suite-list__status.is-warn {
+    color: #8a1f2f;
+}
+
+.barbas-update-suite-list__status.is-muted {
+    color: #646970;
+}
+
+.barbas-update-plugins-status__license {
+    flex-shrink: 0;
+    font-size: 11px;
+    color: #646970;
+}
+
+.barbas-update-plugin-update {
+    flex-shrink: 0;
+    min-height: 28px;
+    border-radius: 6px;
+}
+
+/* Toast */
+.barbas-update-toast-stack {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 100001;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+    max-width: min(360px, calc(100vw - 32px));
+}
+
+.barbas-update-toast {
+    pointer-events: auto;
+    font-size: 13px;
+    line-height: 1.4;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: #1d2327;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    opacity: 0;
+    transform: translateY(8px);
+    animation: barbasToastIn 0.25s ease forwards;
+}
+
+.barbas-update-toast.is-error {
+    background: #8a1f2f;
+}
+
+.barbas-update-toast.is-leaving {
+    animation: barbasToastOut 0.2s ease forwards;
+}
+
+@keyframes barbasToastIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes barbasToastOut {
+    to {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+}
+
+@media (max-width: 782px) {
+    .barbas-update-wrap > .barbas-update-app {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .barbas-update-card {
+        padding: 20px 18px 18px;
+        border-radius: 12px;
+    }
+
+    .barbas-update-tab {
+        border-radius: 8px;
+    }
+
+    .barbas-update-tab.is-active {
+        border-radius: 8px;
+        border-bottom-color: #e0e0e0;
+    }
+
+    .barbas-update-card__head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .barbas-update-nav--picker {
+        max-width: 100%;
+    }
+}
