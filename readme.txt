@@ -5,7 +5,7 @@ Tags: barbas, connect, console, remote, api
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.1.0
+Stable tag: 0.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,10 +46,16 @@ No. Activity bridge routes are stubs until the Console + Activity Reports integr
 
 == Changelog ==
 
+= 0.1.1 =
+* POST /pair for Console pairing handshake.
+
 = 0.1.0 =
 * Initial MVP: connections UI, REST health + HMAC scaffolding, Activity Reports bridge stubs, Barbas Update hub (tab `connect`).
 
 == Upgrade Notice ==
+
+= 0.1.1 =
+Adds POST /pair for Barbas Console handshake.
 
 = 0.1.0 =
 First public MVP scaffold for Barbas Connect.

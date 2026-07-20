@@ -360,6 +360,58 @@ function barbas_connect_get_connection_secret($connection_id) {
 }
 
 /**
+ * Complete Console pairing: match plaintext key to a pending connection.
+ *
+ * @param string $pairing_key Plaintext key (bc_...).
+ * @return array<string,mixed>|WP_Error Public connection row on success.
+ */
+function barbas_connect_complete_pairing($pairing_key) {
+    $pairing_key = is_string($pairing_key) ? trim($pairing_key) : '';
+    if ($pairing_key === '' || strpos($pairing_key, 'bc_') !== 0) {
+        return new WP_Error(
+            'barbas_connect_pair_invalid',
+            __('Invalid pairing key.', 'barbas-connect'),
+            array('status' => 400)
+        );
+    }
+
+    $all = barbas_connect_get_all_connections();
+    $matched_id = '';
+    foreach ($all as $row) {
+        if (($row['status'] ?? '') === 'connected') {
+            continue;
+        }
+        $secret = barbas_connect_decrypt_secret($row['secret']);
+        if ($secret !== '' && hash_equals($secret, $pairing_key)) {
+            $matched_id = $row['id'];
+            break;
+        }
+    }
+
+    if ($matched_id === '') {
+        return new WP_Error(
+            'barbas_connect_pair_not_found',
+            __('No pending connection matches this pairing key.', 'barbas-connect'),
+            array('status' => 404)
+        );
+    }
+
+    barbas_connect_touch_connection($matched_id);
+    barbas_connect_clear_revealed_key($matched_id);
+
+    $updated = barbas_connect_get_connection($matched_id);
+    if ($updated === null) {
+        return new WP_Error(
+            'barbas_connect_pair_failed',
+            __('Pairing failed.', 'barbas-connect'),
+            array('status' => 500)
+        );
+    }
+
+    return barbas_connect_public_connection_summary($updated);
+}
+
+/**
  * Mark connection as connected / touch last_seen.
  *
  * @param string $connection_id Connection id.

@@ -23,6 +23,23 @@ function barbas_connect_register_rest_routes() {
 
     register_rest_route(
         $ns,
+        '/pair',
+        array(
+            'methods'             => WP_REST_Server::CREATABLE,
+            'callback'            => 'barbas_connect_rest_pair',
+            'permission_callback' => '__return_true',
+            'args'                => array(
+                'pairing_key' => array(
+                    'required'          => true,
+                    'type'              => 'string',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+            ),
+        )
+    );
+
+    register_rest_route(
+        $ns,
         '/capabilities',
         array(
             'methods'             => WP_REST_Server::READABLE,
@@ -98,6 +115,40 @@ function barbas_connect_rest_health() {
                 'connected' => $connected,
             ),
             'capabilities' => barbas_connect_capabilities_map(),
+        ),
+        200
+    );
+}
+
+/**
+ * POST /pair — one-time handshake with Console using plaintext pairing key.
+ *
+ * Body JSON: { "pairing_key": "bc_..." }
+ * Returns connection_id for subsequent HMAC calls (secret = pairing key).
+ *
+ * @param WP_REST_Request $request Request.
+ * @return WP_REST_Response|WP_Error
+ */
+function barbas_connect_rest_pair(WP_REST_Request $request) {
+    $key = (string) $request->get_param('pairing_key');
+    if ($key === '' && $request->get_json_params()) {
+        $json = $request->get_json_params();
+        if (is_array($json) && isset($json['pairing_key'])) {
+            $key = sanitize_text_field((string) $json['pairing_key']);
+        }
+    }
+
+    $result = barbas_connect_complete_pairing($key);
+    if (is_wp_error($result)) {
+        return $result;
+    }
+
+    return new WP_REST_Response(
+        array(
+            'ok'            => true,
+            'connection_id' => $result['id'],
+            'site_url'      => home_url('/'),
+            'site_name'     => get_bloginfo('name'),
         ),
         200
     );

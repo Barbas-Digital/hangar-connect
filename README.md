@@ -1,6 +1,6 @@
 # Barbas - Connect
 
-![Version](https://img.shields.io/badge/Version-0.1.0-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.1-blue.svg)
 ![WordPress](https://img.shields.io/badge/Tested%20up%20to-7.0-green.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)
 ![License](https://img.shields.io/badge/License-GPLv2%20or%20Later-orange.svg)
@@ -14,7 +14,7 @@ WordPress admin UI strings are English in source (i18n-ready; pt_BR later).
 - **Settings → Barbas Connect** — connections list, generate pairing key (copy once), rotate, disconnect / disconnect all.
 - REST namespace /wp-json/barbas-connect/v1/... (never /wp/v2).
 - Pairing secret encrypted at rest (OpenSSL AES via Barbas Update crypto); distinct from hub license token.
-- GET /health public discovery; HMAC-protected /capabilities and activity stubs.
+- GET /health public discovery; POST /pair for Console handshake; HMAC-protected /capabilities and activity stubs.
 - **Settings → Barbas Update** — license tab **Connect** (BARBAS_UPDATE_TOKEN_CONNECT).
 
 ## Installation
@@ -35,16 +35,19 @@ WordPress admin UI strings are English in source (i18n-ready; pt_BR later).
 define('BARBAS_UPDATE_TOKEN_CONNECT', 'github_pat_...');
 `
 
-## REST routes (v0.1.0)
+## REST routes (v0.1.1)
 
 | Method | Route | Auth |
 |--------|-------|------|
 | GET | /barbas-connect/v1/health | Public |
+| POST | /barbas-connect/v1/pair | Public (one-time pairing key) |
 | GET | /barbas-connect/v1/capabilities | HMAC |
 | GET | /barbas-connect/v1/activity/users | HMAC (stub) |
 | GET | /barbas-connect/v1/activity/report | HMAC (stub) |
 
 HMAC headers: X-Barbas-Connect-Id, X-Barbas-Connect-Timestamp, X-Barbas-Connect-Nonce, X-Barbas-Connect-Signature.
+
+POST /pair body: `{ "pairing_key": "bc_..." }` → `{ ok, connection_id, site_url, site_name }`.
 
 ## Folder structure
 
@@ -76,9 +79,12 @@ WordPress 5.8+, PHP 7.4+, OpenSSL for secure pairing key storage.
 
 ## Changelog
 
+### 0.1.1
+- POST /pair handshake for Barbas Console (match pending `bc_...` key → connection_id).
+
 ### 0.1.0
 - Initial MVP scaffold: admin connections UI, REST health + HMAC helpers, Activity Reports bridge stubs, Barbas Update hub tab connect.
 
 ## Next
 
-Barbas Console (SaaS) will consume health + HMAC APIs and complete pairing. Not included in this plugin repo yet.
+Use with Barbas Console SaaS for multi-site jobs and Activity Reports bridges.
