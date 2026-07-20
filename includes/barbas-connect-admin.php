@@ -31,10 +31,22 @@ function barbas_connect_admin_enqueue($hook) {
         return;
     }
 
+    $hub_css_deps = array();
+    if (defined('BARBAS_UPDATE_PLUGIN_FILE')) {
+        $hub_ver = defined('BARBAS_UPDATE_HUB_VERSION') ? BARBAS_UPDATE_HUB_VERSION : BARBAS_CONNECT_VERSION;
+        wp_enqueue_style(
+            'barbas-update-admin',
+            plugins_url('assets/css/barbas-update-admin.css', BARBAS_UPDATE_PLUGIN_FILE),
+            array(),
+            $hub_ver
+        );
+        $hub_css_deps[] = 'barbas-update-admin';
+    }
+
     wp_enqueue_style(
         'barbas-connect-admin',
         BARBAS_CONNECT_URL . 'assets/css/barbas-connect-admin.css',
-        array(),
+        $hub_css_deps,
         BARBAS_CONNECT_VERSION
     );
 
@@ -243,7 +255,6 @@ function barbas_connect_render_admin_page() {
     $error_msg = isset($_GET['bc_msg']) ? sanitize_text_field(rawurldecode(wp_unslash((string) $_GET['bc_msg']))) : '';
 
     $health_url = rest_url(BARBAS_CONNECT_REST_NS . '/health');
-    $logo = BARBAS_CONNECT_URL . 'assets/img/logo-black.svg';
 
     echo '<div class="wrap barbas-connect-wrap">';
     echo '<div class="barbas-connect-app">';
@@ -416,12 +427,9 @@ function barbas_connect_render_admin_page() {
     }
     echo '</section>';
 
-    echo '<footer class="barbas-connect-footer">';
-    if (is_readable(BARBAS_CONNECT_DIR . 'assets/img/logo-black.svg')) {
-        echo '<img src="' . esc_url($logo) . '" alt="Barbas Digital" width="120" height="28" />';
+    if (function_exists('barbas_update_render_brand_footer')) {
+        barbas_update_render_brand_footer();
     }
-    echo '<p><a href="https://www.barbas.digital" target="_blank" rel="noopener noreferrer">barbas.digital</a></p>';
-    echo '</footer>';
 
     echo '</div></div>';
 }

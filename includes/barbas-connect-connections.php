@@ -167,10 +167,15 @@ function barbas_connect_create_connection($label = '') {
         );
     }
 
+    $label = sanitize_text_field((string) $label);
+    if ($label === '') {
+        $label = sanitize_text_field((string) get_bloginfo('name'));
+    }
+
     $id = 'c_' . strtolower(wp_generate_password(12, false, false));
     $row = array(
         'id'           => $id,
-        'label'        => sanitize_text_field((string) $label),
+        'label'        => $label,
         'status'       => 'pending',
         'created_at'   => time(),
         'connected_at' => 0,

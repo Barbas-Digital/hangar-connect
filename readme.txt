@@ -1,11 +1,11 @@
-=== Barbas - Connect ===
+=== Barbas Connect ===
 Contributors: gsouza
 Donate link: https://www.barbas.digital
 Tags: barbas, connect, console, remote, api
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.1.2
+Stable tag: 0.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,6 +46,12 @@ No. Activity bridge routes are stubs until the Console + Activity Reports integr
 
 == Changelog ==
 
+= 0.1.3 =
+* Plugin list name without hyphen (Barbas Connect).
+* Admin footer matches Barbas Update hub (logo + Barbas Digital + tagline).
+* Empty connection label falls back to the WordPress site title.
+* pt_BR translations for admin UI.
+
 = 0.1.2 =
 * Fix README encoding (Installation file line / replacement characters).
 
@@ -56,6 +62,9 @@ No. Activity bridge routes are stubs until the Console + Activity Reports integr
 * Initial MVP: connections UI, REST health + HMAC scaffolding, Activity Reports bridge stubs, Barbas Update hub (tab `connect`).
 
 == Upgrade Notice ==
+
+= 0.1.3 =
+UI polish: plugin name, hub footer branding, site-title label fallback, and Portuguese (Brazil) admin translations.
 
 = 0.1.2 =
 README encoding fix (clean install docs in the release zip).

@@ -204,29 +204,7 @@
 	color: #6b7a63;
 }
 
-.barbas-connect-footer {
-	margin-top: 24px;
-	padding-top: 16px;
-	border-top: 1px solid #d5ddd2;
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	flex-wrap: wrap;
-}
-
-.barbas-connect-footer p {
-	margin: 0;
-	color: #6b7a63;
-}
-
-.barbas-connect-footer a {
-	color: #009344;
-	text-decoration: none;
-}
-
-.barbas-connect-footer a:hover {
-	text-decoration: underline;
-}
+/* Brand footer: reuse .barbas-update-footer from hub CSS */
 
 @media (max-width: 782px) {
 	.barbas-connect-table thead {

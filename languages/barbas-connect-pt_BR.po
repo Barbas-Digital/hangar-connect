@@ -1,0 +1,235 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Barbas Connect 0.1.3\n"
+"Report-Msgid-Bugs-To: https://www.barbas.digital\n"
+"POT-Creation-Date: 2026-07-20 18:29+0000\n"
+"PO-Revision-Date: 2026-07-20 18:29+0000\n"
+"Last-Translator: Barbas Digital\n"
+"Language-Team: Português do Brasil\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Domain: barbas-connect\n"
+
+msgid "Barbas Connect"
+msgstr "Barbas Connect"
+
+msgid ""
+"Site agent for Barbas Console: secure REST API, pairing keys, and bridge "
+"stubs for Activity Reports."
+msgstr ""
+"Agente do site para o Barbas Console: API REST segura, chaves de pareamento "
+"e stubs de ponte para Activity Reports."
+
+msgid ""
+"Missing files in includes/ or lib/. Delete the plugin folder and install via"
+" Plugins → Add New → Upload Plugin (barbas-connect.zip)."
+msgstr ""
+"Arquivos em includes/ ou lib/ ausentes. Apague a pasta do plugin e instale "
+"via Plugins → Adicionar novo → Enviar plugin (barbas-connect.zip)."
+
+msgid "Copied!"
+msgstr "Copiado!"
+
+msgid "Could not copy. Select the key and copy manually."
+msgstr "Não foi possível copiar. Selecione a chave e copie manualmente."
+
+msgid "Connections"
+msgstr "Conexões"
+
+msgid "License"
+msgstr "Licença"
+
+msgid "You do not have permission to manage connections."
+msgstr "Você não tem permissão para gerenciar conexões."
+
+msgid "Connected"
+msgstr "Conectado"
+
+msgid "Pending pairing"
+msgstr "Pareamento pendente"
+
+msgid "Unknown"
+msgstr "Desconhecido"
+
+msgid "Barbas Digital"
+msgstr "Barbas Digital"
+
+msgid ""
+"Connect this site to Barbas Console. Generate a pairing key, paste it in the"
+" Console, then manage or revoke connections here."
+msgstr ""
+"Conecte este site ao Barbas Console. Gere uma chave de pareamento, cole no "
+"Console e gerencie ou revogue as conexões aqui."
+
+msgid "v%s"
+msgstr "v%s"
+
+msgid "New pairing key created. Copy it now — it will not be shown again."
+msgstr ""
+"Nova chave de pareamento criada. Copie agora — ela não será exibida "
+"novamente."
+
+msgid "Pairing key rotated. Copy the new key now."
+msgstr "Chave de pareamento regenerada. Copie a nova chave agora."
+
+msgid "Connection disconnected."
+msgstr "Conexão desconectada."
+
+msgid "All connections disconnected."
+msgstr "Todas as conexões foram desconectadas."
+
+msgid "Something went wrong."
+msgstr "Algo deu errado."
+
+msgid "Your pairing key"
+msgstr "Sua chave de pareamento"
+
+msgid "Copy this key into Barbas Console. For security it is shown only once."
+msgstr ""
+"Cole esta chave no Barbas Console. Por segurança, ela é exibida apenas uma "
+"vez."
+
+msgid "Copy"
+msgstr "Copiar"
+
+msgid "Hide key"
+msgstr "Ocultar chave"
+
+msgid "Site status"
+msgstr "Status do site"
+
+msgid "Site URL"
+msgstr "URL do site"
+
+msgid "Health endpoint"
+msgstr "Endpoint de saúde"
+
+msgid "Activity Reports"
+msgstr "Activity Reports"
+
+msgid "Available"
+msgstr "Disponível"
+
+msgid "Not installed / inactive"
+msgstr "Não instalado / inativo"
+
+msgid "Connected to Console"
+msgstr "Conectado ao Console"
+
+msgid "Yes"
+msgstr "Sim"
+
+msgid "No"
+msgstr "Não"
+
+msgid "New connection"
+msgstr "Nova conexão"
+
+msgid ""
+"Creates a pairing key for Barbas Console. This is not your Barbas Update "
+"license token."
+msgstr ""
+"Cria uma chave de pareamento para o Barbas Console. Esta não é a chave de "
+"licença do Barbas Update."
+
+msgid "Label (optional)"
+msgstr "Rótulo (opcional)"
+
+msgid "e.g. Production Console"
+msgstr "ex.: Console de produção"
+
+msgid "Generate pairing key"
+msgstr "Gerar chave de pareamento"
+
+msgid "Disconnect all connections? Pairing keys will stop working."
+msgstr ""
+"Desconectar todas as conexões? As chaves de pareamento deixarão de "
+"funcionar."
+
+msgid "Disconnect all"
+msgstr "Desconectar todas"
+
+msgid "No connections yet. Generate a pairing key to get started."
+msgstr "Nenhuma conexão ainda. Gere uma chave de pareamento para começar."
+
+msgid "Label"
+msgstr "Rótulo"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Created"
+msgstr "Criada"
+
+msgid "Last seen"
+msgstr "Última atividade"
+
+msgid "Actions"
+msgstr "Ações"
+
+msgid "(no label)"
+msgstr "(sem rótulo)"
+
+msgid "Generate new key"
+msgstr "Gerar nova chave"
+
+msgid "Disconnect this connection?"
+msgstr "Desconectar esta conexão?"
+
+msgid "Disconnect"
+msgstr "Desconectar"
+
+msgid "Could not store the pairing key securely (OpenSSL required)."
+msgstr ""
+"Não foi possível armazenar a chave de pareamento com segurança (OpenSSL "
+"necessário)."
+
+msgid "Could not save the connection."
+msgstr "Não foi possível salvar a conexão."
+
+msgid "Connection not found."
+msgstr "Conexão não encontrada."
+
+msgid "Invalid pairing key."
+msgstr "Chave de pareamento inválida."
+
+msgid "No pending connection matches this pairing key."
+msgstr "Nenhuma conexão pendente corresponde a esta chave de pareamento."
+
+msgid "Pairing failed."
+msgstr "Falha no pareamento."
+
+msgid "Missing Barbas Connect authentication headers."
+msgstr "Cabeçalhos de autenticação do Barbas Connect ausentes."
+
+msgid "Invalid timestamp."
+msgstr "Timestamp inválido."
+
+msgid "Request timestamp outside allowed window."
+msgstr "Timestamp da solicitação fora da janela permitida."
+
+msgid "Invalid nonce."
+msgstr "Nonce inválido."
+
+msgid "Nonce already used."
+msgstr "Nonce já utilizado."
+
+msgid "Unknown connection."
+msgstr "Conexão desconhecida."
+
+msgid "Invalid signature."
+msgstr "Assinatura inválida."
+
+msgid "Connect"
+msgstr "Connect"
+
+msgid ""
+"Could not check for updates. Configure the license under <a "
+"href=\"%s\">Barbas Update → Connect</a> (private repository)."
+msgstr ""
+"Não foi possível verificar atualizações. Configure a licença em <a "
+"href=\"%s\">Barbas Update → Connect</a> (repositório privado)."

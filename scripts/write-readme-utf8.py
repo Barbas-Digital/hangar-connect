@@ -2,16 +2,16 @@
 """Write barbas-connect README.md as UTF-8 (no BOM), ASCII-safe arrows."""
 from pathlib import Path
 
-readme = r"""# Barbas - Connect
+readme = r"""# Barbas Connect
 
-![Version](https://img.shields.io/badge/Version-0.1.2-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.3-blue.svg)
 ![WordPress](https://img.shields.io/badge/Tested%20up%20to-7.0-green.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)
 ![License](https://img.shields.io/badge/License-GPLv2%20or%20Later-orange.svg)
 
 WordPress site agent for **Barbas Console**: pairing keys, own REST API, and bridge stubs for Activity Reports.
 
-WordPress admin UI strings are English in source (i18n-ready; pt_BR later).
+Admin UI source strings are English (i18n); `languages/barbas-connect-pt_BR.mo` provides Portuguese (Brazil).
 
 ## Features
 
@@ -39,7 +39,7 @@ WordPress admin UI strings are English in source (i18n-ready; pt_BR later).
 define('BARBAS_UPDATE_TOKEN_CONNECT', 'github_pat_...');
 ```
 
-## REST routes (v0.1.2)
+## REST routes (v0.1.3)
 
 | Method | Route | Auth |
 |--------|-------|------|
@@ -83,6 +83,12 @@ WordPress 5.8+, PHP 7.4+, OpenSSL for secure pairing key storage.
 
 ## Changelog
 
+### 0.1.3
+- Plugin list name without hyphen (Barbas Connect).
+- Admin footer matches Barbas Update hub branding.
+- Empty pairing label falls back to the WordPress site title.
+- pt_BR translations for admin UI.
+
 ### 0.1.2
 - Fix README encoding (corrupted Installation line / replacement characters).
 
@@ -108,4 +114,5 @@ text = raw.decode("utf-8")
 assert "\ufffd" not in text, "U+FFFD found"
 assert "File: `barbas-connect.zip`" in text
 assert "arbas-connect" not in text.replace("barbas-connect", "")
+assert "Barbas - Connect" not in text
 print("encoding OK")
