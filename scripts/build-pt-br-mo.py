@@ -32,7 +32,6 @@ PAIRS = [
     ("Connected", "Conectado"),
     ("Pending pairing", "Pareamento pendente"),
     ("Unknown", "Desconhecido"),
-    ("Barbas Digital", "Barbas Digital"),
     (
         "Connect this site to Barbas Central. Generate a pairing key, paste it in Barbas Central, then manage or revoke connections here.",
         "Conecte este site ao Barbas Central. Gere uma chave de pareamento, cole no Barbas Central e gerencie ou revogue as conex\u00f5es aqui.",
@@ -139,7 +138,7 @@ def main() -> None:
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M%z")
     po = polib.POFile()
     po.metadata = {
-        "Project-Id-Version": "Barbas Connect 0.1.10",
+        "Project-Id-Version": "Barbas Connect 0.1.11",
         "Report-Msgid-Bugs-To": "https://www.barbas.digital",
         "POT-Creation-Date": now,
         "PO-Revision-Date": now,

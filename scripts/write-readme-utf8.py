@@ -4,7 +4,7 @@ from pathlib import Path
 
 readme = r"""# Barbas Connect
 
-![Version](https://img.shields.io/badge/Version-0.1.10-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.11-blue.svg)
 ![WordPress](https://img.shields.io/badge/Tested%20up%20to-7.0-green.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)
 ![License](https://img.shields.io/badge/License-GPLv2%20or%20Later-orange.svg)
@@ -15,8 +15,8 @@ Admin UI source strings are English (i18n); languages/barbas-connect-pt_BR.mo pr
 
 ## Features
 
-- **Settings -> Barbas Connect** -- connections list, generate pairing key (copy once), rotate, disconnect / disconnect all.
-- One active Central pairing at a time: New connection card is hidden while a connection exists.
+- **Settings -> Barbas Connect** -- connections list, generate pairing key (copy once), rotate when pending, disconnect / disconnect all.
+- One active Central pairing at a time: New connection card and "Generate new key" are hidden while connected.
 - REST namespace /wp-json/barbas-connect/v1/... (never /wp/v2).
 - Pairing secret encrypted at rest (OpenSSL AES via Barbas Update crypto); distinct from hub license token.
 - GET /health public discovery; POST /pair for Central handshake; HMAC-protected /capabilities and Activity Reports bridge (/activity/users, /activity/report).
@@ -40,7 +40,7 @@ Admin UI source strings are English (i18n); languages/barbas-connect-pt_BR.mo pr
 define('BARBAS_LICENSE_TOKEN_CONNECT', 'github_pat_...');
 ```
 
-## REST routes (v0.1.10)
+## REST routes (v0.1.11)
 
 | Method | Route | Auth |
 |--------|-------|------|
@@ -87,6 +87,10 @@ barbas-connect/
 WordPress 5.8+, PHP 7.4+, OpenSSL for secure pairing key storage. Barbas Activity Reports for productivity bridges.
 
 ## Changelog
+
+### 0.1.11
+- Remove the Barbas Digital eyebrow label above the Barbas Connect title.
+- Hide "Generate new key" while a connection is Connected (keep Disconnect).
 
 ### 0.1.10
 - Hide New connection card when a connection already exists (one Central at a time).
@@ -148,4 +152,4 @@ assert not raw.startswith(b"\xef\xbb\xbf"), "BOM present"
 text = raw.decode("utf-8")
 assert "\ufffd" not in text, "U+FFFD found"
 assert "File: barbas-connect.zip" in text
-assert "0.1.10" in text
+assert "0.1.11" in text

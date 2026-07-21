@@ -1,10 +1,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Barbas Connect 0.1.10\n"
+"Project-Id-Version: Barbas Connect 0.1.11\n"
 "Report-Msgid-Bugs-To: https://www.barbas.digital\n"
-"POT-Creation-Date: 2026-07-21 15:32+0000\n"
-"PO-Revision-Date: 2026-07-21 15:32+0000\n"
+"POT-Creation-Date: 2026-07-21 15:37+0000\n"
+"PO-Revision-Date: 2026-07-21 15:37+0000\n"
 "Last-Translator: Barbas Digital\n"
 "Language-Team: Português do Brasil\n"
 "Language: pt_BR\n"
@@ -54,9 +54,6 @@ msgstr "Pareamento pendente"
 
 msgid "Unknown"
 msgstr "Desconhecido"
-
-msgid "Barbas Digital"
-msgstr "Barbas Digital"
 
 msgid ""
 "Connect this site to Barbas Central. Generate a pairing key, paste it in "

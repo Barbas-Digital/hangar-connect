@@ -5,7 +5,7 @@ Tags: barbas, connect, central, remote, api
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.1.10
+Stable tag: 0.1.11
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,8 +15,8 @@ Site agent for Barbas Central: pairing keys, secure REST API, and Activity Repor
 
 Barbas Connect turns each WordPress site into a secure agent for Barbas Central.
 
-* Connections screen: generate pairing key, copy once, rotate, disconnect / disconnect all.
-* One Central pairing at a time (New connection hidden while a connection exists).
+* Connections screen: generate pairing key, copy once, rotate when pending, disconnect / disconnect all.
+* One Central pairing at a time (New connection and Generate new key hidden while connected).
 * Own REST namespace (/wp-json/barbas-connect/v1/...) -- never exposes generic /wp/v2.
 * Pairing key is separate from the Barbas Update license token.
 * Health discovery endpoint; HMAC-protected capabilities and Activity Reports bridge.
@@ -46,6 +46,10 @@ GET /wp-json/barbas-connect/v1/health -- public discovery (version, site URL, co
 HMAC endpoints expose summarized Activity Reports data (users + productivity report) for Barbas Central. No raw WSAL admin dump.
 
 == Changelog ==
+
+= 0.1.11 =
+* Remove the Barbas Digital eyebrow label above the Barbas Connect title.
+* Hide Generate new key while a connection is Connected (keep Disconnect).
 
 = 0.1.10 =
 * Hide New connection card when a connection already exists (one Central at a time).
@@ -94,6 +98,9 @@ HMAC endpoints expose summarized Activity Reports data (users + productivity rep
 * Initial MVP: connections UI, REST health + HMAC scaffolding, Activity Reports bridge stubs, Barbas Update hub (tab connect).
 
 == Upgrade Notice ==
+
+= 0.1.11 =
+Cleaner header (no eyebrow) and no Generate new key while Connected.
 
 = 0.1.10 =
 One Central pairing at a time; pt_BR date format in Connections table.

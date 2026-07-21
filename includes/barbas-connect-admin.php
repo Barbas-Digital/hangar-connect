@@ -323,7 +323,6 @@ function barbas_connect_render_admin_page() {
 
     echo '<header class="barbas-connect-header">';
     echo '<div class="barbas-connect-header__copy">';
-    echo '<p class="barbas-connect-eyebrow">' . esc_html__('Barbas Digital', 'barbas-connect') . '</p>';
     echo '<h1>' . esc_html__('Barbas Connect', 'barbas-connect') . '</h1>';
     echo '<p class="barbas-connect-lead">' . esc_html__(
         'Connect this site to Barbas Central. Generate a pairing key, paste it in Barbas Central, then manage or revoke connections here.',
@@ -467,13 +466,16 @@ function barbas_connect_render_admin_page() {
             echo '<td data-label="' . esc_attr__('Last seen', 'barbas-connect') . '">' . esc_html(barbas_connect_format_time($row['last_seen_at'])) . '</td>';
             echo '<td class="barbas-connect-actions" data-label="' . esc_attr__('Actions', 'barbas-connect') . '">';
 
-            echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="barbas-connect-inline-form">';
-            echo '<input type="hidden" name="action" value="barbas_connect_action" />';
-            wp_nonce_field('barbas_connect_admin', '_barbas_connect_nonce');
-            echo '<input type="hidden" name="barbas_connect_action" value="rotate" />';
-            echo '<input type="hidden" name="connection_id" value="' . esc_attr($row['id']) . '" />';
-            echo '<button type="submit" class="button">' . esc_html__('Generate new key', 'barbas-connect') . '</button>';
-            echo '</form>';
+            // Hide rotate while connected — one site = one Central; regenerating confuses the paired link.
+            if ($status !== 'connected') {
+                echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="barbas-connect-inline-form">';
+                echo '<input type="hidden" name="action" value="barbas_connect_action" />';
+                wp_nonce_field('barbas_connect_admin', '_barbas_connect_nonce');
+                echo '<input type="hidden" name="barbas_connect_action" value="rotate" />';
+                echo '<input type="hidden" name="connection_id" value="' . esc_attr($row['id']) . '" />';
+                echo '<button type="submit" class="button">' . esc_html__('Generate new key', 'barbas-connect') . '</button>';
+                echo '</form>';
+            }
 
             echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="barbas-connect-inline-form" onsubmit="return confirm(' . wp_json_encode(__('Disconnect this connection?', 'barbas-connect')) . ');">';
             echo '<input type="hidden" name="action" value="barbas_connect_action" />';
