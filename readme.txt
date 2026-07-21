@@ -5,7 +5,7 @@ Tags: barbas, connect, central, remote, api
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.1.9
+Stable tag: 0.1.10
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,6 +16,7 @@ Site agent for Barbas Central: pairing keys, secure REST API, and Activity Repor
 Barbas Connect turns each WordPress site into a secure agent for Barbas Central.
 
 * Connections screen: generate pairing key, copy once, rotate, disconnect / disconnect all.
+* One Central pairing at a time (New connection hidden while a connection exists).
 * Own REST namespace (/wp-json/barbas-connect/v1/...) -- never exposes generic /wp/v2.
 * Pairing key is separate from the Barbas Update license token.
 * Health discovery endpoint; HMAC-protected capabilities and Activity Reports bridge.
@@ -45,6 +46,11 @@ GET /wp-json/barbas-connect/v1/health -- public discovery (version, site URL, co
 HMAC endpoints expose summarized Activity Reports data (users + productivity report) for Barbas Central. No raw WSAL admin dump.
 
 == Changelog ==
+
+= 0.1.10 =
+* Hide New connection card when a connection already exists (one Central at a time).
+* Reject create / POST /pair while already paired (HTTP 409).
+* Format Connections table dates as DD/MM/YYYY HH:MM for pt_BR.
 
 = 0.1.9 =
 * Harden Activity Reports bridge loader (full AR include order, WSAL table checks, bridge_version in responses).
@@ -88,6 +94,9 @@ HMAC endpoints expose summarized Activity Reports data (users + productivity rep
 * Initial MVP: connections UI, REST health + HMAC scaffolding, Activity Reports bridge stubs, Barbas Update hub (tab connect).
 
 == Upgrade Notice ==
+
+= 0.1.10 =
+One Central pairing at a time; pt_BR date format in Connections table.
 
 = 0.1.9 =
 Required for Barbas Central productivity reports. Replaces the old 501 activity bridge stub.

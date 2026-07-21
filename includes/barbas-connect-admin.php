@@ -161,6 +161,19 @@ function barbas_connect_handle_admin_actions() {
 
     switch ($action) {
         case 'generate':
+            if (!empty(barbas_connect_get_all_connections())) {
+                $redirect = add_query_arg(
+                    array(
+                        'bc_notice' => 'error',
+                        'bc_msg'    => rawurlencode(
+                            __('This site already has a connection. Disconnect it before pairing with another Central.', 'barbas-connect')
+                        ),
+                    ),
+                    $redirect
+                );
+                wp_safe_redirect($redirect);
+                exit;
+            }
             $label = isset($_POST['connection_label'])
                 ? sanitize_text_field(wp_unslash((string) $_POST['connection_label']))
                 : '';
@@ -247,7 +260,9 @@ function barbas_connect_handle_admin_actions() {
 add_action('admin_post_barbas_connect_action', 'barbas_connect_handle_admin_actions');
 
 /**
- * Format unix time for admin display.
+ * Format unix time for admin display (locale-aware).
+ *
+ * pt_BR uses DD/MM/YYYY HH:MM (e.g. 20/07/2026 18:56).
  *
  * @param int $ts Timestamp.
  * @return string
@@ -257,7 +272,18 @@ function barbas_connect_format_time($ts) {
     if ($ts <= 0) {
         return '—';
     }
-    return wp_date('Y-m-d H:i', $ts);
+
+    $locale = function_exists('determine_locale') ? determine_locale() : get_locale();
+    if (is_string($locale) && strpos($locale, 'pt_') === 0) {
+        return wp_date('d/m/Y H:i', $ts);
+    }
+
+    $format = trim((string) get_option('date_format') . ' ' . (string) get_option('time_format'));
+    if ($format === '') {
+        $format = 'Y-m-d H:i';
+    }
+
+    return wp_date($format, $ts);
 }
 
 /**
@@ -380,24 +406,26 @@ function barbas_connect_render_admin_page() {
     echo '</dl>';
     echo '</section>';
 
-    // Generate card.
-    echo '<section class="barbas-connect-card">';
-    echo '<h2>' . esc_html__('New connection', 'barbas-connect') . '</h2>';
-    echo '<p>' . esc_html__(
-        'Creates a pairing key for Barbas Central.',
-        'barbas-connect'
-    ) . '</p>';
-    echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="barbas-connect-form">';
-    echo '<input type="hidden" name="action" value="barbas_connect_action" />';
-    wp_nonce_field('barbas_connect_admin', '_barbas_connect_nonce');
-    echo '<input type="hidden" name="barbas_connect_action" value="generate" />';
-    echo '<p class="barbas-connect-field">';
-    echo '<label for="barbas-connect-label">' . esc_html__('Label (optional)', 'barbas-connect') . '</label>';
-    echo '<input type="text" class="regular-text" id="barbas-connect-label" name="connection_label" maxlength="80" placeholder="' . esc_attr__('e.g. Production', 'barbas-connect') . '" />';
-    echo '</p>';
-    echo '<p><button type="submit" class="button button-primary">' . esc_html__('Generate pairing key', 'barbas-connect') . '</button></p>';
-    echo '</form>';
-    echo '</section>';
+    // Generate card — only when no connection exists (one Central at a time).
+    if (empty($connections)) {
+        echo '<section class="barbas-connect-card">';
+        echo '<h2>' . esc_html__('New connection', 'barbas-connect') . '</h2>';
+        echo '<p>' . esc_html__(
+            'Creates a pairing key for Barbas Central.',
+            'barbas-connect'
+        ) . '</p>';
+        echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="barbas-connect-form">';
+        echo '<input type="hidden" name="action" value="barbas_connect_action" />';
+        wp_nonce_field('barbas_connect_admin', '_barbas_connect_nonce');
+        echo '<input type="hidden" name="barbas_connect_action" value="generate" />';
+        echo '<p class="barbas-connect-field">';
+        echo '<label for="barbas-connect-label">' . esc_html__('Label (optional)', 'barbas-connect') . '</label>';
+        echo '<input type="text" class="regular-text" id="barbas-connect-label" name="connection_label" maxlength="80" placeholder="' . esc_attr__('e.g. Production', 'barbas-connect') . '" />';
+        echo '</p>';
+        echo '<p><button type="submit" class="button button-primary">' . esc_html__('Generate pairing key', 'barbas-connect') . '</button></p>';
+        echo '</form>';
+        echo '</section>';
+    }
 
     // Connections list.
     echo '<section class="barbas-connect-card">';

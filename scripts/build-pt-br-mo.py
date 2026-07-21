@@ -100,6 +100,14 @@ PAIRS = [
     ),
     ("Could not save the connection.", "N\u00e3o foi poss\u00edvel salvar a conex\u00e3o."),
     ("Connection not found.", "Conex\u00e3o n\u00e3o encontrada."),
+    (
+        "This site already has a connection. Disconnect it before pairing with another Central.",
+        "Este site j\u00e1 possui uma conex\u00e3o. Desconecte-a antes de parear com outro Central.",
+    ),
+    (
+        "This site is already paired with Barbas Central. Disconnect before pairing again.",
+        "Este site j\u00e1 est\u00e1 pareado com o Barbas Central. Desconecte antes de parear novamente.",
+    ),
     ("Invalid pairing key.", "Chave de pareamento inv\u00e1lida."),
     (
         "No pending connection matches this pairing key.",
@@ -131,7 +139,7 @@ def main() -> None:
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M%z")
     po = polib.POFile()
     po.metadata = {
-        "Project-Id-Version": "Barbas Connect 0.1.4",
+        "Project-Id-Version": "Barbas Connect 0.1.10",
         "Report-Msgid-Bugs-To": "https://www.barbas.digital",
         "POT-Creation-Date": now,
         "PO-Revision-Date": now,

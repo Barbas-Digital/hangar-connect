@@ -158,6 +158,13 @@ function barbas_connect_generate_pairing_key() {
  * @return array{connection:array<string,mixed>,pairing_key:string}|WP_Error
  */
 function barbas_connect_create_connection($label = '') {
+    if (!empty(barbas_connect_get_all_connections())) {
+        return new WP_Error(
+            'barbas_connect_already_connected',
+            __('This site already has a connection. Disconnect it before pairing with another Central.', 'barbas-connect')
+        );
+    }
+
     $plaintext = barbas_connect_generate_pairing_key();
     $encrypted = barbas_connect_encrypt_secret($plaintext);
     if ($encrypted === '') {
@@ -381,6 +388,17 @@ function barbas_connect_complete_pairing($pairing_key) {
     }
 
     $all = barbas_connect_get_all_connections();
+
+    // One Central at a time: reject pairing a second connection while one is active.
+    // Rotate sets status back to pending, so re-pair of the same slot still works.
+    if (barbas_connect_has_active_connection()) {
+        return new WP_Error(
+            'barbas_connect_already_paired',
+            __('This site is already paired with Barbas Central. Disconnect before pairing again.', 'barbas-connect'),
+            array('status' => 409)
+        );
+    }
+
     $matched_id = '';
     foreach ($all as $row) {
         if (($row['status'] ?? '') === 'connected') {

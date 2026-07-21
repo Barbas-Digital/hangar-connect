@@ -1,6 +1,6 @@
 # Barbas Connect
 
-![Version](https://img.shields.io/badge/Version-0.1.9-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.10-blue.svg)
 ![WordPress](https://img.shields.io/badge/Tested%20up%20to-7.0-green.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)
 ![License](https://img.shields.io/badge/License-GPLv2%20or%20Later-orange.svg)
@@ -12,6 +12,7 @@ Admin UI source strings are English (i18n); languages/barbas-connect-pt_BR.mo pr
 ## Features
 
 - **Settings -> Barbas Connect** -- connections list, generate pairing key (copy once), rotate, disconnect / disconnect all.
+- One active Central pairing at a time: New connection card is hidden while a connection exists.
 - REST namespace /wp-json/barbas-connect/v1/... (never /wp/v2).
 - Pairing secret encrypted at rest (OpenSSL AES via Barbas Update crypto); distinct from hub license token.
 - GET /health public discovery; POST /pair for Central handshake; HMAC-protected /capabilities and Activity Reports bridge (/activity/users, /activity/report).
@@ -35,7 +36,7 @@ Admin UI source strings are English (i18n); languages/barbas-connect-pt_BR.mo pr
 define('BARBAS_LICENSE_TOKEN_CONNECT', 'github_pat_...');
 ```
 
-## REST routes (v0.1.9)
+## REST routes (v0.1.10)
 
 | Method | Route | Auth |
 |--------|-------|------|
@@ -48,6 +49,7 @@ define('BARBAS_LICENSE_TOKEN_CONNECT', 'github_pat_...');
 HMAC headers: X-Barbas-Connect-Id, X-Barbas-Connect-Timestamp, X-Barbas-Connect-Nonce, X-Barbas-Connect-Signature.
 
 POST /pair body: { "pairing_key": "bc_..." } -> { ok, connection_id, site_url, site_name }.
+POST /pair returns 409 if the site is already paired with Central.
 
 Activity bridge requires **Barbas Activity Reports** active (+ WP Activity Log tables). Responses include `bridge_version` and `ready: true` when live (Connect < 0.1.7 returned a 501 stub).
 
@@ -81,6 +83,11 @@ barbas-connect/
 WordPress 5.8+, PHP 7.4+, OpenSSL for secure pairing key storage. Barbas Activity Reports for productivity bridges.
 
 ## Changelog
+
+### 0.1.10
+- Hide New connection card when a connection already exists (one Central at a time).
+- Reject create / POST /pair while already paired (409).
+- Format Connections table dates as DD/MM/YYYY HH:MM for pt_BR.
 
 ### 0.1.9
 - Harden Activity Reports bridge loader (full AR include order, WSAL table checks, bridge_version).
