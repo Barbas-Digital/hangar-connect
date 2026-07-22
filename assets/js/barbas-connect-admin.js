@@ -1,6 +1,34 @@
 (function () {
 	'use strict';
 
+	/**
+	 * Show-once flash notices: strip bc_notice / bc_id / bc_msg from the URL
+	 * after the page has rendered so refresh does not re-display them.
+	 */
+	function stripFlashQueryArgs() {
+		if (!window.history || !window.history.replaceState) {
+			return;
+		}
+		try {
+			var url = new URL(window.location.href);
+			var keys = ['bc_notice', 'bc_id', 'bc_msg'];
+			var changed = false;
+			keys.forEach(function (key) {
+				if (url.searchParams.has(key)) {
+					url.searchParams.delete(key);
+					changed = true;
+				}
+			});
+			if (!changed) {
+				return;
+			}
+			var next = url.pathname + (url.search ? url.search : '') + url.hash;
+			window.history.replaceState({}, document.title, next);
+		} catch (e) {
+			/* ignore */
+		}
+	}
+
 	function copyText(text) {
 		if (navigator.clipboard && navigator.clipboard.writeText) {
 			return navigator.clipboard.writeText(text);
@@ -17,9 +45,9 @@
 				document.execCommand('copy');
 				document.body.removeChild(ta);
 				resolve();
-			} catch (e) {
+			} catch (err) {
 				document.body.removeChild(ta);
-				reject(e);
+				reject(err);
 			}
 		});
 	}
@@ -51,4 +79,6 @@
 				window.alert(labels.copyFail || 'Could not copy.');
 			});
 	});
+
+	stripFlashQueryArgs();
 })();

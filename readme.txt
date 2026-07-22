@@ -5,7 +5,7 @@ Tags: barbas, connect, central, remote, api
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.1.11
+Stable tag: 0.1.12
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,6 +46,9 @@ GET /wp-json/barbas-connect/v1/health -- public discovery (version, site URL, co
 HMAC endpoints expose summarized Activity Reports data (users + productivity report) for Barbas Central. No raw WSAL admin dump.
 
 == Changelog ==
+
+= 0.1.12 =
+* Strip bc_notice / bc_id / bc_msg from the admin URL after render (history.replaceState) so refresh does not re-show flash notices or the one-time key panel.
 
 = 0.1.11 =
 * Remove the Barbas Digital eyebrow label above the Barbas Connect title.
@@ -98,6 +101,9 @@ HMAC endpoints expose summarized Activity Reports data (users + productivity rep
 * Initial MVP: connections UI, REST health + HMAC scaffolding, Activity Reports bridge stubs, Barbas Update hub (tab connect).
 
 == Upgrade Notice ==
+
+= 0.1.12 =
+Flash query args (bc_notice / bc_id) are cleared from the URL after the notice is shown.
 
 = 0.1.11 =
 Cleaner header (no eyebrow) and no Generate new key while Connected.
