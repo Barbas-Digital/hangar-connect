@@ -143,7 +143,54 @@ function barbas_connect_register_plugin_action_links() {
 add_action('plugins_loaded', 'barbas_connect_register_plugin_action_links', 15);
 
 /**
+ * Store a one-shot admin flash (notice + optional focus id / error message).
+ *
+ * @param string $notice Notice key.
+ * @param string $focus_id Connection id for key reveal.
+ * @param string $msg Error message (plain text).
+ */
+function barbas_connect_set_flash($notice, $focus_id = '', $msg = '') {
+    $uid = get_current_user_id();
+    if ($uid <= 0) {
+        return;
+    }
+    set_transient(
+        'barbas_connect_flash_' . $uid,
+        array(
+            'notice' => sanitize_key((string) $notice),
+            'id'     => sanitize_key((string) $focus_id),
+            'msg'    => sanitize_text_field((string) $msg),
+        ),
+        120
+    );
+}
+
+/**
+ * Consume flash once (deleted after read).
+ *
+ * @return array{notice:string,id:string,msg:string}|null
+ */
+function barbas_connect_consume_flash() {
+    $uid = get_current_user_id();
+    if ($uid <= 0) {
+        return null;
+    }
+    $key = 'barbas_connect_flash_' . $uid;
+    $data = get_transient($key);
+    delete_transient($key);
+    if (!is_array($data)) {
+        return null;
+    }
+    return array(
+        'notice' => isset($data['notice']) ? sanitize_key((string) $data['notice']) : '',
+        'id'     => isset($data['id']) ? sanitize_key((string) $data['id']) : '',
+        'msg'    => isset($data['msg']) ? sanitize_text_field((string) $data['msg']) : '',
+    );
+}
+
+/**
  * Handle admin-post actions (generate / rotate / disconnect).
+ * Always redirects to a clean admin URL; flash carries notice/key id (no bc_* query args).
  */
 function barbas_connect_handle_admin_actions() {
     if (!current_user_can('manage_options')) {
@@ -157,19 +204,14 @@ function barbas_connect_handle_admin_actions() {
         : '';
 
     $redirect = admin_url('options-general.php?page=' . BARBAS_CONNECT_MENU_SLUG);
-    $notice = 'ok';
 
     switch ($action) {
         case 'generate':
             if (!empty(barbas_connect_get_all_connections())) {
-                $redirect = add_query_arg(
-                    array(
-                        'bc_notice' => 'error',
-                        'bc_msg'    => rawurlencode(
-                            __('This site already has a connection. Disconnect it before pairing with another Central.', 'barbas-connect')
-                        ),
-                    ),
-                    $redirect
+                barbas_connect_set_flash(
+                    'error',
+                    '',
+                    __('This site already has a connection. Disconnect it before pairing with another Central.', 'barbas-connect')
                 );
                 wp_safe_redirect($redirect);
                 exit;
@@ -179,22 +221,9 @@ function barbas_connect_handle_admin_actions() {
                 : '';
             $result = barbas_connect_create_connection($label);
             if (is_wp_error($result)) {
-                $notice = 'error';
-                $redirect = add_query_arg(
-                    array(
-                        'bc_notice' => $notice,
-                        'bc_msg'    => rawurlencode($result->get_error_message()),
-                    ),
-                    $redirect
-                );
+                barbas_connect_set_flash('error', '', $result->get_error_message());
             } else {
-                $redirect = add_query_arg(
-                    array(
-                        'bc_notice' => 'generated',
-                        'bc_id'     => $result['connection']['id'],
-                    ),
-                    $redirect
-                );
+                barbas_connect_set_flash('generated', $result['connection']['id'], '');
             }
             break;
 
@@ -204,21 +233,9 @@ function barbas_connect_handle_admin_actions() {
                 : '';
             $result = barbas_connect_rotate_connection($id);
             if (is_wp_error($result)) {
-                $redirect = add_query_arg(
-                    array(
-                        'bc_notice' => 'error',
-                        'bc_msg'    => rawurlencode($result->get_error_message()),
-                    ),
-                    $redirect
-                );
+                barbas_connect_set_flash('error', '', $result->get_error_message());
             } else {
-                $redirect = add_query_arg(
-                    array(
-                        'bc_notice' => 'rotated',
-                        'bc_id'     => $id,
-                    ),
-                    $redirect
-                );
+                barbas_connect_set_flash('rotated', $id, '');
             }
             break;
 
@@ -227,17 +244,16 @@ function barbas_connect_handle_admin_actions() {
                 ? sanitize_key(wp_unslash((string) $_POST['connection_id']))
                 : '';
             $result = barbas_connect_delete_connection($id);
-            $notice = is_wp_error($result) ? 'error' : 'disconnected';
-            $args = array('bc_notice' => $notice);
             if (is_wp_error($result)) {
-                $args['bc_msg'] = rawurlencode($result->get_error_message());
+                barbas_connect_set_flash('error', '', $result->get_error_message());
+            } else {
+                barbas_connect_set_flash('disconnected');
             }
-            $redirect = add_query_arg($args, $redirect);
             break;
 
         case 'disconnect_all':
             barbas_connect_delete_all_connections();
-            $redirect = add_query_arg(array('bc_notice' => 'disconnected_all'), $redirect);
+            barbas_connect_set_flash('disconnected_all');
             break;
 
         case 'dismiss_key':
@@ -250,7 +266,7 @@ function barbas_connect_handle_admin_actions() {
             break;
 
         default:
-            $redirect = add_query_arg(array('bc_notice' => 'error'), $redirect);
+            barbas_connect_set_flash('error');
             break;
     }
 
@@ -312,9 +328,20 @@ function barbas_connect_render_admin_page() {
     }
 
     $connections = barbas_connect_get_all_connections();
-    $notice = isset($_GET['bc_notice']) ? sanitize_key(wp_unslash((string) $_GET['bc_notice'])) : '';
-    $focus_id = isset($_GET['bc_id']) ? sanitize_key(wp_unslash((string) $_GET['bc_id'])) : '';
-    $error_msg = isset($_GET['bc_msg']) ? sanitize_text_field(rawurldecode(wp_unslash((string) $_GET['bc_msg']))) : '';
+    $flash = barbas_connect_consume_flash();
+    $notice = $flash ? $flash['notice'] : '';
+    $focus_id = $flash ? $flash['id'] : '';
+    $error_msg = $flash ? $flash['msg'] : '';
+    // Legacy query-arg flash (pre-0.1.12) — still honor once, then JS strips the URL.
+    if ($notice === '' && isset($_GET['bc_notice'])) {
+        $notice = sanitize_key(wp_unslash((string) $_GET['bc_notice']));
+    }
+    if ($focus_id === '' && isset($_GET['bc_id'])) {
+        $focus_id = sanitize_key(wp_unslash((string) $_GET['bc_id']));
+    }
+    if ($error_msg === '' && isset($_GET['bc_msg'])) {
+        $error_msg = sanitize_text_field(rawurldecode(wp_unslash((string) $_GET['bc_msg'])));
+    }
 
     $health_url = rest_url(BARBAS_CONNECT_REST_NS . '/health');
 

@@ -48,7 +48,7 @@ HMAC endpoints expose summarized Activity Reports data (users + productivity rep
 == Changelog ==
 
 = 0.1.12 =
-* Strip bc_notice / bc_id / bc_msg from the admin URL after render (history.replaceState) so refresh does not re-show flash notices or the one-time key panel.
+* After generate/rotate/disconnect, redirect to a clean admin URL (transient flash). JS also strips legacy bc_notice/bc_id/bc_msg so refresh never re-shows them.
 
 = 0.1.11 =
 * Remove the Barbas Digital eyebrow label above the Barbas Connect title.
@@ -103,7 +103,7 @@ HMAC endpoints expose summarized Activity Reports data (users + productivity rep
 == Upgrade Notice ==
 
 = 0.1.12 =
-Flash query args (bc_notice / bc_id) are cleared from the URL after the notice is shown.
+Clean admin URL after generate (transient flash + strip legacy bc_notice/bc_id).
 
 = 0.1.11 =
 Cleaner header (no eyebrow) and no Generate new key while Connected.

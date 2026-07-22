@@ -85,7 +85,7 @@ WordPress 5.8+, PHP 7.4+, OpenSSL for secure pairing key storage. Barbas Activit
 ## Changelog
 
 ### 0.1.12
-- Strip `bc_notice` / `bc_id` / `bc_msg` from the admin URL after render (`history.replaceState`) so refresh does not re-show flash notices or the one-time key panel.
+- After generate/rotate/disconnect, redirect to a clean admin URL (transient flash for notice + key id). JS also strips legacy `bc_notice` / `bc_id` / `bc_msg` so refresh never re-shows them.
 
 ### 0.1.11
 - Remove the Barbas Digital eyebrow label above the Barbas Connect title.
