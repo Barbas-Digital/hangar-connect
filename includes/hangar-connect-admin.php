@@ -417,7 +417,8 @@ function hangar_connect_render_admin_page() {
         'code'          => 'wsal_missing',
         'message'       => '',
     );
-    $wsal_ok = !empty($wsal['ready']) && !empty($wsal['tables_ready']);
+    $wsal_ok = !empty($wsal['plugin_active']) && !empty($wsal['tables_ready']);
+    $wsal_plugin_active = !empty($wsal['plugin_active']);
 
     echo '<section class="hangar-connect-card">';
     echo '<h2>' . esc_html__('Site status', 'hangar-connect') . '</h2>';
@@ -429,13 +430,18 @@ function hangar_connect_render_admin_page() {
     echo '<div class="hangar-connect-wsal' . ($wsal_ok ? ' is-ok' : ' is-warn') . '">';
     echo '<div class="hangar-connect-wsal__row">';
     echo '<span class="hangar-connect-wsal__label">' . esc_html__('WP Activity Log', 'hangar-connect') . '</span>';
-    echo '<span class="hangar-connect-wsal__badge">' . esc_html(
-        $wsal_ok ? __('Ready', 'hangar-connect') : __('Required', 'hangar-connect')
-    ) . '</span>';
+    if ($wsal_ok) {
+        $badge = __('Active', 'hangar-connect');
+    } elseif ($wsal_plugin_active) {
+        $badge = __('Setup needed', 'hangar-connect');
+    } else {
+        $badge = __('Inactive', 'hangar-connect');
+    }
+    echo '<span class="hangar-connect-wsal__badge">' . esc_html($badge) . '</span>';
     echo '</div>';
     if ($wsal_ok) {
         echo '<p class="hangar-connect-wsal__msg">' . esc_html__(
-            'Ready for productivity reports.',
+            'Active for productivity reports.',
             'hangar-connect'
         ) . '</p>';
     } else {
@@ -446,7 +452,7 @@ function hangar_connect_render_admin_page() {
                     $wsal_msg = __('Plugin is active, but log tables were not found yet. Open WP Activity Log once so tables can be created.', 'hangar-connect');
                     break;
                 case 'wsal_plugin_inactive':
-                    $wsal_msg = __('Log tables were found, but the plugin is not active. Activate it to keep recording events.', 'hangar-connect');
+                    $wsal_msg = __('Log tables were found, but the plugin is not active. Activate WP Activity Log to keep recording events.', 'hangar-connect');
                     break;
                 default:
                     $wsal_msg = __('Install and activate WP Activity Log to enable productivity reports.', 'hangar-connect');

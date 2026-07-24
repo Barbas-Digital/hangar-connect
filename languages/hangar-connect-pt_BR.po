@@ -107,14 +107,17 @@ msgstr "Endpoint de saúde"
 msgid "WP Activity Log"
 msgstr "WP Activity Log"
 
-msgid "Ready"
-msgstr "Pronto"
+msgid "Active"
+msgstr "Ativo"
 
-msgid "Required"
-msgstr "Obrigatório"
+msgid "Inactive"
+msgstr "Inativo"
 
-msgid "Ready for productivity reports."
-msgstr "Pronto para relatórios de produtividade."
+msgid "Setup needed"
+msgstr "Configuração pendente"
+
+msgid "Active for productivity reports."
+msgstr "Ativo para relatórios de produtividade."
 
 msgid "Install and activate WP Activity Log to enable productivity reports."
 msgstr "Instale e ative o WP Activity Log para habilitar relatórios de produtividade."
@@ -122,8 +125,8 @@ msgstr "Instale e ative o WP Activity Log para habilitar relatórios de produtiv
 msgid "Plugin is active, but log tables were not found yet. Open WP Activity Log once so tables can be created."
 msgstr "O plugin está ativo, mas as tabelas de log ainda não foram encontradas. Abra o WP Activity Log uma vez para criar as tabelas."
 
-msgid "Log tables were found, but the plugin is not active. Activate it to keep recording events."
-msgstr "As tabelas de log existem, mas o plugin não está ativo. Ative-o para continuar registrando eventos."
+msgid "Log tables were found, but the plugin is not active. Activate WP Activity Log to keep recording events."
+msgstr "As tabelas de log existem, mas o plugin não está ativo. Ative o WP Activity Log para continuar registrando eventos."
 
 msgid "Find WP Activity Log"
 msgstr "Buscar WP Activity Log"

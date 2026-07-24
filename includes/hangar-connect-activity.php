@@ -93,7 +93,7 @@ function hangar_connect_wsal_status() {
         return array(
             'plugin_active' => false,
             'tables_ready'  => true,
-            'ready'         => true,
+            'ready'         => false,
             'code'          => 'wsal_plugin_inactive',
             'message'       => 'WSAL tables found, but the WP Activity Log plugin is not active. New events will not be recorded until it is activated.',
         );
