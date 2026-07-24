@@ -1,37 +1,72 @@
-/* Hangar Connect — Melapress / Barbas suite admin */
+/* Hangar Connect — brand kit v1 (Runway Blue, light WP admin) */
 
 .hangar-connect-wrap {
+	--hc-bg: #ffffff;
+	--hc-surface: #f4f6fa;
+	--hc-border: #d5dae5;
+	--hc-text: #0b0e17;
+	--hc-muted: #5f6880;
+	--hc-accent: #3d7df7;
+	--hc-accent-hover: #2a5fc7;
+	--hc-accent-soft: rgba(61, 125, 247, 0.12);
+	--hc-ok: #2fbf71;
+	--hc-ok-soft: rgba(47, 191, 113, 0.14);
+	--hc-warn: #f5a524;
+	--hc-warn-soft: rgba(245, 165, 36, 0.14);
+	--hc-radius: 8px;
+	--hc-font: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+	--hc-mono: "JetBrains Mono", Consolas, Monaco, ui-monospace, monospace;
+
 	margin: 12px 0 28px;
 	max-width: 880px;
 	box-sizing: border-box;
 }
 
 .hangar-connect-app {
+	font-family: var(--hc-font);
 	font-size: 14px;
-	color: #1d2a1a;
+	color: var(--hc-text);
 }
 
 .hangar-connect-header {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: space-between;
 	gap: 16px 24px;
 	margin-bottom: 20px;
 }
 
-.hangar-connect-header h1 {
-	margin: 0 0 8px;
-	font-size: 28px;
-	font-weight: 600;
-	color: #384a2f;
-	line-height: 1.2;
+.hangar-connect-header__brand {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	min-width: 0;
+}
+
+.hangar-connect-logo {
+	display: block;
+	height: 36px;
+	width: auto;
+	max-width: min(100%, 280px);
+}
+
+.hangar-connect-title-sr {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
 }
 
 .hangar-connect-lead {
 	margin: 0;
 	max-width: 42rem;
-	color: #4a5c42;
+	color: var(--hc-muted);
 	line-height: 1.5;
 }
 
@@ -39,8 +74,8 @@
 	display: inline-block;
 	padding: 4px 10px;
 	border-radius: 999px;
-	background: rgba(0, 147, 68, 0.12);
-	color: #00813c;
+	background: var(--hc-accent-soft);
+	color: var(--hc-accent-hover);
 	font-size: 12px;
 	font-weight: 600;
 }
@@ -50,29 +85,29 @@
 }
 
 .hangar-connect-card {
-	background: #fff;
-	border: 1px solid #c3cfc0;
-	border-radius: 8px;
+	background: var(--hc-bg);
+	border: 1px solid var(--hc-border);
+	border-radius: var(--hc-radius);
 	padding: 18px 20px 20px;
 	margin-bottom: 16px;
-	box-shadow: 0 1px 3px rgba(56, 74, 47, 0.08);
+	box-shadow: 0 1px 3px rgba(11, 14, 23, 0.06);
 }
 
 .hangar-connect-card h2 {
 	margin: 0 0 10px;
 	font-size: 16px;
 	font-weight: 600;
-	color: #384a2f;
+	color: var(--hc-text);
 }
 
 .hangar-connect-card p {
 	margin: 0 0 12px;
-	color: #4a5c42;
+	color: var(--hc-muted);
 }
 
 .hangar-connect-card--reveal {
-	border-color: #009344;
-	box-shadow: 0 0 0 1px rgba(0, 147, 68, 0.18), 0 2px 8px rgba(56, 74, 47, 0.1);
+	border-color: var(--hc-accent);
+	box-shadow: 0 0 0 1px var(--hc-accent-soft), 0 2px 8px rgba(61, 125, 247, 0.12);
 }
 
 .hangar-connect-card__head {
@@ -100,7 +135,6 @@
 		grid-template-columns: 1fr 1fr;
 	}
 
-	/* Site URL + Health endpoint: full width so long URLs align */
 	.hangar-connect-status-grid > div:nth-child(1),
 	.hangar-connect-status-grid > div:nth-child(2) {
 		grid-column: 1 / -1;
@@ -113,7 +147,7 @@
 	font-weight: 700;
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
-	color: #6b7a63;
+	color: var(--hc-muted);
 }
 
 .hangar-connect-status-grid dd {
@@ -126,18 +160,18 @@
 	margin-top: 14px;
 	padding: 10px 12px;
 	border-radius: 6px;
-	border: 1px solid #c3cfc0;
-	background: #f7faf5;
+	border: 1px solid var(--hc-border);
+	background: var(--hc-surface);
 }
 
 .hangar-connect-wsal.is-ok {
-	border-color: rgba(0, 147, 68, 0.35);
-	background: rgba(0, 147, 68, 0.08);
+	border-color: rgba(47, 191, 113, 0.35);
+	background: var(--hc-ok-soft);
 }
 
 .hangar-connect-wsal.is-warn {
-	border-color: rgba(166, 124, 0, 0.4);
-	background: rgba(166, 124, 0, 0.08);
+	border-color: rgba(245, 165, 36, 0.4);
+	background: var(--hc-warn-soft);
 }
 
 .hangar-connect-wsal__row {
@@ -151,7 +185,7 @@
 .hangar-connect-wsal__label {
 	font-size: 13px;
 	font-weight: 600;
-	color: #384a2f;
+	color: var(--hc-text);
 }
 
 .hangar-connect-wsal__badge {
@@ -163,19 +197,19 @@
 	letter-spacing: 0.02em;
 	text-transform: uppercase;
 	background: #fff;
-	color: #4a5c42;
-	border: 1px solid #c3cfc0;
+	color: var(--hc-muted);
+	border: 1px solid var(--hc-border);
 }
 
 .hangar-connect-wsal.is-ok .hangar-connect-wsal__badge {
-	color: #00813c;
-	border-color: rgba(0, 147, 68, 0.35);
-	background: rgba(0, 147, 68, 0.12);
+	color: #1a8a4c;
+	border-color: rgba(47, 191, 113, 0.35);
+	background: rgba(47, 191, 113, 0.12);
 }
 
 .hangar-connect-wsal.is-warn .hangar-connect-wsal__badge {
-	color: #8a6500;
-	border-color: rgba(166, 124, 0, 0.45);
+	color: #9a6a00;
+	border-color: rgba(245, 165, 36, 0.45);
 	background: rgba(255, 255, 255, 0.7);
 }
 
@@ -183,7 +217,7 @@
 	margin: 6px 0 0 !important;
 	font-size: 13px;
 	line-height: 1.4;
-	color: #4a5c42;
+	color: var(--hc-muted);
 }
 
 .hangar-connect-wsal__action {
@@ -193,9 +227,14 @@
 
 .hangar-connect-wsal__action a {
 	font-weight: 600;
+	color: var(--hc-accent);
 }
 
-/* Same box for Site URL and Health endpoint (no extra indent on long URLs). */
+.hangar-connect-wsal__action a:hover,
+.hangar-connect-wsal__action a:focus-visible {
+	color: var(--hc-accent-hover);
+}
+
 .hangar-connect-status-grid dd code,
 .hangar-connect-status-value {
 	display: block;
@@ -203,20 +242,21 @@
 	width: 100%;
 	margin: 0;
 	padding: 8px 10px;
-	background: #f4f7f3;
-	border: 1px solid #c3cfc0;
+	background: var(--hc-surface);
+	border: 1px solid var(--hc-border);
 	border-radius: 6px;
-	font-family: Consolas, Monaco, monospace;
+	font-family: var(--hc-mono);
 	font-size: 12px;
 	line-height: 1.45;
 	word-break: break-all;
 	white-space: normal;
 	user-select: all;
+	color: var(--hc-text);
 }
 
 .hangar-connect-mono,
 .hangar-connect-key {
-	font-family: Consolas, Monaco, monospace;
+	font-family: var(--hc-mono);
 	font-size: 12px;
 	user-select: all;
 }
@@ -233,10 +273,24 @@
 	display: block;
 	flex: 1 1 240px;
 	padding: 10px 12px;
-	background: #f4f7f3;
-	border: 1px solid #c3cfc0;
+	background: var(--hc-surface);
+	border: 1px solid var(--hc-border);
 	border-radius: 6px;
 	word-break: break-all;
+	color: var(--hc-text);
+}
+
+.hangar-connect-wrap .button-primary {
+	background: var(--hc-accent);
+	border-color: var(--hc-accent);
+	color: #fff;
+}
+
+.hangar-connect-wrap .button-primary:hover,
+.hangar-connect-wrap .button-primary:focus {
+	background: var(--hc-accent-hover);
+	border-color: var(--hc-accent-hover);
+	color: #fff;
 }
 
 .hangar-connect-form {
@@ -261,11 +315,11 @@
 	display: block;
 	margin-bottom: 6px;
 	font-weight: 600;
-	color: #384a2f;
+	color: var(--hc-text);
 }
 
 .hangar-connect-table {
-	border: 1px solid #c3cfc0 !important;
+	border: 1px solid var(--hc-border) !important;
 	border-radius: 6px;
 	overflow: hidden;
 }
@@ -277,13 +331,13 @@
 
 .hangar-connect-table th {
 	font-weight: 600;
-	color: #384a2f;
+	color: var(--hc-text);
 }
 
 .hangar-connect-muted {
 	margin-top: 4px;
 	font-size: 11px;
-	color: #6b7a63;
+	color: var(--hc-muted);
 }
 
 .hangar-connect-status {
@@ -297,16 +351,15 @@
 }
 
 .hangar-connect-status--pending {
-	background: rgba(180, 120, 20, 0.12);
-	color: #8a5a00;
+	background: var(--hc-warn-soft);
+	color: #9a6a00;
 }
 
 .hangar-connect-status--connected {
-	background: rgba(0, 147, 68, 0.12);
-	color: #00813c;
+	background: var(--hc-ok-soft);
+	color: #1a8a4c;
 }
 
-/* Keep table-cell display so vertical-align: middle works vs multi-line Label. */
 .hangar-connect-table td.hangar-connect-actions {
 	vertical-align: middle;
 }
@@ -329,12 +382,77 @@
 
 .hangar-connect-empty {
 	margin: 8px 0 0 !important;
-	color: #6b7a63;
+	color: var(--hc-muted);
 }
 
-/* Brand footer: reuse .barbas-update-footer from hub CSS */
+/* Product footer (Hangar) + discreet Barbas Digital credit */
+.hangar-connect-footer {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px 24px;
+	margin-top: 8px;
+	padding-top: 18px;
+	border-top: 1px solid var(--hc-border);
+}
+
+.hangar-connect-footer__product {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	text-decoration: none;
+	color: var(--hc-text);
+}
+
+.hangar-connect-footer__product:hover,
+.hangar-connect-footer__product:focus-visible {
+	color: var(--hc-accent);
+}
+
+.hangar-connect-footer__mark {
+	display: block;
+	width: 28px;
+	height: 28px;
+}
+
+.hangar-connect-footer__name {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+}
+
+.hangar-connect-footer__vendor {
+	margin: 0;
+	max-width: 22rem;
+	font-size: 12px;
+	line-height: 1.45;
+	color: var(--hc-muted);
+	text-align: right;
+}
+
+.hangar-connect-footer__vendor a {
+	color: var(--hc-muted);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.hangar-connect-footer__vendor a:hover,
+.hangar-connect-footer__vendor a:focus-visible {
+	color: var(--hc-accent);
+}
 
 @media (max-width: 782px) {
+	.hangar-connect-footer {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.hangar-connect-footer__vendor {
+		text-align: left;
+	}
+
 	.hangar-connect-table thead {
 		display: none;
 	}
@@ -342,7 +460,7 @@
 	.hangar-connect-table tr {
 		display: block;
 		padding: 12px;
-		border-bottom: 1px solid #c3cfc0;
+		border-bottom: 1px solid var(--hc-border);
 	}
 
 	.hangar-connect-table td {
@@ -357,7 +475,7 @@
 		font-size: 11px;
 		font-weight: 700;
 		text-transform: uppercase;
-		color: #6b7a63;
+		color: var(--hc-muted);
 		margin-bottom: 2px;
 	}
 }

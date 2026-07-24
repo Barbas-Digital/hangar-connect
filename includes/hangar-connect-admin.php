@@ -34,22 +34,10 @@ function hangar_connect_admin_enqueue($hook) {
         return;
     }
 
-    $hub_css_deps = array();
-    if (defined('BARBAS_UPDATE_PLUGIN_FILE')) {
-        $hub_ver = defined('BARBAS_UPDATE_HUB_VERSION') ? BARBAS_UPDATE_HUB_VERSION : HANGAR_CONNECT_VERSION;
-        wp_enqueue_style(
-            'barbas-update-admin',
-            plugins_url('assets/css/barbas-update-admin.css', BARBAS_UPDATE_PLUGIN_FILE),
-            array(),
-            $hub_ver
-        );
-        $hub_css_deps[] = 'barbas-update-admin';
-    }
-
     wp_enqueue_style(
         'hangar-connect-admin',
         HANGAR_CONNECT_URL . 'assets/css/hangar-connect-admin.css',
-        $hub_css_deps,
+        array(),
         HANGAR_CONNECT_VERSION
     );
 
@@ -345,8 +333,9 @@ function hangar_connect_render_admin_page() {
     echo '<div class="hangar-connect-app">';
 
     echo '<header class="hangar-connect-header">';
-    echo '<div class="hangar-connect-header__copy">';
-    echo '<h1>' . esc_html__('Hangar Connect', 'hangar-connect') . '</h1>';
+    echo '<div class="hangar-connect-header__brand">';
+    echo '<h1 class="hangar-connect-title-sr">' . esc_html__('Hangar Connect', 'hangar-connect') . '</h1>';
+    echo '<img class="hangar-connect-logo" src="' . esc_url(HANGAR_CONNECT_URL . 'assets/img/hangar-connect-light.svg') . '" alt="' . esc_attr__('Hangar Connect', 'hangar-connect') . '" width="280" height="44" decoding="async" />';
     echo '<p class="hangar-connect-lead">' . esc_html__(
         'Connect this site to Hangar. Generate a pairing key, paste it in Hangar, then manage or revoke connections here.',
         'hangar-connect'
@@ -554,9 +543,29 @@ function hangar_connect_render_admin_page() {
     }
     echo '</section>';
 
-    if (function_exists('barbas_update_render_brand_footer')) {
-        barbas_update_render_brand_footer();
-    }
+    hangar_connect_render_brand_footer();
 
     echo '</div></div>';
+}
+
+/**
+ * Product footer: Hangar mark + discreet Barbas Digital credit (brand kit).
+ */
+function hangar_connect_render_brand_footer() {
+    $mark = HANGAR_CONNECT_URL . 'assets/img/hangar-mark-blue.svg';
+    $home = 'https://github.com/Barbas-Digital/hangar-connect';
+    $vendor = 'https://www.barbas.digital/';
+
+    echo '<footer class="hangar-connect-footer">';
+    echo '<a class="hangar-connect-footer__product" href="' . esc_url($home) . '" target="_blank" rel="noopener noreferrer">';
+    echo '<img class="hangar-connect-footer__mark" src="' . esc_url($mark) . '" alt="" width="28" height="28" decoding="async" />';
+    echo '<p class="hangar-connect-footer__name">' . esc_html__('Hangar', 'hangar-connect') . '</p>';
+    echo '</a>';
+    echo '<p class="hangar-connect-footer__vendor">';
+    echo esc_html__('A product by', 'hangar-connect') . ' ';
+    echo '<a href="' . esc_url($vendor) . '" target="_blank" rel="noopener noreferrer">' . esc_html__('Barbas Digital', 'hangar-connect') . '</a>';
+    echo '<br />';
+    echo esc_html__('The designer label of the most impactful websites on the Internet.', 'hangar-connect');
+    echo '</p>';
+    echo '</footer>';
 }

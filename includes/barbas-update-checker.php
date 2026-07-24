@@ -56,12 +56,51 @@ function hangar_connect_register_github_updates($plugin_file) {
                 if (is_object($info)) {
                     $info->slug = 'hangar-connect';
                     $info->homepage = 'https://github.com/Barbas-Digital/hangar-connect';
+                    hangar_connect_apply_brand_icons($info);
                 }
                 return $info;
             }
         );
     }
 }
+
+/**
+ * Brand kit icons for updates / plugin information.
+ *
+ * @param object $info Plugin info or update object.
+ */
+function hangar_connect_apply_brand_icons($info) {
+    if (!is_object($info) || !defined('HANGAR_CONNECT_URL')) {
+        return;
+    }
+    $base = HANGAR_CONNECT_URL . 'assets/';
+    $info->icons = array(
+        'svg'     => $base . 'icon.svg',
+        '1x'      => $base . 'icon-128x128.png',
+        '2x'      => $base . 'icon-256x256.png',
+        'default' => $base . 'icon-128x128.png',
+    );
+}
+
+/**
+ * Ensure Ver detalhes / plugins_api also carries Hangar icons.
+ *
+ * @param mixed  $res    API result.
+ * @param string $action Action name.
+ * @param object $args   Request args.
+ * @return mixed
+ */
+function hangar_connect_plugins_api_icons($res, $action, $args) {
+    if ($action !== 'plugin_information' || !is_object($args) || empty($args->slug)) {
+        return $res;
+    }
+    if ((string) $args->slug !== 'hangar-connect' || !is_object($res)) {
+        return $res;
+    }
+    hangar_connect_apply_brand_icons($res);
+    return $res;
+}
+add_filter('plugins_api_result', 'hangar_connect_plugins_api_icons', 20, 3);
 
 add_action('plugins_loaded', function () {
     if (!defined('HANGAR_CONNECT_PLUGIN_FILE')) {
