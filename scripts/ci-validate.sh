@@ -3,7 +3,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-# Plugin slug may differ from the git folder name (repo still barbas-connect; product slug hangar-connect).
+# Plugin slug hangar-connect (repo Barbas-Digital/hangar-connect).
 if [[ -n "${1:-}" ]]; then
   SLUG="$1"
 elif [[ -f "$ROOT/hangar-connect.php" ]]; then

@@ -1,11 +1,11 @@
 # Hangar Connect
 
-![Version](https://img.shields.io/badge/Version-0.2.2-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.2.4-blue.svg)
 ![WordPress](https://img.shields.io/badge/Tested%20up%20to-7.0-green.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)
 ![License](https://img.shields.io/badge/License-GPLv2%20or%20Later-orange.svg)
 
-WordPress site agent for **Hangar**: pairing keys, own REST API, and Activity Reports bridge.
+WordPress site agent for **Hangar**: pairing keys, own REST API, and productivity reports via WP Activity Log (no Activity Reports dependency).
 
 Free and open: public GitHub repo, no license token. Updates come from GitHub Releases (`hangar-connect.zip`).
 
@@ -20,7 +20,7 @@ Admin UI source strings are English (i18n); `languages/hangar-connect-pt_BR.po` 
 - REST namespace `/wp-json/hangar-connect/v1/...` (never `/wp/v2`).
 - Legacy alias `/wp-json/barbas-connect/v1/...` for older Hangar images still calling the pre-rebrand path.
 - Pairing secret encrypted at rest (OpenSSL AES via shared crypto helpers).
-- GET `/health` public discovery; POST `/pair` for Hangar handshake; HMAC-protected `/capabilities` and Activity Reports bridge.
+- GET `/health` public discovery; POST `/pair` for Hangar handshake; HMAC-protected `/capabilities` and productivity reports via WP Activity Log (no Activity Reports dependency).
 - WordPress updates from public GitHub Releases (Plugin Update Checker) -- no Barbas Update license tab.
 - Migrates leftover `barbas-connect/` plugin folder to `hangar-connect/` after updates.
 

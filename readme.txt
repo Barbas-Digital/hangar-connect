@@ -5,11 +5,11 @@ Tags: hangar, connect, wordPress, remote, api
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.2.2
+Stable tag: 0.2.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Site agent for Hangar: pairing keys, secure REST API, and Activity Reports bridge.
+Site agent for Hangar: pairing keys, secure REST API, and productivity reports via WP Activity Log.
 
 == Description ==
 
@@ -21,7 +21,7 @@ Free plugin: public GitHub repository, no license token required.
 * One Hangar pairing at a time (New connection and Generate new key hidden while connected).
 * Own REST namespace (/wp-json/hangar-connect/v1/...) -- never exposes generic /wp/v2.
 * Legacy alias /wp-json/barbas-connect/v1 for older Hangar images.
-* Health discovery endpoint; HMAC-protected capabilities and Activity Reports bridge.
+* Health discovery endpoint; HMAC-protected capabilities and productivity reports via WP Activity Log.
 * Updates from public GitHub Releases (hangar-connect.zip).
 
 == Installation ==
@@ -48,6 +48,12 @@ GET /wp-json/hangar-connect/v1/health -- public discovery (version, site URL, co
 HMAC endpoints expose summarized Activity Reports data (users + productivity report) for Hangar. No raw WSAL admin dump.
 
 == Changelog ==
+
+= 0.2.4 =
+* Native productivity reports from WP Activity Log (no Activity Reports plugin).
+* WSAL readiness status in admin and capabilities.
+* GET /wp/users and /activity/users without AR.
+
 
 = 0.2.2 =
 * Legacy REST alias barbas-connect/v1 for older Hangar images.

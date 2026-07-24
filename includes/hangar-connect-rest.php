@@ -136,23 +136,23 @@ function hangar_connect_register_rest_routes_for_namespace($ns) {
 /**
  * Capability map advertised to Hangar.
  *
- * Activity Reports is an optional shortcut for richer productivity data —
- * never a hard requirement for listing WP users.
+ * Productivity reports require WP Activity Log tables (native Connect engine).
+ * Activity Reports plugin is never required.
  *
  * @return array<string, mixed>
  */
 function hangar_connect_capabilities_map() {
-    $ar     = hangar_connect_activity_reports_available();
-    $loaded = $ar && function_exists('hangar_connect_activity_ensure_loaded')
-        ? hangar_connect_activity_ensure_loaded()
-        : false;
+    $wsal   = function_exists('hangar_connect_wsal_status') ? hangar_connect_wsal_status() : array('ready' => false);
+    $ready  = !empty($wsal['ready']) && !empty($wsal['tables_ready']);
     return array(
-        'wp_users'               => true,
-        'activity_users'         => true,
-        'activity_reports'       => $ar,
-        'activity_report'        => $ar && $loaded,
-        'activity_bridge_ready'  => $ar && $loaded,
-        'activity_bridge_version'=> HANGAR_CONNECT_VERSION,
+        'wp_users'                => true,
+        'activity_users'          => true,
+        'activity_report'         => $ready,
+        'activity_bridge_ready'   => $ready,
+        'activity_bridge_version' => HANGAR_CONNECT_VERSION,
+        'wsal'                    => $wsal,
+        // Legacy keys (Hangar ≤0.11): always false — AR is not required.
+        'activity_reports'        => false,
     );
 }
 

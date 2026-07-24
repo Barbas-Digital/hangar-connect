@@ -1,96 +1,184 @@
 <?php
 /**
- * Activity Reports bridge for Hangar (HMAC-protected REST).
+ * Hangar Connect activity + WP user directory (HMAC-protected REST).
  *
- * Real implementation: calls wsalr_known_users() / wsalr_build_report() from
- * Barbas Activity Reports (not a 501 stub).
+ * Reads WP Activity Log (WSAL) tables natively — no Activity Reports dependency.
+ * Without WSAL, user directory still works; reports return a clear readiness error.
  */
 
 defined('ABSPATH') || exit;
 
 /**
- * Resolve Activity Reports plugin directory.
- *
- * @return string Absolute path with trailing slash, or empty.
+ * Load native WSAL engine once.
  */
-function hangar_connect_activity_reports_dir() {
-    if (defined('WSALR_DIR') && is_string(WSALR_DIR) && WSALR_DIR !== '') {
-        return trailingslashit(WSALR_DIR);
+function hangar_connect_wsal_load_engine() {
+    static $loaded = false;
+    if ($loaded) {
+        return function_exists('hangar_wsal_tables') && function_exists('hangar_wsal_build_report');
     }
-    if (defined('BARBAS_ACTIVITY_REPORTS_PLUGIN_FILE')) {
-        return trailingslashit(plugin_dir_path(BARBAS_ACTIVITY_REPORTS_PLUGIN_FILE));
-    }
-
-    $candidates = array(
-        WP_PLUGIN_DIR . '/barbas-activity-reports/',
-        WP_PLUGIN_DIR . '/barbas-activity-reports-main/',
-    );
-    foreach ($candidates as $dir) {
-        if (is_readable($dir . 'barbas-activity-reports.php')) {
-            return trailingslashit($dir);
+    $loaded = true;
+    $base   = HANGAR_CONNECT_DIR . 'includes/wsal/';
+    foreach (array('events.php', 'data.php', 'analytics.php', 'report.php') as $file) {
+        $path = $base . $file;
+        if (is_readable($path)) {
+            require_once $path;
         }
     }
-    return '';
+    return function_exists('hangar_wsal_tables') && function_exists('hangar_wsal_build_report');
 }
 
 /**
- * Ensure Activity Reports helpers are loaded (same include order as AR bootstrap).
+ * Whether WP Activity Log plugin appears active.
  *
  * @return bool
  */
-function hangar_connect_activity_ensure_loaded() {
-    if (!hangar_connect_activity_reports_available()) {
-        return false;
-    }
-    if (function_exists('wsalr_known_users') && function_exists('wsalr_build_report') && function_exists('wsalr_tables')) {
+function hangar_connect_wsal_plugin_active() {
+    if (defined('WSAL_BASE_NAME') || defined('WSAL_BASE_FILE_NAME') || defined('WSAL_VERSION')) {
         return true;
     }
-
-    $dir = hangar_connect_activity_reports_dir();
-    if ($dir === '') {
-        return false;
+    if (!function_exists('is_plugin_active')) {
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
     }
-
-    $files = array(
-        'includes/events.php',
-        'includes/data.php',
-        'includes/analytics.php',
-        'includes/report.php',
-        'includes/admin.php',
-    );
-    foreach ($files as $rel) {
-        $file = $dir . $rel;
-        if (is_readable($file)) {
-            require_once $file;
+    foreach (array('wp-security-audit-log/wp-security-audit-log.php') as $file) {
+        if (is_plugin_active($file)) {
+            return true;
+        }
+        if (is_multisite() && function_exists('is_plugin_active_for_network') && is_plugin_active_for_network($file)) {
+            return true;
         }
     }
-
-    return function_exists('wsalr_known_users')
-        && function_exists('wsalr_build_report')
-        && function_exists('wsalr_tables');
+    return false;
 }
 
 /**
- * Missing plugin response.
+ * Whether WSAL DB tables are readable.
  *
+ * @return bool
+ */
+function hangar_connect_wsal_tables_ready() {
+    if (!hangar_connect_wsal_load_engine()) {
+        return false;
+    }
+    return (bool) hangar_wsal_tables();
+}
+
+/**
+ * Aggregated WSAL readiness for Hangar + admin UI.
+ *
+ * @return array{plugin_active:bool,tables_ready:bool,ready:bool,code:string,message:string}
+ */
+function hangar_connect_wsal_status() {
+    hangar_connect_wsal_load_engine();
+    $plugin = hangar_connect_wsal_plugin_active();
+    $tables = hangar_connect_wsal_tables_ready();
+    if ($plugin && $tables) {
+        return array(
+            'plugin_active' => true,
+            'tables_ready'  => true,
+            'ready'         => true,
+            'code'          => 'ok',
+            'message'       => 'WP Activity Log is active and tables are available.',
+        );
+    }
+    if (!$plugin && !$tables) {
+        return array(
+            'plugin_active' => false,
+            'tables_ready'  => false,
+            'ready'         => false,
+            'code'          => 'wsal_missing',
+            'message'       => 'WP Activity Log is not installed or not active. Install and activate it to collect productivity logs.',
+        );
+    }
+    if (!$plugin && $tables) {
+        return array(
+            'plugin_active' => false,
+            'tables_ready'  => true,
+            'ready'         => true,
+            'code'          => 'wsal_plugin_inactive',
+            'message'       => 'WSAL tables found, but the WP Activity Log plugin is not active. New events will not be recorded until it is activated.',
+        );
+    }
+    return array(
+        'plugin_active' => true,
+        'tables_ready'  => false,
+        'ready'         => false,
+        'code'          => 'wsal_tables_missing',
+        'message'       => 'WP Activity Log is active, but its database tables were not found yet. Open WP Activity Log once so tables can be created.',
+    );
+}
+
+/**
+ * Missing / not-ready WSAL response for report endpoints.
+ *
+ * @param array<string,mixed>|null $status Optional precomputed status.
  * @return WP_REST_Response
  */
-function hangar_connect_activity_missing_response() {
+function hangar_connect_wsal_not_ready_response($status = null) {
+    if (!is_array($status)) {
+        $status = hangar_connect_wsal_status();
+    }
+    $code = isset($status['code']) ? (string) $status['code'] : 'wsal_missing';
+    $http = ($code === 'wsal_tables_missing') ? 503 : 501;
     return new WP_REST_Response(
         array(
             'ok'      => false,
-            'code'    => 'activity_reports_missing',
-            'message' => 'Productivity report engine is not available on this site yet. Install Activity Reports as an optional shortcut, or wait for Hangar native collection.',
+            'code'    => $code,
+            'message' => isset($status['message']) ? (string) $status['message'] : 'WP Activity Log is required for productivity reports.',
             'ready'   => false,
+            'wsal'    => $status,
         ),
-        501
+        $http
     );
+}
+
+/**
+ * Resolve report subject from email or username.
+ *
+ * @param string $user_param Email or username.
+ * @return string Username (or original).
+ */
+function hangar_connect_activity_resolve_username($user_param) {
+    $user_param = trim((string) $user_param);
+    if ($user_param === '') {
+        return '';
+    }
+
+    if (is_email($user_param)) {
+        $by_email = get_user_by('email', $user_param);
+        if ($by_email instanceof WP_User) {
+            return (string) $by_email->user_login;
+        }
+    }
+
+    $by_login = get_user_by('login', $user_param);
+    if ($by_login instanceof WP_User) {
+        return (string) $by_login->user_login;
+    }
+
+    return $user_param;
+}
+
+/**
+ * Whether a WP user exists for the given email or username.
+ *
+ * @param string $user_param Email or username.
+ * @return bool
+ */
+function hangar_connect_activity_user_exists($user_param) {
+    $user_param = trim((string) $user_param);
+    if ($user_param === '') {
+        return false;
+    }
+    if (is_email($user_param)) {
+        return (bool) get_user_by('email', $user_param);
+    }
+    return (bool) get_user_by('login', $user_param);
 }
 
 /**
  * Enrich a known-user row with WP email / display name.
  *
- * @param object $row Known user row from wsalr_known_users().
+ * @param object $row Known user row from hangar_wsal_known_users().
  * @return array<string, mixed>
  */
 function hangar_connect_activity_enrich_user($row) {
@@ -116,37 +204,9 @@ function hangar_connect_activity_enrich_user($row) {
 }
 
 /**
- * Resolve report subject from email or username.
- *
- * @param string $user_param Email or username.
- * @return string Username (or original) for wsalr_build_report.
- */
-function hangar_connect_activity_resolve_username($user_param) {
-    $user_param = trim((string) $user_param);
-    if ($user_param === '') {
-        return '';
-    }
-
-    if (is_email($user_param)) {
-        $by_email = get_user_by('email', $user_param);
-        if ($by_email instanceof WP_User) {
-            return (string) $by_email->user_login;
-        }
-    }
-
-    $by_login = get_user_by('login', $user_param);
-    if ($by_login instanceof WP_User) {
-        return (string) $by_login->user_login;
-    }
-
-    return $user_param;
-}
-
-/**
  * GET /activity/users and /wp/users — WordPress users (HMAC).
  *
- * Always lists WP users via get_users(). If Activity Reports is installed,
- * merges WSAL activity counts as an optional enrichment shortcut.
+ * Always lists WP users via get_users(). When WSAL tables exist, merges event counts.
  *
  * @param WP_REST_Request $request Request.
  * @return WP_REST_Response
@@ -155,6 +215,7 @@ function hangar_connect_rest_activity_users(WP_REST_Request $request) {
     unset($request);
 
     $by_key = array();
+    $wsal   = hangar_connect_wsal_status();
 
     $wp_users = get_users(
         array(
@@ -178,10 +239,10 @@ function hangar_connect_rest_activity_users(WP_REST_Request $request) {
         );
     }
 
-    $ar_enrichment = false;
-    if (hangar_connect_activity_reports_available() && hangar_connect_activity_ensure_loaded() && function_exists('wsalr_tables') && wsalr_tables() && function_exists('wsalr_known_users')) {
-        $ar_enrichment = true;
-        foreach ((array) wsalr_known_users() as $row) {
+    $wsal_enrichment = false;
+    if (!empty($wsal['tables_ready']) && hangar_connect_wsal_load_engine() && function_exists('hangar_wsal_known_users')) {
+        $wsal_enrichment = true;
+        foreach ((array) hangar_wsal_known_users() as $row) {
             if (!is_object($row)) {
                 continue;
             }
@@ -190,9 +251,9 @@ function hangar_connect_rest_activity_users(WP_REST_Request $request) {
             $key      = $uid > 0 ? ('id:' . $uid) : ('login:' . strtolower((string) $enriched['username']));
             if (isset($by_key[$key])) {
                 $by_key[$key]['events'] = (int) $enriched['events'];
-                $by_key[$key]['source'] = 'wp+ar';
+                $by_key[$key]['source'] = 'wp+wsal';
             } else {
-                $enriched['source'] = 'ar';
+                $enriched['source'] = 'wsal';
                 $by_key[$key]       = $enriched;
             }
         }
@@ -220,8 +281,9 @@ function hangar_connect_rest_activity_users(WP_REST_Request $request) {
             'site_name'      => get_bloginfo('name'),
             'users'          => $users,
             'users_count'    => count($users),
-            'source'         => $ar_enrichment ? 'wp+ar' : 'wp',
-            'ar_shortcut'    => $ar_enrichment,
+            'source'         => $wsal_enrichment ? 'wp+wsal' : 'wp',
+            'wsal'           => $wsal,
+            'activity_ready' => !empty($wsal['ready']) && !empty($wsal['tables_ready']),
         ),
         200
     );
@@ -236,30 +298,20 @@ function hangar_connect_rest_activity_users(WP_REST_Request $request) {
  * @return WP_REST_Response|WP_Error
  */
 function hangar_connect_rest_activity_report(WP_REST_Request $request) {
-    if (!hangar_connect_activity_reports_available()) {
-        return hangar_connect_activity_missing_response();
+    $wsal = hangar_connect_wsal_status();
+    if (empty($wsal['tables_ready'])) {
+        return hangar_connect_wsal_not_ready_response($wsal);
     }
-    if (!hangar_connect_activity_ensure_loaded()) {
+    if (!hangar_connect_wsal_load_engine()) {
         return new WP_REST_Response(
             array(
                 'ok'      => false,
-                'code'    => 'activity_bridge_unavailable',
-                'message' => 'Activity Reports helpers could not be loaded. Update Hangar Connect and Activity Reports.',
+                'code'    => 'wsal_engine_unavailable',
+                'message' => 'Hangar Connect WSAL engine could not be loaded.',
                 'ready'   => false,
+                'wsal'    => $wsal,
             ),
             500
-        );
-    }
-
-    if (!wsalr_tables()) {
-        return new WP_REST_Response(
-            array(
-                'ok'      => false,
-                'code'    => 'wsal_tables_missing',
-                'message' => 'WP Activity Log tables not found on this site.',
-                'ready'   => false,
-            ),
-            503
         );
     }
 
@@ -279,9 +331,22 @@ function hangar_connect_rest_activity_report(WP_REST_Request $request) {
         );
     }
 
+    if (!hangar_connect_activity_user_exists($user_param) && is_email($user_param)) {
+        return new WP_REST_Response(
+            array(
+                'ok'      => false,
+                'code'    => 'user_not_found',
+                'message' => 'No WordPress user with that email on this site.',
+                'ready'   => true,
+                'wsal'    => $wsal,
+            ),
+            404
+        );
+    }
+
     $username = hangar_connect_activity_resolve_username($user_param);
-    $from_ts  = function_exists('wsalr_date_to_ts') ? wsalr_date_to_ts($from) : null;
-    $to_ts    = function_exists('wsalr_date_to_ts') ? wsalr_date_to_ts($to, true) : null;
+    $from_ts  = hangar_wsal_date_to_ts($from);
+    $to_ts    = hangar_wsal_date_to_ts($to, true);
 
     if (null === $from_ts && $from !== '') {
         $from_ts = strtotime($from . ' 00:00:00');
@@ -290,13 +355,13 @@ function hangar_connect_rest_activity_report(WP_REST_Request $request) {
         $to_ts = strtotime($to . ' 23:59:59');
     }
 
-    list($analysis, $meta, $events, $details) = wsalr_build_report($username, $from_ts, $to_ts);
+    list($analysis, $meta, $events, $details) = hangar_wsal_build_report($username, $from_ts, $to_ts);
 
     $events_count = is_array($events) ? count($events) : 0;
     $totals       = isset($analysis['totals']) && is_array($analysis['totals']) ? $analysis['totals'] : array();
 
-    if ($format === 'html' && function_exists('wsalr_render_report_html')) {
-        $html = wsalr_render_report_html($analysis, $meta);
+    if ($format === 'html') {
+        // Hangar SaaS renders the full multi-site template; Connect returns analysis JSON payload.
         return new WP_REST_Response(
             array(
                 'ok'             => true,
@@ -308,14 +373,16 @@ function hangar_connect_rest_activity_report(WP_REST_Request $request) {
                 'events_count'   => $events_count,
                 'totals'         => $totals,
                 'meta'           => $meta,
-                'html'           => $html,
+                'analysis'       => $analysis,
+                'html'           => '',
+                'wsal'           => $wsal,
             ),
             200
         );
     }
 
     if ($format === 'csv') {
-        $csv_rows = array();
+        $csv_rows   = array();
         $csv_rows[] = array(
             'Date/Time',
             'User',
@@ -334,21 +401,26 @@ function hangar_connect_rest_activity_report(WP_REST_Request $request) {
             }
             $oid    = isset($r->id) ? (int) $r->id : 0;
             $detail = '';
-            if ($oid && is_array($details) && isset($details[ $oid ]) && is_array($details[ $oid ])) {
+            if ($oid && is_array($details) && isset($details[$oid]) && is_array($details[$oid])) {
                 foreach (array('PostTitle', 'FileName', 'PluginName') as $k) {
-                    if (!empty($details[ $oid ][ $k ])) {
-                        $detail = (string) $details[ $oid ][ $k ];
+                    if (!empty($details[$oid][$k])) {
+                        $detail = (string) $details[$oid][$k];
                         break;
                     }
                 }
             }
+            $label = function_exists('hangar_wsal_event_label')
+                ? hangar_wsal_event_label($r->alert_id ?? 0, $r->event_type ?? '', $r->object ?? '')
+                : '';
             $csv_rows[] = array(
                 isset($r->created_on) ? wp_date('Y-m-d H:i:s', (int) $r->created_on) : '',
                 isset($r->username) ? (string) $r->username : '',
                 isset($r->user_roles) ? (string) $r->user_roles : '',
                 isset($r->client_ip) ? (string) $r->client_ip : '',
-                isset($r->severity) ? (string) $r->severity : '',
-                '',
+                isset($r->severity) && function_exists('hangar_wsal_severity_label')
+                    ? hangar_wsal_severity_label($r->severity)
+                    : (isset($r->severity) ? (string) $r->severity : ''),
+                $label,
                 isset($r->object) ? (string) $r->object : '',
                 isset($r->event_type) ? (string) $r->event_type : '',
                 isset($r->alert_id) ? (string) $r->alert_id : '',
@@ -366,12 +438,12 @@ function hangar_connect_rest_activity_report(WP_REST_Request $request) {
                 'site_name'      => get_bloginfo('name'),
                 'events_count'   => $events_count,
                 'csv'            => $csv_rows,
+                'wsal'           => $wsal,
             ),
             200
         );
     }
 
-    // Strip bulky raw events from default JSON (Central merges summaries).
     $analysis_out = $analysis;
     if (isset($analysis_out['heatmap']) && is_array($analysis_out['heatmap']) && count($analysis_out['heatmap']) > 500) {
         $analysis_out['heatmap'] = array_slice($analysis_out['heatmap'], 0, 500);
@@ -389,6 +461,7 @@ function hangar_connect_rest_activity_report(WP_REST_Request $request) {
             'totals'         => $totals,
             'analysis'       => $analysis_out,
             'meta'           => $meta,
+            'wsal'           => $wsal,
         ),
         200
     );

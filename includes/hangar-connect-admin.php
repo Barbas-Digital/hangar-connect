@@ -418,6 +418,31 @@ function hangar_connect_render_admin_page() {
     echo '</dl>';
     echo '</section>';
 
+    // WP Activity Log readiness (required for productivity reports).
+    $wsal = function_exists('hangar_connect_wsal_status') ? hangar_connect_wsal_status() : array('ready' => false, 'code' => 'wsal_missing', 'message' => '');
+    $wsal_ok = !empty($wsal['ready']) && !empty($wsal['tables_ready']);
+    echo '<section class="hangar-connect-card">';
+    echo '<h2>' . esc_html__('WP Activity Log', 'hangar-connect') . '</h2>';
+    if ($wsal_ok) {
+        echo '<div class="notice notice-success inline hangar-connect-notice"><p>' . esc_html__(
+            'WP Activity Log is ready. Hangar can generate productivity reports for this site.',
+            'hangar-connect'
+        ) . '</p></div>';
+    } else {
+        echo '<div class="notice notice-warning inline hangar-connect-notice"><p>' . esc_html(
+            isset($wsal['message']) && $wsal['message'] !== ''
+                ? (string) $wsal['message']
+                : __('WP Activity Log is required for productivity reports. Install and activate it from the WordPress plugin directory.', 'hangar-connect')
+        ) . '</p></div>';
+        $install_url = self_admin_url('plugin-install.php?s=wp-activity-log&tab=search&type=term');
+        echo '<p><a class="button button-secondary" href="' . esc_url($install_url) . '">' . esc_html__('Find WP Activity Log', 'hangar-connect') . '</a></p>';
+    }
+    echo '<dl class="hangar-connect-status-grid">';
+    echo '<div><dt>' . esc_html__('Plugin', 'hangar-connect') . '</dt><dd>' . esc_html(!empty($wsal['plugin_active']) ? __('Active', 'hangar-connect') : __('Not active', 'hangar-connect')) . '</dd></div>';
+    echo '<div><dt>' . esc_html__('Log tables', 'hangar-connect') . '</dt><dd>' . esc_html(!empty($wsal['tables_ready']) ? __('Found', 'hangar-connect') : __('Not found', 'hangar-connect')) . '</dd></div>';
+    echo '</dl>';
+    echo '</section>';
+
     // Generate card — only when no connection exists (one Hangar at a time).
     if (empty($connections)) {
         echo '<section class="hangar-connect-card">';
