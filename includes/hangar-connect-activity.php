@@ -198,8 +198,11 @@ function hangar_connect_activity_enrich_user($row) {
         'username'     => $username,
         'user_id'      => $user_id,
         'email'        => $wp_user instanceof WP_User ? (string) $wp_user->user_email : '',
-        'display_name' => $wp_user instanceof WP_User ? (string) $wp_user->display_name : $username,
+        'display_name' => $wp_user instanceof WP_User
+            ? (string) $wp_user->display_name
+            : ($username !== '' ? $username : __('Unknown User', 'hangar-connect')),
         'events'       => $events,
+        'active'       => $wp_user instanceof WP_User,
     );
 }
 
@@ -236,6 +239,7 @@ function hangar_connect_rest_activity_users(WP_REST_Request $request) {
             'display_name' => (string) $u->display_name,
             'events'       => 0,
             'source'       => 'wp',
+            'active'       => true,
         );
     }
 
@@ -252,8 +256,10 @@ function hangar_connect_rest_activity_users(WP_REST_Request $request) {
             if (isset($by_key[$key])) {
                 $by_key[$key]['events'] = (int) $enriched['events'];
                 $by_key[$key]['source'] = 'wp+wsal';
+                $by_key[$key]['active'] = true;
             } else {
                 $enriched['source'] = 'wsal';
+                $enriched['active'] = !empty($enriched['active']);
                 $by_key[$key]       = $enriched;
             }
         }
