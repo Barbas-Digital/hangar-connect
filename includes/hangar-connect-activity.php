@@ -80,7 +80,7 @@ function hangar_connect_activity_missing_response() {
         array(
             'ok'      => false,
             'code'    => 'activity_reports_missing',
-            'message' => 'Barbas Activity Reports is not active on this site.',
+            'message' => 'Productivity report engine is not available on this site yet. Install Activity Reports as an optional shortcut, or wait for Hangar native collection.',
             'ready'   => false,
         ),
         501
@@ -143,48 +143,73 @@ function hangar_connect_activity_resolve_username($user_param) {
 }
 
 /**
- * GET /activity/users — list users with activity (enriched with email).
+ * GET /activity/users and /wp/users — WordPress users (HMAC).
+ *
+ * Always lists WP users via get_users(). If Activity Reports is installed,
+ * merges WSAL activity counts as an optional enrichment shortcut.
  *
  * @param WP_REST_Request $request Request.
  * @return WP_REST_Response
  */
 function hangar_connect_rest_activity_users(WP_REST_Request $request) {
     unset($request);
-    if (!hangar_connect_activity_reports_available()) {
-        return hangar_connect_activity_missing_response();
-    }
-    if (!hangar_connect_activity_ensure_loaded()) {
-        return new WP_REST_Response(
-            array(
-                'ok'      => false,
-                'code'    => 'activity_bridge_unavailable',
-                'message' => 'Activity Reports helpers could not be loaded. Update Hangar Connect and Activity Reports.',
-                'ready'   => false,
-            ),
-            500
-        );
-    }
 
-    if (!wsalr_tables()) {
-        return new WP_REST_Response(
-            array(
-                'ok'      => false,
-                'code'    => 'wsal_tables_missing',
-                'message' => 'WP Activity Log tables not found on this site.',
-                'ready'   => false,
-            ),
-            503
-        );
-    }
+    $by_key = array();
 
-    $rows  = wsalr_known_users();
-    $users = array();
-    foreach ((array) $rows as $row) {
-        if (!is_object($row)) {
+    $wp_users = get_users(
+        array(
+            'orderby' => 'display_name',
+            'order'   => 'ASC',
+            'fields'  => array('ID', 'user_login', 'user_email', 'display_name'),
+        )
+    );
+    foreach ((array) $wp_users as $u) {
+        if (!is_object($u)) {
             continue;
         }
-        $users[] = hangar_connect_activity_enrich_user($row);
+        $uid = (int) $u->ID;
+        $by_key['id:' . $uid] = array(
+            'username'     => (string) $u->user_login,
+            'user_id'      => $uid,
+            'email'        => (string) $u->user_email,
+            'display_name' => (string) $u->display_name,
+            'events'       => 0,
+            'source'       => 'wp',
+        );
     }
+
+    $ar_enrichment = false;
+    if (hangar_connect_activity_reports_available() && hangar_connect_activity_ensure_loaded() && function_exists('wsalr_tables') && wsalr_tables() && function_exists('wsalr_known_users')) {
+        $ar_enrichment = true;
+        foreach ((array) wsalr_known_users() as $row) {
+            if (!is_object($row)) {
+                continue;
+            }
+            $enriched = hangar_connect_activity_enrich_user($row);
+            $uid      = (int) $enriched['user_id'];
+            $key      = $uid > 0 ? ('id:' . $uid) : ('login:' . strtolower((string) $enriched['username']));
+            if (isset($by_key[$key])) {
+                $by_key[$key]['events'] = (int) $enriched['events'];
+                $by_key[$key]['source'] = 'wp+ar';
+            } else {
+                $enriched['source'] = 'ar';
+                $by_key[$key]       = $enriched;
+            }
+        }
+    }
+
+    $users = array_values($by_key);
+    usort(
+        $users,
+        static function ($a, $b) {
+            $ea = isset($a['events']) ? (int) $a['events'] : 0;
+            $eb = isset($b['events']) ? (int) $b['events'] : 0;
+            if ($ea !== $eb) {
+                return $eb <=> $ea;
+            }
+            return strcasecmp((string) ($a['display_name'] ?? ''), (string) ($b['display_name'] ?? ''));
+        }
+    );
 
     return new WP_REST_Response(
         array(
@@ -195,6 +220,8 @@ function hangar_connect_rest_activity_users(WP_REST_Request $request) {
             'site_name'      => get_bloginfo('name'),
             'users'          => $users,
             'users_count'    => count($users),
+            'source'         => $ar_enrichment ? 'wp+ar' : 'wp',
+            'ar_shortcut'    => $ar_enrichment,
         ),
         200
     );

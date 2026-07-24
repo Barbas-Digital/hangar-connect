@@ -120,12 +120,26 @@ function hangar_connect_register_rest_routes_for_namespace($ns) {
             ),
         )
     );
+
+    // Future log module / Hangar UX: same WP user directory without AR dependency.
+    register_rest_route(
+        $ns,
+        '/wp/users',
+        array(
+            'methods'             => WP_REST_Server::READABLE,
+            'callback'            => 'hangar_connect_rest_activity_users',
+            'permission_callback' => 'hangar_connect_rest_permission_hmac',
+        )
+    );
 }
 
 /**
- * Capability map advertised to Central.
+ * Capability map advertised to Hangar.
  *
- * @return array<string, bool>
+ * Activity Reports is an optional shortcut for richer productivity data —
+ * never a hard requirement for listing WP users.
+ *
+ * @return array<string, mixed>
  */
 function hangar_connect_capabilities_map() {
     $ar     = hangar_connect_activity_reports_available();
@@ -133,8 +147,9 @@ function hangar_connect_capabilities_map() {
         ? hangar_connect_activity_ensure_loaded()
         : false;
     return array(
+        'wp_users'               => true,
+        'activity_users'         => true,
         'activity_reports'       => $ar,
-        'activity_users'         => $ar && $loaded,
         'activity_report'        => $ar && $loaded,
         'activity_bridge_ready'  => $ar && $loaded,
         'activity_bridge_version'=> HANGAR_CONNECT_VERSION,
