@@ -2492,11 +2492,11 @@ function barbas_update_filter_plugin_row_meta_details_guard($plugin_meta, $plugi
  * Install details guards once the newest hub is loaded.
  */
 function barbas_update_boot_plugin_details_guards() {
-    static  = false;
-    if () {
+    static $booted = false;
+    if ($booted) {
         return;
     }
-     = true;
+    $booted = true;
 
     barbas_update_sync_plugin_details_from_tabs();
 
@@ -2506,7 +2506,6 @@ function barbas_update_boot_plugin_details_guards() {
     add_filter('site_transient_update_plugins', 'barbas_update_filter_update_plugins_details_guard', PHP_INT_MAX);
     add_filter('plugin_row_meta', 'barbas_update_filter_plugin_row_meta_details_guard', PHP_INT_MAX, 3);
 
-    // Uncode/Undsgn often registers plugin_row_meta later and/or rewrites links in JS after paint.
     add_action('load-plugins.php', 'barbas_update_reassert_plugin_details_php_guards', 99999);
     add_action('admin_head-plugins.php', 'barbas_update_reassert_plugin_details_php_guards', 99999);
     add_action('load-plugins.php', 'barbas_update_start_plugins_page_output_guard', 0);
@@ -2531,51 +2530,51 @@ function barbas_update_reassert_plugin_details_php_guards() {
  * Remove known Undsgn/Uncode plugin_row_meta hijacks (name/file match).
  */
 function barbas_update_remove_uncode_plugin_row_meta_hijacks() {
-    global ;
-    if (!isset(['plugin_row_meta']) || !is_object(['plugin_row_meta'])) {
+    global $wp_filter;
+    if (!isset($wp_filter['plugin_row_meta']) || !is_object($wp_filter['plugin_row_meta'])) {
         return;
     }
-     = ['plugin_row_meta'];
-    if (empty(->callbacks) || !is_array(->callbacks)) {
+    $hook = $wp_filter['plugin_row_meta'];
+    if (empty($hook->callbacks) || !is_array($hook->callbacks)) {
         return;
     }
-    foreach (->callbacks as  => ) {
-        if (!is_array()) {
+    foreach ($hook->callbacks as $priority => $callbacks) {
+        if (!is_array($callbacks)) {
             continue;
         }
-        foreach ( as  => ) {
-            if (!is_array() || !isset(['function'])) {
+        foreach ($callbacks as $id => $cb) {
+            if (!is_array($cb) || !isset($cb['function'])) {
                 continue;
             }
-             = barbas_update_callable_debug_label(['function']);
-            if ( === '') {
+            $label = barbas_update_callable_debug_label($cb['function']);
+            if ($label === '') {
                 continue;
             }
-            if (preg_match('/uncode|undsgn/i', ) && !preg_match('/barbas_update_/i', )) {
-                remove_filter('plugin_row_meta', ['function'], (int) );
+            if (preg_match('/uncode|undsgn/i', $label) && !preg_match('/barbas_update_/i', $label)) {
+                remove_filter('plugin_row_meta', $cb['function'], (int) $priority);
             }
         }
     }
 }
 
 /**
- * @param mixed  Callable.
+ * @param mixed $fn Callable.
  * @return string
  */
-function barbas_update_callable_debug_label() {
-    if (is_string()) {
-        return ;
+function barbas_update_callable_debug_label($fn) {
+    if (is_string($fn)) {
+        return $fn;
     }
-    if (is_array() && isset([0], [1])) {
-         = is_object([0]) ? get_class([0]) : (string) [0];
-        return  . '::' . (string) [1];
+    if (is_array($fn) && isset($fn[0], $fn[1])) {
+        $class = is_object($fn[0]) ? get_class($fn[0]) : (string) $fn[0];
+        return $class . '::' . (string) $fn[1];
     }
-    if ( instanceof Closure) {
+    if ($fn instanceof Closure) {
         try {
-             = new ReflectionFunction();
-             = (string) ->getFileName();
-            return  !== '' ?  : 'Closure';
-        } catch (Exception ) {
+            $ref = new ReflectionFunction($fn);
+            $file = (string) $ref->getFileName();
+            return $file !== '' ? $file : 'Closure';
+        } catch (Exception $e) {
             return 'Closure';
         }
     }
@@ -2586,63 +2585,63 @@ function barbas_update_callable_debug_label() {
  * Buffer plugins.php HTML and rewrite Undsgn "View details" on Barbas rows.
  */
 function barbas_update_start_plugins_page_output_guard() {
-    static  = false;
-    if () {
+    static $started = false;
+    if ($started) {
         return;
     }
-     = true;
+    $started = true;
     ob_start('barbas_update_rewrite_plugins_page_details_html');
 }
 
 /**
- * @param string  Plugins page HTML.
+ * @param string $html Plugins page HTML.
  * @return string
  */
-function barbas_update_rewrite_plugins_page_details_html() {
-    if (!is_string() ||  === '') {
-        return ;
+function barbas_update_rewrite_plugins_page_details_html($html) {
+    if (!is_string($html) || $html === '') {
+        return $html;
     }
     barbas_update_sync_plugin_details_from_tabs();
-     = barbas_update_plugin_details_registry();
-    if (empty()) {
-        return ;
+    $registry = barbas_update_plugin_details_registry();
+    if (empty($registry)) {
+        return $html;
     }
 
-    foreach ( as ) {
-        if (empty(['file']) || empty(['slug'])) {
+    foreach ($registry as $entry) {
+        if (empty($entry['file']) || empty($entry['slug'])) {
             continue;
         }
-         = plugin_basename(['file']);
-             = (string) ['slug'];
-          = network_admin_url(
-            'plugin-install.php?tab=plugin-information&plugin=' . rawurlencode() .
+        $basename = plugin_basename($entry['file']);
+        $slug     = (string) $entry['slug'];
+        $details  = network_admin_url(
+            'plugin-install.php?tab=plugin-information&plugin=' . rawurlencode($slug) .
             '&TB_iframe=true&width=600&height=550'
         );
-         = esc_url();
+        $details_attr = esc_url($details);
 
-         = '/(<tr\b[^>]*\bdata-plugin="' . preg_quote(, '/') . '"[^>]*>)(.*?)(<\/tr>)/is';
-            = preg_replace_callback(
-            ,
-            static function () use () {
-                 = [2];
-                 = preg_replace(
-                    '/href=(["\\\'])https?:\\/\\/(?:support\\.)?undsgn\\.com[^"\\\']*\\1/i',
-                    'href="' .  . '"',
-                    
+        $pattern = '/(<tr\b[^>]*\bdata-plugin="' . preg_quote($basename, '/') . '"[^>]*>)(.*?)(<\/tr>)/is';
+        $html    = preg_replace_callback(
+            $pattern,
+            static function ($m) use ($details_attr) {
+                $row = $m[2];
+                $row = preg_replace(
+                    '/href=(["\'])https?:\/\/(?:support\.)?undsgn\.com[^"\']*\1/i',
+                    'href="' . $details_attr . '"',
+                    $row
                 );
-                 = preg_replace(
-                    '/href=(["\\\'])https?:\\/\\/(?:www\\.)?(?:theme\\.)?uncode\\.net[^"\\\']*\\1/i',
-                    'href="' .  . '"',
-                    
+                $row = preg_replace(
+                    '/href=(["\'])https?:\/\/(?:www\.)?(?:theme\.)?uncode\.net[^"\']*\1/i',
+                    'href="' . $details_attr . '"',
+                    $row
                 );
-                return [1] .  . [3];
+                return $m[1] . $row . $m[3];
             },
-            ,
+            $html,
             1
         );
     }
 
-    return ;
+    return $html;
 }
 
 /**
@@ -2652,41 +2651,41 @@ function barbas_update_print_plugin_details_guard_js() {
     if (!is_admin() || !current_user_can('activate_plugins')) {
         return;
     }
-    static  = false;
-    if () {
+    static $printed = false;
+    if ($printed) {
         return;
     }
-     = true;
+    $printed = true;
 
     barbas_update_sync_plugin_details_from_tabs();
-     = barbas_update_plugin_details_registry();
-    if (empty()) {
+    $registry = barbas_update_plugin_details_registry();
+    if (empty($registry)) {
         return;
     }
 
-     = array();
-    foreach ( as ) {
-        if (empty(['file']) || empty(['slug'])) {
+    $map = array();
+    foreach ($registry as $entry) {
+        if (empty($entry['file']) || empty($entry['slug'])) {
             continue;
         }
-         = plugin_basename(['file']);
-             = (string) ['slug'];
-        [  ] = array(
-            'slug'       => ,
-            'homepage'   => isset(['homepage']) ? (string) ['homepage'] : '',
+        $basename = plugin_basename($entry['file']);
+        $slug     = (string) $entry['slug'];
+        $map[ $basename ] = array(
+            'slug'       => $slug,
+            'homepage'   => isset($entry['homepage']) ? (string) $entry['homepage'] : '',
             'detailsUrl' => network_admin_url(
-                'plugin-install.php?tab=plugin-information&plugin=' . rawurlencode() .
+                'plugin-install.php?tab=plugin-information&plugin=' . rawurlencode($slug) .
                 '&TB_iframe=true&width=600&height=550'
             ),
             'label'      => __('View details'),
         );
     }
-    if (empty()) {
+    if (empty($map)) {
         return;
     }
 
-     = wp_json_encode();
-    if (!is_string() ||  === '') {
+    $json = wp_json_encode($map);
+    if (!is_string($json) || $json === '') {
         return;
     }
     ?>
@@ -2695,8 +2694,8 @@ function barbas_update_print_plugin_details_guard_js() {
   if (window.__barbasDetailsGuardBooted) return;
   window.__barbasDetailsGuardBooted = true;
 
-  var map = <?php echo ; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
-  var hijack = /undsgn\\.com|support\\.undsgn|theme\\.uncode|uncode\\.net|themeforest\\.net\\/item\\/uncode/i;
+  var map = <?php echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
+  var hijack = /undsgn\.com|support\.undsgn|theme\.uncode|uncode\.net|themeforest\.net\/item\/uncode/i;
   var detailsText = /view details|ver detalhes|voir les d[eé]tails|detalles/i;
 
   function confFor(el) {
