@@ -5,7 +5,7 @@ Tags: hangar, connect, wordPress, remote, api
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.2.0
+Stable tag: 0.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,27 +15,28 @@ Site agent for Hangar: pairing keys, secure REST API, and Activity Reports bridg
 
 Hangar Connect turns each WordPress site into a secure agent for Hangar.
 
+Free plugin: public GitHub repository, no license token required.
+
 * Connections screen: generate pairing key, copy once, rotate when pending, disconnect / disconnect all.
 * One Hangar pairing at a time (New connection and Generate new key hidden while connected).
 * Own REST namespace (/wp-json/hangar-connect/v1/...) -- never exposes generic /wp/v2.
-* Pairing key is separate from the Barbas Update license token.
 * Health discovery endpoint; HMAC-protected capabilities and Activity Reports bridge.
-* Updates via Settings -> Barbas Update (Connect tab).
+* Updates from public GitHub Releases (hangar-connect.zip).
 
 == Installation ==
 
 1. Plugins -> Add New -> Upload Plugin -> hangar-connect.zip
 2. Activate
 3. Settings -> Hangar Connect -> Generate pairing key
-4. Settings -> Barbas Update -> Connect -> save and validate license (for updates)
+4. Pair the site from Hangar using that key
 
 Always install via WordPress (not hosting file manager only).
 
 == Frequently Asked Questions ==
 
-= Is the pairing key the same as the update license? =
+= Do I need a Barbas Update license? =
 
-No. The pairing key authenticates Hangar API calls. The license under Barbas Update is only for GitHub plugin updates (BARBAS_LICENSE_TOKEN_CONNECT).
+No. Hangar Connect is free. Updates use the public GitHub repository.
 
 = Where is the health endpoint? =
 
@@ -46,6 +47,10 @@ GET /wp-json/hangar-connect/v1/health -- public discovery (version, site URL, co
 HMAC endpoints expose summarized Activity Reports data (users + productivity report) for Hangar. No raw WSAL admin dump.
 
 == Changelog ==
+
+= 0.2.1 =
+* Public repository; remove Connect license / Barbas Update token requirement.
+* GitHub updates work without BARBAS_LICENSE_TOKEN_CONNECT.
 
 = 0.2.0 =
 * Rebrand to Hangar Connect (slug hangar-connect, REST hangar-connect/v1).
@@ -65,6 +70,9 @@ HMAC endpoints expose summarized Activity Reports data (users + productivity rep
 * Format Connections table dates as DD/MM/YYYY HH:MM for pt_BR.
 
 == Upgrade Notice ==
+
+= 0.2.1 =
+Free public updates: license tab no longer required. Reinstall hangar-connect.zip if updating from a private-repo build.
 
 = 0.2.0 =
 Clean slug rename to hangar-connect. Remove any old barbas-connect folder before installing hangar-connect.zip. Re-pair sites with Hangar after install.

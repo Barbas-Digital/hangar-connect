@@ -1,11 +1,13 @@
 # Hangar Connect
 
-![Version](https://img.shields.io/badge/Version-0.2.0-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.2.1-blue.svg)
 ![WordPress](https://img.shields.io/badge/Tested%20up%20to-7.0-green.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)
 ![License](https://img.shields.io/badge/License-GPLv2%20or%20Later-orange.svg)
 
 WordPress site agent for **Hangar**: pairing keys, own REST API, and Activity Reports bridge.
+
+Free and open: public GitHub repo, no license token. Updates come from GitHub Releases (`hangar-connect.zip`).
 
 Admin UI source strings are English (i18n); `languages/hangar-connect-pt_BR.po` provides Portuguese (Brazil).
 
@@ -16,9 +18,9 @@ Admin UI source strings are English (i18n); `languages/hangar-connect-pt_BR.po` 
 - **Settings -> Hangar Connect** -- connections list, generate pairing key (copy once), rotate when pending, disconnect / disconnect all.
 - One active Hangar pairing at a time: New connection card and "Generate new key" are hidden while connected.
 - REST namespace `/wp-json/hangar-connect/v1/...` (never `/wp/v2`).
-- Pairing secret encrypted at rest (OpenSSL AES via Barbas Update crypto); distinct from hub license token.
+- Pairing secret encrypted at rest (OpenSSL AES via shared crypto helpers).
 - GET `/health` public discovery; POST `/pair` for Hangar handshake; HMAC-protected `/capabilities` and Activity Reports bridge.
-- **Settings -> Barbas Update** -- license tab **Connect** (`BARBAS_LICENSE_TOKEN_CONNECT`).
+- WordPress updates from public GitHub Releases (Plugin Update Checker) -- no Barbas Update license tab.
 
 ## Installation
 
@@ -26,19 +28,9 @@ Admin UI source strings are English (i18n); `languages/hangar-connect-pt_BR.po` 
 2. File: `hangar-connect.zip`
 3. **Activate**
 4. **Settings -> Hangar Connect** -> generate a pairing key
+5. Paste the key in Hangar to pair the site
 
-## Update license (private repository)
-
-1. **Settings -> Barbas Update -> Connect**
-2. Paste the license -> **Validate license** -> **Save**
-
-**Safe option (wp-config.php):**
-
-```php
-define('BARBAS_LICENSE_TOKEN_CONNECT', 'github_pat_...');
-```
-
-## REST routes (v0.2.0)
+## REST routes (v0.2.1)
 
 | Method | Route | Auth |
 |--------|-------|------|
@@ -70,6 +62,11 @@ hangar-connect/
 ```
 
 ## Changelog
+
+### 0.2.1
+
+- Public repository; remove Connect license / Barbas Update token requirement.
+- GitHub updates work without `BARBAS_LICENSE_TOKEN_CONNECT`.
 
 ### 0.2.0
 

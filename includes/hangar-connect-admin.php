@@ -121,13 +121,6 @@ function hangar_connect_plugin_action_links($links) {
         '<a href="' . esc_url($url) . '">' . esc_html__('Connections', 'hangar-connect') . '</a>'
     );
 
-    if (function_exists('barbas_update_settings_url')) {
-        array_unshift(
-            $links,
-            '<a href="' . esc_url(barbas_update_settings_url('connect')) . '">' . esc_html__('License', 'hangar-connect') . '</a>'
-        );
-    }
-
     return $links;
 }
 

@@ -2,8 +2,8 @@
 /*
 Plugin Name: Hangar Connect
 Plugin URI: https://github.com/Barbas-Digital/barbas-connect
-Description: Site agent for Hangar: secure REST API, pairing keys, and Activity Reports bridge. Updates via Settings -> Barbas Update.
-Version: 0.2.0
+Description: Free site agent for Hangar: secure REST API, pairing keys, and Activity Reports bridge. Public GitHub updates (no license).
+Version: 0.2.1
 Requires at least: 5.8
 Requires PHP: 7.4
 Author: Guilherme Souza
@@ -19,22 +19,30 @@ if (!defined('ABSPATH')) {
 }
 
 define('HANGAR_CONNECT_PLUGIN_FILE', __FILE__);
-define('HANGAR_CONNECT_VERSION', '0.2.0');
+define('HANGAR_CONNECT_VERSION', '0.2.1');
 define('HANGAR_CONNECT_DIR', plugin_dir_path(__FILE__));
 define('HANGAR_CONNECT_URL', plugin_dir_url(__FILE__));
 define('HANGAR_CONNECT_REST_NS', 'hangar-connect/v1');
 
 $hangar_connect_base = plugin_dir_path(__FILE__);
 
+// Pairing secrets use OpenSSL helpers (no Barbas Update license hub required).
+if (is_readable($hangar_connect_base . 'includes/barbas-update-crypto.php')) {
+    require_once $hangar_connect_base . 'includes/barbas-update-crypto.php';
+}
+
+// If another Barbas plugin already hosts the Update hub, register as candidate only
+// (crypto / PUC helpers). Connect itself does not require a license tab.
 if (is_readable($hangar_connect_base . 'includes/barbas-update-bootstrap.php')) {
     require_once $hangar_connect_base . 'includes/barbas-update-bootstrap.php';
-    barbas_update_bootstrap(__FILE__);
+    if (function_exists('barbas_update_register_hub_candidate')) {
+        barbas_update_register_hub_candidate(__FILE__);
+    }
 }
 
 $hangar_connect_includes = array(
     'includes/barbas-plugin-list-i18n.php',
     'includes/barbas-readme-i18n.php',
-    'includes/barbas-update-tab.php',
     'includes/barbas-update-checker.php',
     'includes/hangar-connect-connections.php',
     'includes/hangar-connect-hmac.php',

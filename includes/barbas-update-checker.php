@@ -2,19 +2,7 @@
 defined('ABSPATH') or die('No script kiddies please!');
 
 /**
- * GitHub updates via Plugin Update Checker (PUC loaded once by the hub).
- *
- * @return string
- */
-function hangar_connect_get_update_token() {
-    if (function_exists('barbas_update_get_token_for_plugin')) {
-        return barbas_update_get_token_for_plugin('connect');
-    }
-    return '';
-}
-
-/**
- * Register GitHub release updates for private repo.
+ * GitHub updates via Plugin Update Checker (public repository — no license token).
  *
  * @param string $plugin_file Main plugin file.
  */
@@ -25,11 +13,6 @@ function hangar_connect_register_github_updates($plugin_file) {
             'hangar-connect',
             'https://github.com/Barbas-Digital/barbas-connect'
         );
-    }
-
-    $token = hangar_connect_get_update_token();
-    if ($token === '') {
-        return;
     }
 
     if (function_exists('barbas_update_load_puc_library')) {
@@ -58,18 +41,7 @@ function hangar_connect_register_github_updates($plugin_file) {
         barbas_update_remember_puc($plugin_file, $updateChecker);
     }
 
-    if (is_object($updateChecker) && method_exists($updateChecker, 'setAuthentication')) {
-        $updateChecker->setAuthentication($token);
-    }
-
-    if (is_object($updateChecker) && method_exists($updateChecker, 'getUniqueName')) {
-        add_filter(
-            $updateChecker->getUniqueName('manual_check_message'),
-            'hangar_connect_manual_check_message',
-            10,
-            2
-        );
-    }
+    // Public repo: do not setAuthentication().
 
     if (is_object($updateChecker) && method_exists($updateChecker, 'getVcsApi')) {
         $vcsApi = $updateChecker->getVcsApi();
@@ -89,24 +61,6 @@ function hangar_connect_register_github_updates($plugin_file) {
             }
         );
     }
-}
-
-/**
- * @param string $message Message.
- * @param string $status  Status.
- * @return string
- */
-function hangar_connect_manual_check_message($message, $status) {
-    if ($status !== 'error' || !function_exists('barbas_update_settings_url')) {
-        return $message;
-    }
-
-    $url = esc_url(barbas_update_settings_url('connect'));
-    return sprintf(
-        /* translators: %s: settings URL */
-        __('Could not check for updates. Configure the license under <a href="%s">Barbas Update → Connect</a> (private repository).', 'hangar-connect'),
-        $url
-    );
 }
 
 add_action('plugins_loaded', function () {
