@@ -145,10 +145,10 @@ function hangar_connect_generate_pairing_key() {
         $bytes = random_bytes(32);
     } catch (Exception $e) {
         $bytes = wp_generate_password(32, true, true);
-        return 'bc_' . rtrim(strtr(base64_encode(hash('sha256', $bytes, true)), '+/', '-_'), '=');
+        return 'hc_' . rtrim(strtr(base64_encode(hash('sha256', $bytes, true)), '+/', '-_'), '=');
     }
 
-    return 'bc_' . rtrim(strtr(base64_encode($bytes), '+/', '-_'), '=');
+    return 'hc_' . rtrim(strtr(base64_encode($bytes), '+/', '-_'), '=');
 }
 
 /**
@@ -379,7 +379,7 @@ function hangar_connect_get_connection_secret($connection_id) {
  */
 function hangar_connect_complete_pairing($pairing_key) {
     $pairing_key = is_string($pairing_key) ? trim($pairing_key) : '';
-    if ($pairing_key === '' || strpos($pairing_key, 'bc_') !== 0) {
+    if ($pairing_key === '' || (strpos($pairing_key, 'hc_') !== 0 && strpos($pairing_key, 'bc_') !== 0)) {
         return new WP_Error(
             'hangar_connect_pair_invalid',
             __('Invalid pairing key.', 'hangar-connect'),

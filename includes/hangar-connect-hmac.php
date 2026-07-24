@@ -3,10 +3,11 @@
  * HMAC request verification scaffold for Hangar Connect REST.
  *
  * Headers:
- * - X-Barbas-Connect-Id: connection id
- * - X-Barbas-Connect-Timestamp: unix seconds
- * - X-Barbas-Connect-Nonce: unique request nonce
- * - X-Barbas-Connect-Signature: hex HMAC-SHA256 of canonical string
+ * - X-Hangar-Connect-Id: connection id
+ * - X-Hangar-Connect-Timestamp: unix seconds
+ * - X-Hangar-Connect-Nonce: unique request nonce
+ * - X-Hangar-Connect-Signature: hex HMAC-SHA256 of canonical string
+ * Legacy (deprecated): X-Barbas-Connect-*
  *
  * Canonical string:
  *   timestamp + "\n" + nonce + "\n" + METHOD + "\n" + path_with_query + "\n" + sha256_hex(body)
@@ -77,11 +78,26 @@ function hangar_connect_hmac_read_headers() {
         return '';
     };
 
+    // Prefer Hangar headers; fall back to legacy Barbas headers (deprecation window).
+    $id = $get('X-Hangar-Connect-Id');
+    $ts = $get('X-Hangar-Connect-Timestamp');
+    $nonce = $get('X-Hangar-Connect-Nonce');
+    $sig = $get('X-Hangar-Connect-Signature');
+    if ($id === '' && $ts === '' && $nonce === '' && $sig === '') {
+        $id = $get('X-Barbas-Connect-Id');
+        $ts = $get('X-Barbas-Connect-Timestamp');
+        $nonce = $get('X-Barbas-Connect-Nonce');
+        $sig = $get('X-Barbas-Connect-Signature');
+        if ($id !== '') {
+            // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- deprecation metric
+            error_log('[hangar-connect] legacy X-Barbas-Connect-* HMAC headers for connection ' . $id);
+        }
+    }
     return array(
-        'id'        => $get('X-Barbas-Connect-Id'),
-        'timestamp' => $get('X-Barbas-Connect-Timestamp'),
-        'nonce'     => $get('X-Barbas-Connect-Nonce'),
-        'signature' => $get('X-Barbas-Connect-Signature'),
+        'id'        => $id,
+        'timestamp' => $ts,
+        'nonce'     => $nonce,
+        'signature' => $sig,
     );
 }
 
