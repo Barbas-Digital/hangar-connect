@@ -26,7 +26,7 @@ if (!defined('BARBAS_UPDATE_PLUGIN_FILE')) {
 define('BARBAS_UPDATE_HUB_LOADED', true);
 
 if (!defined('BARBAS_UPDATE_HUB_VERSION')) {
-    define('BARBAS_UPDATE_HUB_VERSION', '2.2.22');
+    define('BARBAS_UPDATE_HUB_VERSION', '2.2.23');
 }
 
 if (!defined('BARBAS_UPDATE_INLINE_TABS_MAX')) {
@@ -2492,11 +2492,11 @@ function barbas_update_filter_plugin_row_meta_details_guard($plugin_meta, $plugi
  * Install details guards once the newest hub is loaded.
  */
 function barbas_update_boot_plugin_details_guards() {
-    static $booted = false;
-    if ($booted) {
+    static  = false;
+    if () {
         return;
     }
-    $booted = true;
+     = true;
 
     barbas_update_sync_plugin_details_from_tabs();
 
@@ -2509,7 +2509,10 @@ function barbas_update_boot_plugin_details_guards() {
     // Uncode/Undsgn often registers plugin_row_meta later and/or rewrites links in JS after paint.
     add_action('load-plugins.php', 'barbas_update_reassert_plugin_details_php_guards', 99999);
     add_action('admin_head-plugins.php', 'barbas_update_reassert_plugin_details_php_guards', 99999);
-    add_action('admin_print_footer_scripts-plugins.php', 'barbas_update_print_plugin_details_guard_js', 99999);
+    add_action('load-plugins.php', 'barbas_update_start_plugins_page_output_guard', 0);
+    add_action('admin_print_footer_scripts-plugins.php', 'barbas_update_print_plugin_details_guard_js', 1);
+    add_action('admin_footer-plugins.php', 'barbas_update_print_plugin_details_guard_js', 1);
+    add_action('admin_footer-plugins.php', 'barbas_update_print_plugin_details_guard_js', 99999);
 }
 
 /**
@@ -2517,11 +2520,129 @@ function barbas_update_boot_plugin_details_guards() {
  */
 function barbas_update_reassert_plugin_details_php_guards() {
     barbas_update_sync_plugin_details_from_tabs();
-    // Remove + re-add so we win over same-priority late registrars.
     remove_filter('all_plugins', 'barbas_update_filter_all_plugins_details_guard', PHP_INT_MAX);
     remove_filter('plugin_row_meta', 'barbas_update_filter_plugin_row_meta_details_guard', PHP_INT_MAX);
     add_filter('all_plugins', 'barbas_update_filter_all_plugins_details_guard', PHP_INT_MAX);
     add_filter('plugin_row_meta', 'barbas_update_filter_plugin_row_meta_details_guard', PHP_INT_MAX, 3);
+    barbas_update_remove_uncode_plugin_row_meta_hijacks();
+}
+
+/**
+ * Remove known Undsgn/Uncode plugin_row_meta hijacks (name/file match).
+ */
+function barbas_update_remove_uncode_plugin_row_meta_hijacks() {
+    global ;
+    if (!isset(['plugin_row_meta']) || !is_object(['plugin_row_meta'])) {
+        return;
+    }
+     = ['plugin_row_meta'];
+    if (empty(->callbacks) || !is_array(->callbacks)) {
+        return;
+    }
+    foreach (->callbacks as  => ) {
+        if (!is_array()) {
+            continue;
+        }
+        foreach ( as  => ) {
+            if (!is_array() || !isset(['function'])) {
+                continue;
+            }
+             = barbas_update_callable_debug_label(['function']);
+            if ( === '') {
+                continue;
+            }
+            if (preg_match('/uncode|undsgn/i', ) && !preg_match('/barbas_update_/i', )) {
+                remove_filter('plugin_row_meta', ['function'], (int) );
+            }
+        }
+    }
+}
+
+/**
+ * @param mixed  Callable.
+ * @return string
+ */
+function barbas_update_callable_debug_label() {
+    if (is_string()) {
+        return ;
+    }
+    if (is_array() && isset([0], [1])) {
+         = is_object([0]) ? get_class([0]) : (string) [0];
+        return  . '::' . (string) [1];
+    }
+    if ( instanceof Closure) {
+        try {
+             = new ReflectionFunction();
+             = (string) ->getFileName();
+            return  !== '' ?  : 'Closure';
+        } catch (Exception ) {
+            return 'Closure';
+        }
+    }
+    return '';
+}
+
+/**
+ * Buffer plugins.php HTML and rewrite Undsgn "View details" on Barbas rows.
+ */
+function barbas_update_start_plugins_page_output_guard() {
+    static  = false;
+    if () {
+        return;
+    }
+     = true;
+    ob_start('barbas_update_rewrite_plugins_page_details_html');
+}
+
+/**
+ * @param string  Plugins page HTML.
+ * @return string
+ */
+function barbas_update_rewrite_plugins_page_details_html() {
+    if (!is_string() ||  === '') {
+        return ;
+    }
+    barbas_update_sync_plugin_details_from_tabs();
+     = barbas_update_plugin_details_registry();
+    if (empty()) {
+        return ;
+    }
+
+    foreach ( as ) {
+        if (empty(['file']) || empty(['slug'])) {
+            continue;
+        }
+         = plugin_basename(['file']);
+             = (string) ['slug'];
+          = network_admin_url(
+            'plugin-install.php?tab=plugin-information&plugin=' . rawurlencode() .
+            '&TB_iframe=true&width=600&height=550'
+        );
+         = esc_url();
+
+         = '/(<tr\b[^>]*\bdata-plugin="' . preg_quote(, '/') . '"[^>]*>)(.*?)(<\/tr>)/is';
+            = preg_replace_callback(
+            ,
+            static function () use () {
+                 = [2];
+                 = preg_replace(
+                    '/href=(["\\\'])https?:\\/\\/(?:support\\.)?undsgn\\.com[^"\\\']*\\1/i',
+                    'href="' .  . '"',
+                    
+                );
+                 = preg_replace(
+                    '/href=(["\\\'])https?:\\/\\/(?:www\\.)?(?:theme\\.)?uncode\\.net[^"\\\']*\\1/i',
+                    'href="' .  . '"',
+                    
+                );
+                return [1] .  . [3];
+            },
+            ,
+            1
+        );
+    }
+
+    return ;
 }
 
 /**
@@ -2531,43 +2652,76 @@ function barbas_update_print_plugin_details_guard_js() {
     if (!is_admin() || !current_user_can('activate_plugins')) {
         return;
     }
+    static  = false;
+    if () {
+        return;
+    }
+     = true;
+
     barbas_update_sync_plugin_details_from_tabs();
-    $registry = barbas_update_plugin_details_registry();
-    if (empty($registry)) {
+     = barbas_update_plugin_details_registry();
+    if (empty()) {
         return;
     }
 
-    $map = array();
-    foreach ($registry as $entry) {
-        if (empty($entry['file']) || empty($entry['slug'])) {
+     = array();
+    foreach ( as ) {
+        if (empty(['file']) || empty(['slug'])) {
             continue;
         }
-        $basename = plugin_basename($entry['file']);
-        $slug     = (string) $entry['slug'];
-        $map[ $basename ] = array(
-            'slug'       => $slug,
-            'homepage'   => isset($entry['homepage']) ? (string) $entry['homepage'] : '',
+         = plugin_basename(['file']);
+             = (string) ['slug'];
+        [  ] = array(
+            'slug'       => ,
+            'homepage'   => isset(['homepage']) ? (string) ['homepage'] : '',
             'detailsUrl' => network_admin_url(
-                'plugin-install.php?tab=plugin-information&plugin=' . rawurlencode($slug) .
+                'plugin-install.php?tab=plugin-information&plugin=' . rawurlencode() .
                 '&TB_iframe=true&width=600&height=550'
             ),
             'label'      => __('View details'),
         );
     }
-    if (empty($map)) {
+    if (empty()) {
         return;
     }
 
-    $json = wp_json_encode($map);
-    if (!is_string($json) || $json === '') {
+     = wp_json_encode();
+    if (!is_string() ||  === '') {
         return;
     }
     ?>
 <script id="barbas-update-plugin-details-guard">
 (function () {
-  var map = <?php echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON from wp_json_encode ?>;
-  var hijack = /undsgn\.com|support\.undsgn|theme\.uncode|uncode\.net|themeforest\.net\/item\/uncode/i;
+  if (window.__barbasDetailsGuardBooted) return;
+  window.__barbasDetailsGuardBooted = true;
+
+  var map = <?php echo ; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
+  var hijack = /undsgn\\.com|support\\.undsgn|theme\\.uncode|uncode\\.net|themeforest\\.net\\/item\\/uncode/i;
   var detailsText = /view details|ver detalhes|voir les d[eé]tails|detalles/i;
+
+  function confFor(el) {
+    var tr = el && el.closest ? el.closest('tr[data-plugin]') : null;
+    if (!tr) return null;
+    return map[tr.getAttribute('data-plugin') || ''] || null;
+  }
+
+  function isDetailsAnchor(a, conf) {
+    if (!a || !conf) return false;
+    var href = a.getAttribute('href') || a.href || '';
+    var text = (a.textContent || '').trim();
+    return a.classList.contains('open-plugin-details-modal')
+      || detailsText.test(text)
+      || /plugin-information/.test(href)
+      || hijack.test(href);
+  }
+
+  function applyHref(a, conf) {
+    a.setAttribute('href', conf.detailsUrl);
+    try { a.href = conf.detailsUrl; } catch (e) {}
+    a.classList.add('thickbox', 'open-plugin-details-modal');
+    a.removeAttribute('target');
+    a.removeAttribute('rel');
+  }
 
   function fixRow(tr, conf) {
     if (!tr || !conf || !conf.detailsUrl) return;
@@ -2575,29 +2729,18 @@ function barbas_update_print_plugin_details_guard_js() {
     var hasGood = false;
     for (var i = 0; i < links.length; i++) {
       var a = links[i];
-      var href = a.getAttribute('href') || '';
-      var text = (a.textContent || '').trim();
-      var isDetails = a.classList.contains('open-plugin-details-modal') || detailsText.test(text) || /plugin-information/.test(href);
-      if (!isDetails && !hijack.test(href)) continue;
-      if (hijack.test(href) || (isDetails && href.indexOf('plugin=' + conf.slug) === -1)) {
-        a.setAttribute('href', conf.detailsUrl);
-        a.classList.add('thickbox', 'open-plugin-details-modal');
-        a.setAttribute('target', '');
-        a.removeAttribute('target');
-        if (detailsText.test(text) || hijack.test(href)) {
-          a.textContent = conf.label || text || 'View details';
-        }
+      if (!isDetailsAnchor(a, conf) && !hijack.test(a.getAttribute('href') || '')) continue;
+      applyHref(a, conf);
+      if (detailsText.test((a.textContent || '').trim())) {
+        a.textContent = conf.label || a.textContent || 'View details';
       }
-      if ((a.getAttribute('href') || '').indexOf('plugin=' + conf.slug) !== -1) {
-        hasGood = true;
-      }
+      if ((a.getAttribute('href') || '').indexOf('plugin=' + conf.slug) !== -1) hasGood = true;
     }
     if (!hasGood) {
       var cell = tr.querySelector('.plugin-version-author-uri');
       if (!cell) return;
       var a = document.createElement('a');
-      a.href = conf.detailsUrl;
-      a.className = 'thickbox open-plugin-details-modal';
+      applyHref(a, conf);
       a.textContent = conf.label || 'View details';
       cell.appendChild(document.createTextNode(' | '));
       cell.appendChild(a);
@@ -2605,34 +2748,52 @@ function barbas_update_print_plugin_details_guard_js() {
   }
 
   function fixAll() {
-    var rows = document.querySelectorAll('tr[data-plugin], #the-list tr');
+    var rows = document.querySelectorAll('tr[data-plugin]');
     for (var i = 0; i < rows.length; i++) {
       var tr = rows[i];
-      var key = tr.getAttribute('data-plugin') || '';
-      if (!key || !map[key]) continue;
-      fixRow(tr, map[key]);
+      var conf = map[tr.getAttribute('data-plugin') || ''];
+      if (conf) fixRow(tr, conf);
     }
   }
 
+  function openDetails(conf) {
+    if (!conf || !conf.detailsUrl) return;
+    if (typeof window.tb_show === 'function') {
+      window.tb_show(conf.label || conf.slug, conf.detailsUrl, false);
+      return;
+    }
+    window.location.href = conf.detailsUrl;
+  }
+
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (!a) return;
+    var conf = confFor(a);
+    if (!conf || !isDetailsAnchor(a, conf)) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    applyHref(a, conf);
+    openDetails(conf);
+  }, true);
+
   function boot() {
     fixAll();
-    // Uncode often rewrites after DOMContentLoaded — watch and re-apply.
     var list = document.getElementById('the-list') || document.body;
-    if (!list || typeof MutationObserver === 'undefined') return;
-    var scheduled = false;
-    var obs = new MutationObserver(function () {
-      if (scheduled) return;
-      scheduled = true;
-      setTimeout(function () {
-        scheduled = false;
-        fixAll();
-      }, 30);
-    });
-    obs.observe(list, { subtree: true, childList: true, attributes: true, attributeFilter: ['href'] });
-    // A few delayed passes cover late Uncode scripts without endless loops.
-    setTimeout(fixAll, 200);
-    setTimeout(fixAll, 1000);
-    setTimeout(fixAll, 3000);
+    if (list && typeof MutationObserver !== 'undefined') {
+      var scheduled = false;
+      var obs = new MutationObserver(function () {
+        if (scheduled) return;
+        scheduled = true;
+        setTimeout(function () { scheduled = false; fixAll(); }, 20);
+      });
+      obs.observe(list, { subtree: true, childList: true, attributes: true, attributeFilter: ['href', 'class'] });
+    }
+    var n = 0;
+    var timer = setInterval(function () {
+      fixAll();
+      n += 1;
+      if (n >= 40) clearInterval(timer);
+    }, 250);
   }
 
   if (document.readyState === 'loading') {
