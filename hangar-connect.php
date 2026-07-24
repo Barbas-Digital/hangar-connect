@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Hangar Connect
-Plugin URI: https://github.com/Barbas-Digital/barbas-connect
+Plugin URI: https://github.com/Barbas-Digital/hangar-connect
 Description: Free site agent for Hangar: secure REST API, pairing keys, and Activity Reports bridge. Public GitHub updates (no license).
 Version: 0.2.1
 Requires at least: 5.8

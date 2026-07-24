@@ -11,7 +11,7 @@ function hangar_connect_register_github_updates($plugin_file) {
         barbas_update_guard_plugin_details(
             $plugin_file,
             'hangar-connect',
-            'https://github.com/Barbas-Digital/barbas-connect'
+            'https://github.com/Barbas-Digital/hangar-connect'
         );
     }
 
@@ -32,7 +32,7 @@ function hangar_connect_register_github_updates($plugin_file) {
     }
 
     $updateChecker = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
-        'https://github.com/Barbas-Digital/barbas-connect',
+        'https://github.com/Barbas-Digital/hangar-connect',
         $plugin_file,
         'hangar-connect'
     );
@@ -55,7 +55,7 @@ function hangar_connect_register_github_updates($plugin_file) {
             static function ($info) {
                 if (is_object($info)) {
                     $info->slug = 'hangar-connect';
-                    $info->homepage = 'https://github.com/Barbas-Digital/barbas-connect';
+                    $info->homepage = 'https://github.com/Barbas-Digital/hangar-connect';
                 }
                 return $info;
             }
