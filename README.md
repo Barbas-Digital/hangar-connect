@@ -1,6 +1,6 @@
 # Hangar Connect
 
-![Version](https://img.shields.io/badge/Version-0.2.5-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.2.11-blue.svg)
 ![WordPress](https://img.shields.io/badge/Tested%20up%20to-7.0-green.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)
 ![License](https://img.shields.io/badge/License-GPLv2%20or%20Later-orange.svg)

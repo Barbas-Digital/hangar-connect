@@ -42,7 +42,7 @@ if (!function_exists('hangar_connect_filter_plugins_list')) {
 
         $plugins[ $basename ]['Name'] = hangar_connect_display_name();
         $plugins[ $basename ]['Description'] = __(
-            'Site agent for Hangar: secure REST API, pairing keys, and bridge stubs for Activity Reports.',
+            'Site agent for Hangar: secure REST API, pairing keys, and productivity reports via WP Activity Log.',
             'hangar-connect'
         );
 
@@ -56,7 +56,10 @@ if (function_exists('barbas_readme_i18n_register')) {
     barbas_readme_i18n_register(
         'hangar-connect',
         static function () {
-            return array();
+            if (!function_exists('hangar_connect_readme_i18n_sections')) {
+                return array();
+            }
+            return hangar_connect_readme_i18n_sections();
         }
     );
 }
