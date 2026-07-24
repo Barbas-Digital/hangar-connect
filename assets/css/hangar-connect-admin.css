@@ -122,6 +122,79 @@
 	word-break: break-word;
 }
 
+.hangar-connect-wsal {
+	margin-top: 14px;
+	padding: 10px 12px;
+	border-radius: 6px;
+	border: 1px solid #c3cfc0;
+	background: #f7faf5;
+}
+
+.hangar-connect-wsal.is-ok {
+	border-color: rgba(0, 147, 68, 0.35);
+	background: rgba(0, 147, 68, 0.08);
+}
+
+.hangar-connect-wsal.is-warn {
+	border-color: rgba(166, 124, 0, 0.4);
+	background: rgba(166, 124, 0, 0.08);
+}
+
+.hangar-connect-wsal__row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.hangar-connect-wsal__label {
+	font-size: 13px;
+	font-weight: 600;
+	color: #384a2f;
+}
+
+.hangar-connect-wsal__badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 999px;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	background: #fff;
+	color: #4a5c42;
+	border: 1px solid #c3cfc0;
+}
+
+.hangar-connect-wsal.is-ok .hangar-connect-wsal__badge {
+	color: #00813c;
+	border-color: rgba(0, 147, 68, 0.35);
+	background: rgba(0, 147, 68, 0.12);
+}
+
+.hangar-connect-wsal.is-warn .hangar-connect-wsal__badge {
+	color: #8a6500;
+	border-color: rgba(166, 124, 0, 0.45);
+	background: rgba(255, 255, 255, 0.7);
+}
+
+.hangar-connect-wsal__msg {
+	margin: 6px 0 0 !important;
+	font-size: 13px;
+	line-height: 1.4;
+	color: #4a5c42;
+}
+
+.hangar-connect-wsal__action {
+	margin: 6px 0 0 !important;
+	font-size: 13px;
+}
+
+.hangar-connect-wsal__action a {
+	font-weight: 600;
+}
+
 /* Same box for Site URL and Health endpoint (no extra indent on long URLs). */
 .hangar-connect-status-grid dd code,
 .hangar-connect-status-value {

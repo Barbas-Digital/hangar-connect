@@ -3,7 +3,7 @@
 Plugin Name: Hangar Connect
 Plugin URI: https://github.com/Barbas-Digital/hangar-connect
 Description: Free site agent for Hangar: pairing, WP users, productivity reports via WP Activity Log. Public GitHub updates (no license).
-Version: 0.2.5
+Version: 0.2.6
 Requires at least: 5.8
 Requires PHP: 7.4
 Author: Guilherme Souza
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 define('HANGAR_CONNECT_PLUGIN_FILE', __FILE__);
-define('HANGAR_CONNECT_VERSION', '0.2.5');
+define('HANGAR_CONNECT_VERSION', '0.2.6');
 define('HANGAR_CONNECT_DIR', plugin_dir_path(__FILE__));
 define('HANGAR_CONNECT_URL', plugin_dir_url(__FILE__));
 define('HANGAR_CONNECT_REST_NS', 'hangar-connect/v1');
@@ -69,7 +69,7 @@ if (!function_exists('hangar_connect_missing_files_notice')) {
         }
         echo '<div class="notice notice-error"><p><strong>Hangar Connect:</strong> ';
         echo esc_html__(
-            'Missing files in includes/ or lib/. Delete the plugin folder and install via Plugins → Add New → Upload Plugin (hangar-connect.zip).',
+            'Missing files in includes/ or lib/. Delete the plugin folder and install via Plugins â†’ Add New â†’ Upload Plugin (hangar-connect.zip).',
             'hangar-connect'
         );
         echo '</p></div>';
