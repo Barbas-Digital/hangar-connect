@@ -26,7 +26,7 @@ if (!defined('BARBAS_UPDATE_PLUGIN_FILE')) {
 define('BARBAS_UPDATE_HUB_LOADED', true);
 
 if (!defined('BARBAS_UPDATE_HUB_VERSION')) {
-    define('BARBAS_UPDATE_HUB_VERSION', '2.2.21');
+    define('BARBAS_UPDATE_HUB_VERSION', '2.2.22');
 }
 
 if (!defined('BARBAS_UPDATE_INLINE_TABS_MAX')) {
@@ -2505,6 +2505,144 @@ function barbas_update_boot_plugin_details_guards() {
     add_filter('all_plugins', 'barbas_update_filter_all_plugins_details_guard', PHP_INT_MAX);
     add_filter('site_transient_update_plugins', 'barbas_update_filter_update_plugins_details_guard', PHP_INT_MAX);
     add_filter('plugin_row_meta', 'barbas_update_filter_plugin_row_meta_details_guard', PHP_INT_MAX, 3);
+
+    // Uncode/Undsgn often registers plugin_row_meta later and/or rewrites links in JS after paint.
+    add_action('load-plugins.php', 'barbas_update_reassert_plugin_details_php_guards', 99999);
+    add_action('admin_head-plugins.php', 'barbas_update_reassert_plugin_details_php_guards', 99999);
+    add_action('admin_print_footer_scripts-plugins.php', 'barbas_update_print_plugin_details_guard_js', 99999);
+}
+
+/**
+ * Re-attach PHP meta/all_plugins guards after late Uncode hooks register.
+ */
+function barbas_update_reassert_plugin_details_php_guards() {
+    barbas_update_sync_plugin_details_from_tabs();
+    // Remove + re-add so we win over same-priority late registrars.
+    remove_filter('all_plugins', 'barbas_update_filter_all_plugins_details_guard', PHP_INT_MAX);
+    remove_filter('plugin_row_meta', 'barbas_update_filter_plugin_row_meta_details_guard', PHP_INT_MAX);
+    add_filter('all_plugins', 'barbas_update_filter_all_plugins_details_guard', PHP_INT_MAX);
+    add_filter('plugin_row_meta', 'barbas_update_filter_plugin_row_meta_details_guard', PHP_INT_MAX, 3);
+}
+
+/**
+ * Client-side guard: Uncode rewrites "Ver detalhes" to support.undsgn.com after load.
+ */
+function barbas_update_print_plugin_details_guard_js() {
+    if (!is_admin() || !current_user_can('activate_plugins')) {
+        return;
+    }
+    barbas_update_sync_plugin_details_from_tabs();
+    $registry = barbas_update_plugin_details_registry();
+    if (empty($registry)) {
+        return;
+    }
+
+    $map = array();
+    foreach ($registry as $entry) {
+        if (empty($entry['file']) || empty($entry['slug'])) {
+            continue;
+        }
+        $basename = plugin_basename($entry['file']);
+        $slug     = (string) $entry['slug'];
+        $map[ $basename ] = array(
+            'slug'       => $slug,
+            'homepage'   => isset($entry['homepage']) ? (string) $entry['homepage'] : '',
+            'detailsUrl' => network_admin_url(
+                'plugin-install.php?tab=plugin-information&plugin=' . rawurlencode($slug) .
+                '&TB_iframe=true&width=600&height=550'
+            ),
+            'label'      => __('View details'),
+        );
+    }
+    if (empty($map)) {
+        return;
+    }
+
+    $json = wp_json_encode($map);
+    if (!is_string($json) || $json === '') {
+        return;
+    }
+    ?>
+<script id="barbas-update-plugin-details-guard">
+(function () {
+  var map = <?php echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON from wp_json_encode ?>;
+  var hijack = /undsgn\.com|support\.undsgn|theme\.uncode|uncode\.net|themeforest\.net\/item\/uncode/i;
+  var detailsText = /view details|ver detalhes|voir les d[eé]tails|detalles/i;
+
+  function fixRow(tr, conf) {
+    if (!tr || !conf || !conf.detailsUrl) return;
+    var links = tr.querySelectorAll('a');
+    var hasGood = false;
+    for (var i = 0; i < links.length; i++) {
+      var a = links[i];
+      var href = a.getAttribute('href') || '';
+      var text = (a.textContent || '').trim();
+      var isDetails = a.classList.contains('open-plugin-details-modal') || detailsText.test(text) || /plugin-information/.test(href);
+      if (!isDetails && !hijack.test(href)) continue;
+      if (hijack.test(href) || (isDetails && href.indexOf('plugin=' + conf.slug) === -1)) {
+        a.setAttribute('href', conf.detailsUrl);
+        a.classList.add('thickbox', 'open-plugin-details-modal');
+        a.setAttribute('target', '');
+        a.removeAttribute('target');
+        if (detailsText.test(text) || hijack.test(href)) {
+          a.textContent = conf.label || text || 'View details';
+        }
+      }
+      if ((a.getAttribute('href') || '').indexOf('plugin=' + conf.slug) !== -1) {
+        hasGood = true;
+      }
+    }
+    if (!hasGood) {
+      var cell = tr.querySelector('.plugin-version-author-uri');
+      if (!cell) return;
+      var a = document.createElement('a');
+      a.href = conf.detailsUrl;
+      a.className = 'thickbox open-plugin-details-modal';
+      a.textContent = conf.label || 'View details';
+      cell.appendChild(document.createTextNode(' | '));
+      cell.appendChild(a);
+    }
+  }
+
+  function fixAll() {
+    var rows = document.querySelectorAll('tr[data-plugin], #the-list tr');
+    for (var i = 0; i < rows.length; i++) {
+      var tr = rows[i];
+      var key = tr.getAttribute('data-plugin') || '';
+      if (!key || !map[key]) continue;
+      fixRow(tr, map[key]);
+    }
+  }
+
+  function boot() {
+    fixAll();
+    // Uncode often rewrites after DOMContentLoaded — watch and re-apply.
+    var list = document.getElementById('the-list') || document.body;
+    if (!list || typeof MutationObserver === 'undefined') return;
+    var scheduled = false;
+    var obs = new MutationObserver(function () {
+      if (scheduled) return;
+      scheduled = true;
+      setTimeout(function () {
+        scheduled = false;
+        fixAll();
+      }, 30);
+    });
+    obs.observe(list, { subtree: true, childList: true, attributes: true, attributeFilter: ['href'] });
+    // A few delayed passes cover late Uncode scripts without endless loops.
+    setTimeout(fixAll, 200);
+    setTimeout(fixAll, 1000);
+    setTimeout(fixAll, 3000);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();
+</script>
+    <?php
 }
 
 if (did_action('plugins_loaded')) {
