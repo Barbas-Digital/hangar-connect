@@ -3,7 +3,7 @@
 Plugin Name: Hangar Connect
 Plugin URI: https://github.com/Barbas-Digital/hangar-connect
 Description: Free site agent for Hangar: pairing, WP users, productivity reports via WP Activity Log. Public GitHub updates (no license).
-Version: 0.2.6
+Version: 0.2.7
 Requires at least: 5.8
 Requires PHP: 7.4
 Author: Guilherme Souza
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 define('HANGAR_CONNECT_PLUGIN_FILE', __FILE__);
-define('HANGAR_CONNECT_VERSION', '0.2.6');
+define('HANGAR_CONNECT_VERSION', '0.2.7');
 define('HANGAR_CONNECT_DIR', plugin_dir_path(__FILE__));
 define('HANGAR_CONNECT_URL', plugin_dir_url(__FILE__));
 define('HANGAR_CONNECT_REST_NS', 'hangar-connect/v1');
@@ -37,6 +37,13 @@ if (is_readable($hangar_connect_base . 'includes/barbas-update-bootstrap.php')) 
     require_once $hangar_connect_base . 'includes/barbas-update-bootstrap.php';
     if (function_exists('barbas_update_register_hub_candidate')) {
         barbas_update_register_hub_candidate(__FILE__);
+    }
+    if (function_exists('barbas_update_guard_plugin_details')) {
+        barbas_update_guard_plugin_details(
+            __FILE__,
+            'hangar-connect',
+            'https://github.com/Barbas-Digital/hangar-connect'
+        );
     }
 }
 

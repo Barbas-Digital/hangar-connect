@@ -131,6 +131,26 @@ function hangar_connect_register_rest_routes_for_namespace($ns) {
             'permission_callback' => 'hangar_connect_rest_permission_hmac',
         )
     );
+
+    register_rest_route(
+        $ns,
+        '/wp/snapshot',
+        array(
+            'methods'             => WP_REST_Server::READABLE,
+            'callback'            => 'hangar_connect_rest_wp_snapshot',
+            'permission_callback' => 'hangar_connect_rest_permission_hmac',
+            'args'                => array(
+                'refresh' => array(
+                    'required'          => false,
+                    'type'              => 'boolean',
+                    'default'           => true,
+                    'sanitize_callback' => static function ($v) {
+                        return filter_var($v, FILTER_VALIDATE_BOOLEAN);
+                    },
+                ),
+            ),
+        )
+    );
 }
 
 /**
@@ -151,6 +171,7 @@ function hangar_connect_capabilities_map() {
         'activity_bridge_ready'   => $ready,
         'activity_bridge_version' => HANGAR_CONNECT_VERSION,
         'wsal'                    => $wsal,
+        'wp_snapshot'             => true,
         // Legacy keys (Hangar ≤0.11): always false — AR is not required.
         'activity_reports'        => false,
     );
@@ -239,6 +260,82 @@ function hangar_connect_rest_capabilities(WP_REST_Request $request) {
             'ok'           => true,
             'capabilities' => hangar_connect_capabilities_map(),
             'version'      => HANGAR_CONNECT_VERSION,
+        ),
+        200
+    );
+}
+
+/**
+ * GET /wp/snapshot — plugins / update counts for Hangar fleet sync (HMAC).
+ *
+ * @param WP_REST_Request $request Request.
+ * @return WP_REST_Response
+ */
+function hangar_connect_rest_wp_snapshot(WP_REST_Request $request) {
+    if (!function_exists('get_plugins')) {
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    }
+
+    $refresh = $request->get_param('refresh');
+    if ($refresh === null || $refresh === true || $refresh === '1' || $refresh === 1) {
+        if (!function_exists('wp_update_plugins')) {
+            require_once ABSPATH . 'wp-includes/update.php';
+        }
+        if (function_exists('wp_update_plugins')) {
+            wp_update_plugins();
+        }
+        if (!function_exists('wp_update_themes')) {
+            require_once ABSPATH . 'wp-includes/update.php';
+        }
+        if (function_exists('wp_update_themes')) {
+            wp_update_themes();
+        }
+    }
+
+    $plugins = get_plugins();
+    $active  = (array) get_option('active_plugins', array());
+    $network = is_multisite() ? array_keys((array) get_site_option('active_sitewide_plugins', array())) : array();
+    $active_map = array_fill_keys(array_merge($active, $network), true);
+    $updates = get_site_transient('update_plugins');
+    $response = (is_object($updates) && !empty($updates->response) && is_array($updates->response))
+        ? $updates->response
+        : array();
+
+    $plugins_updates = 0;
+    foreach ($plugins as $file => $_data) {
+        if (isset($response[ $file ])) {
+            $plugins_updates++;
+        }
+    }
+
+    $theme_updates = 0;
+    $theme_transient = get_site_transient('update_themes');
+    if (is_object($theme_transient) && !empty($theme_transient->response) && is_array($theme_transient->response)) {
+        $theme_updates = count($theme_transient->response);
+    }
+
+    $wp_update = false;
+    $core = get_site_transient('update_core');
+    if (is_object($core) && !empty($core->updates) && is_array($core->updates)) {
+        foreach ($core->updates as $u) {
+            if (is_object($u) && isset($u->response) && $u->response === 'upgrade') {
+                $wp_update = true;
+                break;
+            }
+        }
+    }
+
+    return new WP_REST_Response(
+        array(
+            'ok'               => true,
+            'plugins_count'    => count($plugins),
+            'plugins_active'   => count($active_map),
+            'plugins_updates'  => $plugins_updates,
+            'themes_updates'   => $theme_updates,
+            'wordpress_update' => $wp_update,
+            'wordpress_version'=> get_bloginfo('version'),
+            'php_version'      => PHP_VERSION,
+            'checked_at'       => gmdate('c'),
         ),
         200
     );
