@@ -549,23 +549,23 @@ function hangar_connect_render_admin_page() {
 }
 
 /**
- * Product footer: Hangar mark + discreet Barbas Digital credit (brand kit).
+ * Vendor footer — same Barbas Digital block as the rest of the suite.
  */
 function hangar_connect_render_brand_footer() {
-    $mark = HANGAR_CONNECT_URL . 'assets/img/hangar-mark-blue.svg';
-    $home = 'https://github.com/Barbas-Digital/hangar-connect';
-    $vendor = 'https://www.barbas.digital/';
+    if (function_exists('barbas_update_render_brand_footer')) {
+        barbas_update_render_brand_footer();
+        return;
+    }
 
-    echo '<footer class="hangar-connect-footer">';
-    echo '<a class="hangar-connect-footer__product" href="' . esc_url($home) . '" target="_blank" rel="noopener noreferrer">';
-    echo '<img class="hangar-connect-footer__mark" src="' . esc_url($mark) . '" alt="" width="28" height="28" decoding="async" />';
-    echo '<p class="hangar-connect-footer__name">' . esc_html__('Hangar', 'hangar-connect') . '</p>';
+    $logo = HANGAR_CONNECT_URL . 'assets/img/logo-black.svg';
+    $site = 'https://www.barbas.digital';
+    echo '<footer class="barbas-update-footer">';
+    echo '<a href="' . esc_url($site) . '" class="barbas-update-footer__logo-link" target="_blank" rel="noopener noreferrer" aria-label="' . esc_attr__('Barbas Digital', 'hangar-connect') . '">';
+    echo '<img src="' . esc_url($logo) . '" alt="" class="barbas-update-footer__logo" width="36" height="63" decoding="async" />';
     echo '</a>';
-    echo '<p class="hangar-connect-footer__vendor">';
-    echo esc_html__('A product by', 'hangar-connect') . ' ';
-    echo '<a href="' . esc_url($vendor) . '" target="_blank" rel="noopener noreferrer">' . esc_html__('Barbas Digital', 'hangar-connect') . '</a>';
-    echo '<br />';
-    echo esc_html__('The designer label of the most impactful websites on the Internet.', 'hangar-connect');
-    echo '</p>';
+    echo '<div class="barbas-update-footer__copy">';
+    echo '<p class="barbas-update-footer__name"><a href="' . esc_url($site) . '" target="_blank" rel="noopener noreferrer">' . esc_html__('Barbas Digital', 'hangar-connect') . '</a></p>';
+    echo '<p class="barbas-update-footer__tagline">' . esc_html__('The brand behind the most impactful websites on the Internet.', 'hangar-connect') . '</p>';
+    echo '</div>';
     echo '</footer>';
 }

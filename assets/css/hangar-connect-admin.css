@@ -17,9 +17,18 @@
 	--hc-font: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 	--hc-mono: "JetBrains Mono", Consolas, Monaco, ui-monospace, monospace;
 
-	margin: 12px 0 28px;
+	margin: 0 0 28px;
 	max-width: 880px;
 	box-sizing: border-box;
+}
+
+/* Tighten WP admin chrome above our branded header */
+body.settings_page_hangar-connect #wpbody-content > .wrap.hangar-connect-wrap {
+	margin-top: 0;
+}
+
+body.settings_page_hangar-connect #wpbody-content {
+	padding-top: 12px;
 }
 
 .hangar-connect-app {
@@ -33,8 +42,8 @@
 	flex-wrap: wrap;
 	align-items: flex-start;
 	justify-content: space-between;
-	gap: 16px 24px;
-	margin-bottom: 20px;
+	gap: 12px 24px;
+	margin: 0 0 16px;
 }
 
 .hangar-connect-header__brand {
@@ -385,74 +394,74 @@
 	color: var(--hc-muted);
 }
 
-/* Product footer (Hangar) + discreet Barbas Digital credit */
-.hangar-connect-footer {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px 24px;
-	margin-top: 8px;
-	padding-top: 18px;
-	border-top: 1px solid var(--hc-border);
-}
-
-.hangar-connect-footer__product {
+/* Vendor footer (suite Barbas Digital block) */
+.hangar-connect-wrap .barbas-update-footer {
 	display: flex;
 	align-items: center;
-	gap: 10px;
-	text-decoration: none;
-	color: var(--hc-text);
+	gap: 14px;
+	margin-top: 28px;
+	padding-top: 22px;
+	border-top: 1px solid #f0f0f1;
 }
 
-.hangar-connect-footer__product:hover,
-.hangar-connect-footer__product:focus-visible {
-	color: var(--hc-accent);
-}
-
-.hangar-connect-footer__mark {
+.hangar-connect-wrap .barbas-update-footer__logo-link {
 	display: block;
-	width: 28px;
-	height: 28px;
+	flex-shrink: 0;
+	line-height: 0;
+	text-decoration: none;
+	border-radius: 4px;
+	transition: opacity 0.15s ease;
 }
 
-.hangar-connect-footer__name {
-	margin: 0;
-	font-size: 14px;
+.hangar-connect-wrap .barbas-update-footer__logo-link:hover,
+.hangar-connect-wrap .barbas-update-footer__logo-link:focus-visible {
+	opacity: 0.85;
+}
+
+.hangar-connect-wrap .barbas-update-footer__logo {
+	display: block;
+	width: auto;
+	height: 52px;
+	opacity: 0.38;
+	transition: opacity 0.15s ease;
+}
+
+.hangar-connect-wrap .barbas-update-footer__logo-link:hover .barbas-update-footer__logo,
+.hangar-connect-wrap .barbas-update-footer__logo-link:focus-visible .barbas-update-footer__logo {
+	opacity: 0.55;
+}
+
+.hangar-connect-wrap .barbas-update-footer__copy {
+	min-width: 0;
+}
+
+.hangar-connect-wrap .barbas-update-footer__name {
+	margin: 0 0 3px;
+	font-size: 13px;
 	font-weight: 600;
+	line-height: 1.3;
 	letter-spacing: -0.01em;
 }
 
-.hangar-connect-footer__vendor {
+.hangar-connect-wrap .barbas-update-footer__name a {
+	color: #50575e;
+	text-decoration: none;
+}
+
+.hangar-connect-wrap .barbas-update-footer__name a:hover,
+.hangar-connect-wrap .barbas-update-footer__name a:focus-visible {
+	color: #1d2327;
+}
+
+.hangar-connect-wrap .barbas-update-footer__tagline {
 	margin: 0;
-	max-width: 22rem;
 	font-size: 12px;
-	line-height: 1.45;
-	color: var(--hc-muted);
-	text-align: right;
-}
-
-.hangar-connect-footer__vendor a {
-	color: var(--hc-muted);
-	text-decoration: underline;
-	text-underline-offset: 2px;
-}
-
-.hangar-connect-footer__vendor a:hover,
-.hangar-connect-footer__vendor a:focus-visible {
-	color: var(--hc-accent);
+	line-height: 1.5;
+	color: #a7aaad;
+	max-width: 38ch;
 }
 
 @media (max-width: 782px) {
-	.hangar-connect-footer {
-		flex-direction: column;
-		align-items: flex-start;
-	}
-
-	.hangar-connect-footer__vendor {
-		text-align: left;
-	}
-
 	.hangar-connect-table thead {
 		display: none;
 	}
