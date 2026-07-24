@@ -320,7 +320,6 @@ if (!function_exists('barbas_update_filter_plugin_information_changelog')) {
         $slug = isset($args->slug) ? (string) $args->slug : (isset($result->slug) ? (string) $result->slug : '');
         $is_barbas = (strpos($homepage, 'github.com/Barbas-Digital/') !== false)
             || ($slug !== '' && strpos($slug, 'barbas-') === 0)
-            || ($slug !== '' && strpos($slug, 'hangar-') === 0)
             || ($slug === 'abler-api-vagas');
         if (!$is_barbas) {
             return $result;
@@ -338,100 +337,102 @@ if (!function_exists('barbas_update_filter_plugin_information_changelog')) {
 
 if (!function_exists('barbas_update_guard_plugin_details')) {
     /**
-     * Garante que "Ver detalhes" abre o modal Barbas (slug/url do nosso repo),
-     * mesmo se Uncode/Undsgn sobrescreve PluginURI/slug ou o link na lista de plugins.
+     * Register plugin for correct "View details" (hub 2.2.21+ owns filters + local plugins_api).
      *
-     * @param string $plugin_file Caminho absoluto do arquivo principal do plugin.
-     * @param string $slug        Slug PUC (ex.: barbas-uncode-core-fix).
-     * @param string $homepage    URL da página do plugin (preferência: GitHub do repo).
+     * @param string $plugin_file Absolute main plugin file.
+     * @param string $slug        PUC slug (e.g. barbas-uncode-core-fix).
+     * @param string $homepage    Prefer GitHub repo URL.
      */
     function barbas_update_guard_plugin_details($plugin_file, $slug, $homepage = '') {
         if (!is_string($plugin_file) || $plugin_file === '' || !is_string($slug) || $slug === '') {
             return;
         }
-
-        static $registered = array();
-        if (isset($registered[$slug])) {
+        $slug = sanitize_key($slug);
+        if ($slug === '') {
             return;
         }
-        $registered[$slug] = true;
-
         if ($homepage === '') {
             $homepage = 'https://github.com/Barbas-Digital/' . $slug;
         }
 
-        // Última palavra antes do WP renderizar a lista (Uncode costuma filtrar all_plugins).
+        // Prefer newest hub registry (survives Uncode hijacks + private-repo "Plugin not found").
+        if (function_exists('barbas_update_register_plugin_details_guard')) {
+            barbas_update_register_plugin_details_guard($plugin_file, $slug, $homepage);
+            return;
+        }
+
+        if (!isset($GLOBALS['barbas_update_plugin_details']) || !is_array($GLOBALS['barbas_update_plugin_details'])) {
+            $GLOBALS['barbas_update_plugin_details'] = array();
+        }
+        $GLOBALS['barbas_update_plugin_details'][ $slug ] = array(
+            'file'     => $plugin_file,
+            'slug'     => $slug,
+            'homepage' => $homepage,
+        );
+
+        // Legacy fallback when an older hub is still the active host.
+        static $legacy_hooks = false;
+        if ($legacy_hooks) {
+            return;
+        }
+        $legacy_hooks = true;
+
         add_filter(
             'all_plugins',
-            static function ($plugins) use ($plugin_file, $slug, $homepage) {
-                if (!is_array($plugins)) {
+            static function ($plugins) {
+                if (!is_array($plugins) || empty($GLOBALS['barbas_update_plugin_details'])) {
                     return $plugins;
                 }
-                $key = plugin_basename($plugin_file);
-                if (!isset($plugins[$key]) || !is_array($plugins[$key])) {
-                    return $plugins;
+                foreach ($GLOBALS['barbas_update_plugin_details'] as $entry) {
+                    $key = plugin_basename($entry['file']);
+                    if (!isset($plugins[ $key ]) || !is_array($plugins[ $key ])) {
+                        continue;
+                    }
+                    $plugins[ $key ]['slug'] = $entry['slug'];
+                    $plugins[ $key ]['PluginURI'] = $entry['homepage'];
                 }
-                $plugins[$key]['slug'] = $slug;
-                $plugins[$key]['PluginURI'] = $homepage;
                 return $plugins;
             },
-            99999
+            PHP_INT_MAX
         );
 
-        add_filter(
-            'site_transient_update_plugins',
-            static function ($transient) use ($plugin_file, $slug, $homepage) {
-                if (!is_object($transient) || empty($transient->response) || !is_array($transient->response)) {
-                    return $transient;
-                }
-                $key = plugin_basename($plugin_file);
-                if (isset($transient->response[$key]) && is_object($transient->response[$key])) {
-                    $transient->response[$key]->slug = $slug;
-                    $transient->response[$key]->url  = $homepage;
-                }
-                return $transient;
-            },
-            99999
-        );
-
-        // Remove link Undsgn (ex.: support.undsgn.com/.../Change-Log) e garante o thickbox Barbas.
         add_filter(
             'plugin_row_meta',
-            static function ($plugin_meta, $plugin_file_rel, $plugin_data = array()) use ($plugin_file, $slug) {
-                if (!is_array($plugin_meta)) {
+            static function ($plugin_meta, $plugin_file_rel, $plugin_data = array()) {
+                if (!is_array($plugin_meta) || empty($GLOBALS['barbas_update_plugin_details'])) {
                     return $plugin_meta;
                 }
-                if (plugin_basename($plugin_file) !== $plugin_file_rel) {
+                $entry = null;
+                foreach ($GLOBALS['barbas_update_plugin_details'] as $candidate) {
+                    if (plugin_basename($candidate['file']) === $plugin_file_rel) {
+                        $entry = $candidate;
+                        break;
+                    }
+                }
+                if ($entry === null) {
                     return $plugin_meta;
                 }
-
+                $slug = $entry['slug'];
                 $cleaned = array();
                 $has_our_details = false;
-
                 foreach ($plugin_meta as $link) {
                     if (!is_string($link)) {
                         $cleaned[] = $link;
                         continue;
                     }
-
-                    // Links sequestrados pelo Uncode/Undsgn.
-                    if (preg_match('/undsgn\.com|support\.undsgn/i', $link)) {
+                    if (preg_match('/undsgn\.com|support\.undsgn|theme\.uncode|uncode\.net|themeforest\.net\/item\/uncode/i', $link)) {
                         continue;
                     }
-
-                    $is_details = (bool) preg_match('/open-plugin-details-modal|View details|Ver detalhes/i', $link);
+                    $is_details = (bool) preg_match('/open-plugin-details-modal|plugin-information|View details|Ver detalhes/i', $link);
                     if ($is_details) {
                         if (stripos($link, 'plugin=' . $slug) !== false) {
                             $has_our_details = true;
                             $cleaned[] = $link;
                         }
-                        // Descarta "Ver detalhes" apontando para outro slug/URL.
                         continue;
                     }
-
                     $cleaned[] = $link;
                 }
-
                 if (!$has_our_details) {
                     $name = !empty($plugin_data['Name']) ? $plugin_data['Name'] : $slug;
                     array_unshift(
@@ -444,17 +445,15 @@ if (!function_exists('barbas_update_guard_plugin_details')) {
                                     '&TB_iframe=true&width=600&height=550'
                                 )
                             ),
-                            /* translators: %s: Plugin name. */
                             esc_attr(sprintf(__('More information about %s'), $name)),
                             esc_attr($name),
                             __('View details')
                         )
                     );
                 }
-
                 return $cleaned;
             },
-            99999,
+            PHP_INT_MAX,
             3
         );
     }

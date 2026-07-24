@@ -26,7 +26,7 @@ if (!defined('BARBAS_UPDATE_PLUGIN_FILE')) {
 define('BARBAS_UPDATE_HUB_LOADED', true);
 
 if (!defined('BARBAS_UPDATE_HUB_VERSION')) {
-    define('BARBAS_UPDATE_HUB_VERSION', '2.2.20');
+    define('BARBAS_UPDATE_HUB_VERSION', '2.2.21');
 }
 
 if (!defined('BARBAS_UPDATE_INLINE_TABS_MAX')) {
@@ -2147,3 +2147,369 @@ function barbas_update_redirect_legacy_urls() {
         exit;
     }
 }
+
+/**
+ * Registry of Barbas plugins that need a correct "View details" modal.
+ *
+ * @return array<string, array{file:string,slug:string,homepage:string}>
+ */
+function barbas_update_plugin_details_registry() {
+    if (!isset($GLOBALS['barbas_update_plugin_details']) || !is_array($GLOBALS['barbas_update_plugin_details'])) {
+        $GLOBALS['barbas_update_plugin_details'] = array();
+    }
+    return $GLOBALS['barbas_update_plugin_details'];
+}
+
+/**
+ * Register one plugin for details-link + plugins_api local fallback.
+ *
+ * @param string $plugin_file Absolute main plugin file.
+ * @param string $slug        PUC / modal slug (e.g. barbas-image-upload-size-limit).
+ * @param string $homepage    Prefer GitHub repo URL.
+ */
+function barbas_update_register_plugin_details_guard($plugin_file, $slug, $homepage = '') {
+    if (!is_string($plugin_file) || $plugin_file === '' || !is_string($slug) || $slug === '') {
+        return;
+    }
+    $slug = sanitize_key($slug);
+    if ($slug === '') {
+        return;
+    }
+    if ($homepage === '') {
+        $homepage = 'https://github.com/Barbas-Digital/' . $slug;
+    }
+    if (!isset($GLOBALS['barbas_update_plugin_details']) || !is_array($GLOBALS['barbas_update_plugin_details'])) {
+        $GLOBALS['barbas_update_plugin_details'] = array();
+    }
+    $GLOBALS['barbas_update_plugin_details'][ $slug ] = array(
+        'file'     => $plugin_file,
+        'slug'     => $slug,
+        'homepage' => $homepage,
+    );
+}
+
+/**
+ * Pull every hub tab into the details registry (covers plugins whose bootstrap is older).
+ */
+function barbas_update_sync_plugin_details_from_tabs() {
+    if (!function_exists('barbas_update_get_tabs')) {
+        $tabs = apply_filters('barbas_update_tabs', array());
+    } else {
+        $tabs = barbas_update_get_tabs();
+    }
+    if (!is_array($tabs)) {
+        return;
+    }
+    foreach ($tabs as $tab) {
+        if (!is_array($tab) || empty($tab['plugin']) || !is_string($tab['plugin'])) {
+            continue;
+        }
+        $basename = $tab['plugin'];
+        $abs = trailingslashit(WP_PLUGIN_DIR) . $basename;
+        if (!is_readable($abs)) {
+            continue;
+        }
+        $slug = '';
+        $homepage = '';
+        if (!empty($tab['github_repo']) && is_string($tab['github_repo'])) {
+            $parts = explode('/', $tab['github_repo']);
+            $slug = sanitize_key(end($parts));
+            $homepage = 'https://github.com/' . $tab['github_repo'];
+        }
+        if ($slug === '') {
+            $slug = function_exists('barbas_update_get_tab_plugin_slug')
+                ? barbas_update_get_tab_plugin_slug($tab)
+                : sanitize_key(dirname($basename));
+        }
+        if ($slug === '' || $slug === '.') {
+            $slug = sanitize_key(basename($basename, '.php'));
+        }
+        if ($slug === '') {
+            continue;
+        }
+        barbas_update_register_plugin_details_guard($abs, $slug, $homepage);
+    }
+}
+
+/**
+ * Build a plugins_api plugin_information object from local headers/readme.
+ *
+ * @param array{file:string,slug:string,homepage:string} $entry Registry entry.
+ * @return object|null
+ */
+function barbas_update_build_local_plugin_information(array $entry) {
+    $file = isset($entry['file']) ? (string) $entry['file'] : '';
+    $slug = isset($entry['slug']) ? (string) $entry['slug'] : '';
+    $homepage = isset($entry['homepage']) ? (string) $entry['homepage'] : '';
+    if ($file === '' || $slug === '' || !is_readable($file)) {
+        return null;
+    }
+    if (!function_exists('get_plugin_data')) {
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    }
+    $data = get_plugin_data($file, false, false);
+    if (!is_array($data) || empty($data['Name'])) {
+        return null;
+    }
+
+    $description = isset($data['Description']) ? (string) $data['Description'] : '';
+    $sections = array(
+        'description' => $description !== '' ? wpautop($description) : '<p></p>',
+    );
+
+    $readme = plugin_dir_path($file) . 'readme.txt';
+    if (is_readable($readme)) {
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+        $raw = file_get_contents($readme);
+        if (is_string($raw) && $raw !== '') {
+            if (preg_match('/^==\s*Changelog\s*==\s*(.+?)(?=^==\s|\z)/ms', $raw, $m)) {
+                $sections['changelog'] = barbas_update_readme_section_to_html($m[1]);
+            }
+            if (preg_match('/^==\s*Description\s*==\s*(.+?)(?=^==\s|\z)/ms', $raw, $m)) {
+                $sections['description'] = barbas_update_readme_section_to_html($m[1]);
+            }
+            if (preg_match('/^==\s*Installation\s*==\s*(.+?)(?=^==\s|\z)/ms', $raw, $m)) {
+                $sections['installation'] = barbas_update_readme_section_to_html($m[1]);
+            }
+            if (preg_match('/^==\s*Frequently Asked Questions\s*==\s*(.+?)(?=^==\s|\z)/ms', $raw, $m)) {
+                $sections['faq'] = barbas_update_readme_section_to_html($m[1]);
+            }
+        }
+    }
+
+    $info = (object) array(
+        'name'          => $data['Name'],
+        'slug'          => $slug,
+        'version'       => isset($data['Version']) ? (string) $data['Version'] : '',
+        'author'        => isset($data['Author']) ? (string) $data['Author'] : '',
+        'author_profile'=> isset($data['AuthorURI']) ? (string) $data['AuthorURI'] : '',
+        'homepage'      => $homepage !== '' ? $homepage : (isset($data['PluginURI']) ? (string) $data['PluginURI'] : ''),
+        'requires'      => '',
+        'tested'        => '',
+        'requires_php'  => '',
+        'sections'      => $sections,
+        'download_link' => '',
+        'banners'       => array(),
+        'icons'         => array(),
+        'external'      => true,
+    );
+
+    return $info;
+}
+
+/**
+ * Minimal readme.txt section → HTML (headings + paragraphs + lists).
+ *
+ * @param string $text Raw section body.
+ * @return string
+ */
+function barbas_update_readme_section_to_html($text) {
+    $text = trim((string) $text);
+    if ($text === '') {
+        return '<p></p>';
+    }
+    $text = preg_replace('/^=\s*(.+?)\s*=\s*$/m', '<h4>$1</h4>', $text);
+    $text = preg_replace('/^\*\s+(.+)$/m', '<li>$1</li>', $text);
+    $text = preg_replace('/(?:<li>.*<\/li>\n?)+/s', '<ul>$0</ul>', $text);
+    $parts = preg_split('/\n{2,}/', $text);
+    $html = '';
+    foreach ($parts as $part) {
+        $part = trim($part);
+        if ($part === '') {
+            continue;
+        }
+        if (preg_match('/^<(h4|ul|li)\b/i', $part)) {
+            $html .= $part;
+            continue;
+        }
+        $html .= '<p>' . nl2br(esc_html($part)) . '</p>';
+    }
+    return $html !== '' ? $html : '<p></p>';
+}
+
+/**
+ * plugins_api: after PUC (20), serve local info so private repos never hit "Plugin not found".
+ *
+ * @param false|object|WP_Error $result Result so far.
+ * @param string                $action Action.
+ * @param object                $args   Args.
+ * @return false|object|WP_Error
+ */
+function barbas_update_filter_plugins_api_local_details($result, $action, $args) {
+    if ($action !== 'plugin_information' || !is_object($args) || empty($args->slug)) {
+        return $result;
+    }
+    if ($result !== false && !is_wp_error($result) && is_object($result)) {
+        return $result;
+    }
+    $slug = sanitize_key((string) $args->slug);
+    $registry = barbas_update_plugin_details_registry();
+    if ($slug === '' || !isset($registry[ $slug ])) {
+        return $result;
+    }
+    $local = barbas_update_build_local_plugin_information($registry[ $slug ]);
+    return $local ? $local : $result;
+}
+
+/**
+ * plugins_api_result: replace WP.org "Plugin not found" for our slugs.
+ *
+ * @param object|WP_Error $result Result.
+ * @param string          $action Action.
+ * @param object          $args   Args.
+ * @return object|WP_Error
+ */
+function barbas_update_filter_plugins_api_result_local_details($result, $action, $args) {
+    if ($action !== 'plugin_information' || !is_object($args) || empty($args->slug)) {
+        return $result;
+    }
+    $slug = sanitize_key((string) $args->slug);
+    $registry = barbas_update_plugin_details_registry();
+    if ($slug === '' || !isset($registry[ $slug ])) {
+        return $result;
+    }
+    $needs_local = is_wp_error($result)
+        || !is_object($result)
+        || empty($result->sections);
+    if (!$needs_local) {
+        return $result;
+    }
+    $local = barbas_update_build_local_plugin_information($registry[ $slug ]);
+    return $local ? $local : $result;
+}
+
+/**
+ * Force correct slug + PluginURI (Uncode/Undsgn often hijack these).
+ *
+ * @param array<string, array<string, mixed>> $plugins Plugins list.
+ * @return array<string, array<string, mixed>>
+ */
+function barbas_update_filter_all_plugins_details_guard($plugins) {
+    if (!is_array($plugins)) {
+        return $plugins;
+    }
+    foreach (barbas_update_plugin_details_registry() as $entry) {
+        $key = plugin_basename($entry['file']);
+        if (!isset($plugins[ $key ]) || !is_array($plugins[ $key ])) {
+            continue;
+        }
+        $plugins[ $key ]['slug'] = $entry['slug'];
+        $plugins[ $key ]['PluginURI'] = $entry['homepage'];
+    }
+    return $plugins;
+}
+
+/**
+ * Keep update transient slugs aligned with our GitHub repos.
+ *
+ * @param object|mixed $transient Transient.
+ * @return object|mixed
+ */
+function barbas_update_filter_update_plugins_details_guard($transient) {
+    if (!is_object($transient) || empty($transient->response) || !is_array($transient->response)) {
+        return $transient;
+    }
+    foreach (barbas_update_plugin_details_registry() as $entry) {
+        $key = plugin_basename($entry['file']);
+        if (isset($transient->response[ $key ]) && is_object($transient->response[ $key ])) {
+            $transient->response[ $key ]->slug = $entry['slug'];
+            $transient->response[ $key ]->url  = $entry['homepage'];
+        }
+    }
+    return $transient;
+}
+
+/**
+ * Rebuild "View details" meta links; strip Undsgn/Uncode hijacks.
+ *
+ * @param string[]             $plugin_meta Meta links.
+ * @param string               $plugin_file Plugin basename.
+ * @param array<string, mixed> $plugin_data Header data.
+ * @return string[]
+ */
+function barbas_update_filter_plugin_row_meta_details_guard($plugin_meta, $plugin_file, $plugin_data = array()) {
+    if (!is_array($plugin_meta)) {
+        return $plugin_meta;
+    }
+    $entry = null;
+    foreach (barbas_update_plugin_details_registry() as $candidate) {
+        if (plugin_basename($candidate['file']) === $plugin_file) {
+            $entry = $candidate;
+            break;
+        }
+    }
+    if ($entry === null) {
+        return $plugin_meta;
+    }
+
+    $slug = $entry['slug'];
+    $cleaned = array();
+    $has_our_details = false;
+
+    foreach ($plugin_meta as $link) {
+        if (!is_string($link)) {
+            $cleaned[] = $link;
+            continue;
+        }
+        if (preg_match('/undsgn\.com|support\.undsgn|theme\.uncode|uncode\.net|themeforest\.net\/item\/uncode/i', $link)) {
+            continue;
+        }
+        $is_details = (bool) preg_match('/open-plugin-details-modal|plugin-information|View details|Ver detalhes/i', $link);
+        if ($is_details) {
+            if (stripos($link, 'plugin=' . $slug) !== false || stripos($link, 'plugin=' . rawurlencode($slug)) !== false) {
+                $has_our_details = true;
+                $cleaned[] = $link;
+            }
+            continue;
+        }
+        $cleaned[] = $link;
+    }
+
+    if (!$has_our_details) {
+        $name = !empty($plugin_data['Name']) ? (string) $plugin_data['Name'] : $slug;
+        array_unshift(
+            $cleaned,
+            sprintf(
+                '<a href="%s" class="thickbox open-plugin-details-modal" aria-label="%s" data-title="%s">%s</a>',
+                esc_url(
+                    network_admin_url(
+                        'plugin-install.php?tab=plugin-information&plugin=' . rawurlencode($slug) .
+                        '&TB_iframe=true&width=600&height=550'
+                    )
+                ),
+                /* translators: %s: Plugin name. */
+                esc_attr(sprintf(__('More information about %s'), $name)),
+                esc_attr($name),
+                __('View details')
+            )
+        );
+    }
+
+    return $cleaned;
+}
+
+/**
+ * Install details guards once the newest hub is loaded.
+ */
+function barbas_update_boot_plugin_details_guards() {
+    static $booted = false;
+    if ($booted) {
+        return;
+    }
+    $booted = true;
+
+    barbas_update_sync_plugin_details_from_tabs();
+
+    add_filter('plugins_api', 'barbas_update_filter_plugins_api_local_details', 25, 3);
+    add_filter('plugins_api_result', 'barbas_update_filter_plugins_api_result_local_details', 5, 3);
+    add_filter('all_plugins', 'barbas_update_filter_all_plugins_details_guard', PHP_INT_MAX);
+    add_filter('site_transient_update_plugins', 'barbas_update_filter_update_plugins_details_guard', PHP_INT_MAX);
+    add_filter('plugin_row_meta', 'barbas_update_filter_plugin_row_meta_details_guard', PHP_INT_MAX, 3);
+}
+
+if (did_action('plugins_loaded')) {
+    barbas_update_boot_plugin_details_guards();
+} else {
+    add_action('plugins_loaded', 'barbas_update_boot_plugin_details_guards', 20);
+}
+add_action('admin_init', 'barbas_update_sync_plugin_details_from_tabs', 1);
