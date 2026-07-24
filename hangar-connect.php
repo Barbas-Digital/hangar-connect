@@ -3,7 +3,7 @@
 Plugin Name: Hangar Connect
 Plugin URI: https://github.com/Barbas-Digital/hangar-connect
 Description: Free site agent for Hangar: secure REST API, pairing keys, and Activity Reports bridge. Public GitHub updates (no license).
-Version: 0.2.1
+Version: 0.2.2
 Requires at least: 5.8
 Requires PHP: 7.4
 Author: Guilherme Souza
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 define('HANGAR_CONNECT_PLUGIN_FILE', __FILE__);
-define('HANGAR_CONNECT_VERSION', '0.2.1');
+define('HANGAR_CONNECT_VERSION', '0.2.2');
 define('HANGAR_CONNECT_DIR', plugin_dir_path(__FILE__));
 define('HANGAR_CONNECT_URL', plugin_dir_url(__FILE__));
 define('HANGAR_CONNECT_REST_NS', 'hangar-connect/v1');
@@ -41,6 +41,7 @@ if (is_readable($hangar_connect_base . 'includes/barbas-update-bootstrap.php')) 
 }
 
 $hangar_connect_includes = array(
+    'includes/hangar-connect-migrate.php',
     'includes/barbas-plugin-list-i18n.php',
     'includes/barbas-readme-i18n.php',
     'includes/barbas-update-checker.php',

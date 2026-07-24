@@ -161,7 +161,7 @@ function hangar_connect_create_connection($label = '') {
     if (!empty(hangar_connect_get_all_connections())) {
         return new WP_Error(
             'hangar_connect_already_connected',
-            __('This site already has a connection. Disconnect it before pairing with another Central.', 'hangar-connect')
+            __('This site already has a connection. Disconnect it before pairing with another Hangar.', 'hangar-connect')
         );
     }
 
@@ -372,7 +372,7 @@ function hangar_connect_get_connection_secret($connection_id) {
 }
 
 /**
- * Complete Central pairing: match plaintext key to a pending connection.
+ * Complete Hangar pairing: match plaintext key to a pending connection.
  *
  * @param string $pairing_key Plaintext key (bc_...).
  * @return array<string,mixed>|WP_Error Public connection row on success.
@@ -389,7 +389,7 @@ function hangar_connect_complete_pairing($pairing_key) {
 
     $all = hangar_connect_get_all_connections();
 
-    // One Central at a time: reject pairing a second connection while one is active.
+    // One Hangar at a time: reject pairing a second connection while one is active.
     // Rotate sets status back to pending, so re-pair of the same slot still works.
     if (hangar_connect_has_active_connection()) {
         return new WP_Error(

@@ -207,7 +207,7 @@ function hangar_connect_handle_admin_actions() {
                 hangar_connect_set_flash(
                     'error',
                     '',
-                    __('This site already has a connection. Disconnect it before pairing with another Central.', 'hangar-connect')
+                    __('This site already has a connection. Disconnect it before pairing with another Hangar.', 'hangar-connect')
                 );
                 wp_safe_redirect($redirect);
                 exit;
@@ -415,20 +415,10 @@ function hangar_connect_render_admin_page() {
     echo '<dl class="hangar-connect-status-grid">';
     echo '<div><dt>' . esc_html__('Site URL', 'hangar-connect') . '</dt><dd><code class="hangar-connect-status-value">' . esc_html(home_url('/')) . '</code></dd></div>';
     echo '<div><dt>' . esc_html__('Health endpoint', 'hangar-connect') . '</dt><dd><code class="hangar-connect-status-value">' . esc_html($health_url) . '</code></dd></div>';
-    echo '<div><dt>' . esc_html__('Activity Reports', 'hangar-connect') . '</dt><dd>';
-    echo hangar_connect_activity_reports_available()
-        ? esc_html__('Available', 'hangar-connect')
-        : esc_html__('Not installed / inactive', 'hangar-connect');
-    echo '</dd></div>';
-    echo '<div><dt>' . esc_html__('Connected to Central', 'hangar-connect') . '</dt><dd>';
-    echo hangar_connect_has_active_connection()
-        ? esc_html__('Yes', 'hangar-connect')
-        : esc_html__('No', 'hangar-connect');
-    echo '</dd></div>';
     echo '</dl>';
     echo '</section>';
 
-    // Generate card — only when no connection exists (one Central at a time).
+    // Generate card — only when no connection exists (one Hangar at a time).
     if (empty($connections)) {
         echo '<section class="hangar-connect-card">';
         echo '<h2>' . esc_html__('New connection', 'hangar-connect') . '</h2>';
@@ -489,7 +479,7 @@ function hangar_connect_render_admin_page() {
             echo '<td data-label="' . esc_attr__('Last seen', 'hangar-connect') . '">' . esc_html(hangar_connect_format_time($row['last_seen_at'])) . '</td>';
             echo '<td class="hangar-connect-actions" data-label="' . esc_attr__('Actions', 'hangar-connect') . '">';
 
-            // Hide rotate while connected — one site = one Central; regenerating confuses the paired link.
+            // Hide rotate while connected — one site = one Hangar; regenerating confuses the paired link.
             if ($status !== 'connected') {
                 echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="hangar-connect-inline-form">';
                 echo '<input type="hidden" name="action" value="hangar_connect_action" />';

@@ -5,7 +5,7 @@ Tags: hangar, connect, wordPress, remote, api
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.2.1
+Stable tag: 0.2.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,6 +20,7 @@ Free plugin: public GitHub repository, no license token required.
 * Connections screen: generate pairing key, copy once, rotate when pending, disconnect / disconnect all.
 * One Hangar pairing at a time (New connection and Generate new key hidden while connected).
 * Own REST namespace (/wp-json/hangar-connect/v1/...) -- never exposes generic /wp/v2.
+* Legacy alias /wp-json/barbas-connect/v1 for older Hangar images.
 * Health discovery endpoint; HMAC-protected capabilities and Activity Reports bridge.
 * Updates from public GitHub Releases (hangar-connect.zip).
 
@@ -40,13 +41,19 @@ No. Hangar Connect is free. Updates use the public GitHub repository.
 
 = Where is the health endpoint? =
 
-GET /wp-json/hangar-connect/v1/health -- public discovery (version, site URL, connected flag, capabilities). No secrets.
+GET /wp-json/hangar-connect/v1/health -- public discovery (version, site URL, connected flag, capabilities). No secrets. Legacy path /wp-json/barbas-connect/v1/health also works.
 
 = Does it dump WP Activity Log data? =
 
 HMAC endpoints expose summarized Activity Reports data (users + productivity report) for Hangar. No raw WSAL admin dump.
 
 == Changelog ==
+
+= 0.2.2 =
+* Legacy REST alias barbas-connect/v1 for older Hangar images.
+* Migrate plugin folder barbas-connect to hangar-connect after updates.
+* pt_BR .mo + Hangar product strings.
+* Site status card shows only Site URL and Health endpoint.
 
 = 0.2.1 =
 * Public repository; remove Connect license / Barbas Update token requirement.
@@ -70,6 +77,9 @@ HMAC endpoints expose summarized Activity Reports data (users + productivity rep
 * Format Connections table dates as DD/MM/YYYY HH:MM for pt_BR.
 
 == Upgrade Notice ==
+
+= 0.2.2 =
+Install hangar-connect.zip. Dual REST namespaces fix pairing with Hangar 0.9.x. Folder migrate from barbas-connect when possible.
 
 = 0.2.1 =
 Free public updates: license tab no longer required. Reinstall hangar-connect.zip if updating from a private-repo build.

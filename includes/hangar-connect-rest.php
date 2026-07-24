@@ -1,15 +1,45 @@
 <?php
 /**
  * REST API for Hangar Connect (own namespace only — never /wp/v2).
+ *
+ * Canonical namespace: hangar-connect/v1.
+ * Legacy alias: barbas-connect/v1 (Hangar images older than 0.10 still call this).
  */
 
 defined('ABSPATH') || exit;
 
 /**
- * Register routes.
+ * REST namespaces served by this plugin (canonical first).
+ *
+ * @return string[]
+ */
+function hangar_connect_rest_namespaces() {
+    return array(
+        HANGAR_CONNECT_REST_NS,
+        'barbas-connect/v1',
+    );
+}
+
+/**
+ * Register routes under canonical + legacy namespaces.
  */
 function hangar_connect_register_rest_routes() {
-    $ns = HANGAR_CONNECT_REST_NS;
+    foreach (hangar_connect_rest_namespaces() as $ns) {
+        hangar_connect_register_rest_routes_for_namespace($ns);
+    }
+}
+add_action('rest_api_init', 'hangar_connect_register_rest_routes');
+
+/**
+ * Register all Connect routes for one namespace.
+ *
+ * @param string $ns Namespace (e.g. hangar-connect/v1).
+ */
+function hangar_connect_register_rest_routes_for_namespace($ns) {
+    $ns = is_string($ns) ? $ns : '';
+    if ($ns === '') {
+        return;
+    }
 
     register_rest_route(
         $ns,
@@ -91,7 +121,6 @@ function hangar_connect_register_rest_routes() {
         )
     );
 }
-add_action('rest_api_init', 'hangar_connect_register_rest_routes');
 
 /**
  * Capability map advertised to Central.

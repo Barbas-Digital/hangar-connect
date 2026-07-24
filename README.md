@@ -1,6 +1,6 @@
 # Hangar Connect
 
-![Version](https://img.shields.io/badge/Version-0.2.1-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.2.2-blue.svg)
 ![WordPress](https://img.shields.io/badge/Tested%20up%20to-7.0-green.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)
 ![License](https://img.shields.io/badge/License-GPLv2%20or%20Later-orange.svg)
@@ -9,7 +9,7 @@ WordPress site agent for **Hangar**: pairing keys, own REST API, and Activity Re
 
 Free and open: public GitHub repo, no license token. Updates come from GitHub Releases (`hangar-connect.zip`).
 
-Admin UI source strings are English (i18n); `languages/hangar-connect-pt_BR.po` provides Portuguese (Brazil).
+Admin UI source strings are English (i18n); `languages/hangar-connect-pt_BR.po` + `.mo` provide Portuguese (Brazil).
 
 **Slug:** `hangar-connect` (immutable). Display name defaults to Hangar Connect; filter `hangar_connect_display_name` for white-label (`{company} Connect`).
 
@@ -18,9 +18,11 @@ Admin UI source strings are English (i18n); `languages/hangar-connect-pt_BR.po` 
 - **Settings -> Hangar Connect** -- connections list, generate pairing key (copy once), rotate when pending, disconnect / disconnect all.
 - One active Hangar pairing at a time: New connection card and "Generate new key" are hidden while connected.
 - REST namespace `/wp-json/hangar-connect/v1/...` (never `/wp/v2`).
+- Legacy alias `/wp-json/barbas-connect/v1/...` for older Hangar images still calling the pre-rebrand path.
 - Pairing secret encrypted at rest (OpenSSL AES via shared crypto helpers).
 - GET `/health` public discovery; POST `/pair` for Hangar handshake; HMAC-protected `/capabilities` and Activity Reports bridge.
 - WordPress updates from public GitHub Releases (Plugin Update Checker) -- no Barbas Update license tab.
+- Migrates leftover `barbas-connect/` plugin folder to `hangar-connect/` after updates.
 
 ## Installation
 
@@ -30,7 +32,9 @@ Admin UI source strings are English (i18n); `languages/hangar-connect-pt_BR.po` 
 4. **Settings -> Hangar Connect** -> generate a pairing key
 5. Paste the key in Hangar to pair the site
 
-## REST routes (v0.2.1)
+If updating from `barbas-connect`, prefer upload of `hangar-connect.zip` (or wait for the in-plugin folder migration on 0.2.2+).
+
+## REST routes (v0.2.2)
 
 | Method | Route | Auth |
 |--------|-------|------|
@@ -39,6 +43,8 @@ Admin UI source strings are English (i18n); `languages/hangar-connect-pt_BR.po` 
 | GET | /hangar-connect/v1/capabilities | HMAC |
 | GET | /hangar-connect/v1/activity/users | HMAC |
 | GET | /hangar-connect/v1/activity/report | HMAC (query: user, from, to, format) |
+
+Legacy: the same routes under `/barbas-connect/v1/...`.
 
 POST /pair body: `{ "pairing_key": "bc_..." }` -> `{ ok, connection_id, site_url, site_name }`.
 
@@ -54,6 +60,7 @@ hangar-connect/
 |   |-- hangar-connect-activity.php
 |   |-- hangar-connect-connections.php
 |   |-- hangar-connect-hmac.php
+|   |-- hangar-connect-migrate.php
 |   |-- hangar-connect-rest.php
 |   |-- barbas-update-*.php
 |-- assets/
@@ -62,6 +69,13 @@ hangar-connect/
 ```
 
 ## Changelog
+
+### 0.2.2
+
+- Legacy REST alias `barbas-connect/v1` (compatibility with Hangar images still on the old namespace).
+- Migrate plugin directory `barbas-connect` -> `hangar-connect` after updates.
+- pt_BR: compile `.mo`; Hangar product strings.
+- Site status card: only Site URL + Health endpoint (pairing lives in Connections).
 
 ### 0.2.1
 
