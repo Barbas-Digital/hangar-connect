@@ -108,7 +108,7 @@ if (!function_exists('hangar_connect_readme_i18n_sections')) {
                 . '<li>' . esc_html__('Settings → Hangar Connect → Generate pairing key', $domain) . '</li>'
                 . '<li>' . esc_html__('Pair the site from Hangar using that key.', $domain) . '</li>'
                 . '</ol>'
-                . '<p>' . esc_html__('Always install via WordPress (not hosting file manager only).', $domain) . '</p>',
+                . '<p>' . esc_html__('Recommended: install or update via Plugins -> Add New -> Upload Plugin (zip). Manual file copy also works, but WordPress update hooks may not run.', $domain) . '</p>',
             'frequently_asked_questions' => '<h4>' . esc_html__('Do I need a Barbas Update license?', $domain) . '</h4>'
                 . '<p>' . esc_html__('No. Hangar Connect is free. Updates use the public GitHub repository.', $domain) . '</p>'
                 . '<h4>' . esc_html__('Where is the health endpoint?', $domain) . '</h4>'

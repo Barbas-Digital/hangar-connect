@@ -3,7 +3,7 @@
 Plugin Name: Hangar Connect
 Plugin URI: https://github.com/Barbas-Digital/hangar-connect
 Description: Site agent for Hangar: secure REST API, pairing keys, and productivity reports via WP Activity Log.
-Version: 0.2.11
+Version: 0.2.12
 Requires at least: 5.8
 Requires PHP: 7.4
 Author: Guilherme Souza
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 define('HANGAR_CONNECT_PLUGIN_FILE', __FILE__);
-define('HANGAR_CONNECT_VERSION', '0.2.11');
+define('HANGAR_CONNECT_VERSION', '0.2.12');
 define('HANGAR_CONNECT_DIR', plugin_dir_path(__FILE__));
 define('HANGAR_CONNECT_URL', plugin_dir_url(__FILE__));
 define('HANGAR_CONNECT_REST_NS', 'hangar-connect/v1');

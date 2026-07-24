@@ -26,7 +26,7 @@ if (!defined('BARBAS_UPDATE_PLUGIN_FILE')) {
 define('BARBAS_UPDATE_HUB_LOADED', true);
 
 if (!defined('BARBAS_UPDATE_HUB_VERSION')) {
-    define('BARBAS_UPDATE_HUB_VERSION', '2.2.23');
+    define('BARBAS_UPDATE_HUB_VERSION', '2.2.25');
 }
 
 if (!defined('BARBAS_UPDATE_INLINE_TABS_MAX')) {
@@ -2509,6 +2509,9 @@ function barbas_update_boot_plugin_details_guards() {
     add_action('load-plugins.php', 'barbas_update_reassert_plugin_details_php_guards', 99999);
     add_action('admin_head-plugins.php', 'barbas_update_reassert_plugin_details_php_guards', 99999);
     add_action('load-plugins.php', 'barbas_update_start_plugins_page_output_guard', 0);
+    // Print as early as possible: Uncode/Undsgn rewrites "View details" for any row whose name contains "Uncode".
+    add_action('admin_head-plugins.php', 'barbas_update_print_plugin_details_guard_js', 1);
+    add_action('admin_print_scripts-plugins.php', 'barbas_update_print_plugin_details_guard_js', 1);
     add_action('admin_print_footer_scripts-plugins.php', 'barbas_update_print_plugin_details_guard_js', 1);
     add_action('admin_footer-plugins.php', 'barbas_update_print_plugin_details_guard_js', 1);
     add_action('admin_footer-plugins.php', 'barbas_update_print_plugin_details_guard_js', 99999);
@@ -2613,7 +2616,7 @@ function barbas_update_rewrite_plugins_page_details_html($html) {
         }
         $basename = plugin_basename($entry['file']);
         $slug     = (string) $entry['slug'];
-        $details  = network_admin_url(
+        $details  = admin_url(
             'plugin-install.php?tab=plugin-information&plugin=' . rawurlencode($slug) .
             '&TB_iframe=true&width=600&height=550'
         );
@@ -2632,6 +2635,17 @@ function barbas_update_rewrite_plugins_page_details_html($html) {
                 $row = preg_replace(
                     '/href=(["\'])https?:\/\/(?:www\.)?(?:theme\.)?uncode\.net[^"\']*\1/i',
                     'href="' . $details_attr . '"',
+                    $row
+                );
+                $row = preg_replace(
+                    '/href=(["\'])[^"\']*213454129[^"\']*\1/i',
+                    'href="' . $details_attr . '"',
+                    $row
+                );
+                $row = preg_replace(
+                    '/<a\b[^>]*>\s*(?:View details|Ver detalhes)\s*<\/a>/iu',
+                    '<a href="' . $details_attr . '" class="thickbox open-plugin-details-modal" data-barbas-details="1">' .
+                    esc_html__('View details') . '</a>',
                     $row
                 );
                 return $m[1] . $row . $m[3];
@@ -2655,37 +2669,53 @@ function barbas_update_print_plugin_details_guard_js() {
     if ($printed) {
         return;
     }
-    $printed = true;
 
     barbas_update_sync_plugin_details_from_tabs();
     $registry = barbas_update_plugin_details_registry();
     if (empty($registry)) {
         return;
     }
+    $printed = true;
 
-    $map = array();
+    $by_plugin = array();
+    $by_slug   = array();
     foreach ($registry as $entry) {
         if (empty($entry['file']) || empty($entry['slug'])) {
             continue;
         }
         $basename = plugin_basename($entry['file']);
         $slug     = (string) $entry['slug'];
-        $map[ $basename ] = array(
+        $title    = $slug;
+        if (!function_exists('get_plugin_data')) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+        if (is_readable($entry['file'])) {
+            $pdata = get_plugin_data($entry['file'], false, false);
+            if (is_array($pdata) && !empty($pdata['Name'])) {
+                $title = (string) $pdata['Name'];
+            }
+        }
+        $payload  = array(
             'slug'       => $slug,
+            'plugin'     => $basename,
+            'title'      => $title,
             'homepage'   => isset($entry['homepage']) ? (string) $entry['homepage'] : '',
-            'detailsUrl' => network_admin_url(
+            'detailsUrl' => admin_url(
                 'plugin-install.php?tab=plugin-information&plugin=' . rawurlencode($slug) .
                 '&TB_iframe=true&width=600&height=550'
             ),
             'label'      => __('View details'),
         );
+        $by_plugin[ $basename ] = $payload;
+        $by_slug[ $slug ]       = $payload;
     }
-    if (empty($map)) {
+    if (empty($by_plugin)) {
         return;
     }
 
-    $json = wp_json_encode($map);
-    if (!is_string($json) || $json === '') {
+    $json_plugin = wp_json_encode($by_plugin);
+    $json_slug   = wp_json_encode($by_slug);
+    if (!is_string($json_plugin) || $json_plugin === '' || !is_string($json_slug) || $json_slug === '') {
         return;
     }
     ?>
@@ -2694,32 +2724,93 @@ function barbas_update_print_plugin_details_guard_js() {
   if (window.__barbasDetailsGuardBooted) return;
   window.__barbasDetailsGuardBooted = true;
 
-  var map = <?php echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
-  var hijack = /undsgn\.com|support\.undsgn|theme\.uncode|uncode\.net|themeforest\.net\/item\/uncode/i;
-  var detailsText = /view details|ver detalhes|voir les d[eé]tails|detalles/i;
+  var byPlugin = <?php echo $json_plugin; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
+  var bySlug = <?php echo $json_slug; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
+  var hijack = /undsgn\.com|support\.undsgn|theme\.uncode|uncode\.net|themeforest\.net\/item\/uncode|213454129/i;
+  var detailsText = /view details|ver detalhes|voir les d[eé]tails|detalles|visualizza dettagli|details anzeigen/i;
+
+  function confForRow(tr) {
+    if (!tr) return null;
+    var plugin = tr.getAttribute('data-plugin') || '';
+    if (plugin && byPlugin[plugin]) return byPlugin[plugin];
+    var slug = tr.getAttribute('data-slug') || '';
+    if (slug && bySlug[slug]) return bySlug[slug];
+    // Undsgn sometimes rewrites data-slug; match Barbas folder names.
+    if (plugin) {
+      for (var k in byPlugin) {
+        if (!Object.prototype.hasOwnProperty.call(byPlugin, k)) continue;
+        if (plugin === k || plugin.indexOf(byPlugin[k].slug + '/') === 0) return byPlugin[k];
+      }
+    }
+    return null;
+  }
 
   function confFor(el) {
     var tr = el && el.closest ? el.closest('tr[data-plugin]') : null;
-    if (!tr) return null;
-    return map[tr.getAttribute('data-plugin') || ''] || null;
+    return confForRow(tr);
   }
 
   function isDetailsAnchor(a, conf) {
     if (!a || !conf) return false;
-    var href = a.getAttribute('href') || a.href || '';
+    var href = a.getAttribute('href') || '';
     var text = (a.textContent || '').trim();
     return a.classList.contains('open-plugin-details-modal')
       || detailsText.test(text)
       || /plugin-information/.test(href)
-      || hijack.test(href);
+      || hijack.test(href)
+      || a.getAttribute('data-barbas-details') === '1';
   }
 
-  function applyHref(a, conf) {
+  function needsFix(a, conf) {
+    if (!a || !conf) return false;
+    var href = a.getAttribute('href') || '';
+    if (hijack.test(href)) return true;
+    if (!isDetailsAnchor(a, conf)) return false;
+    return href.indexOf('plugin=' + conf.slug) === -1;
+  }
+
+  function freshAnchor(conf) {
+    var a = document.createElement('a');
+    a.href = conf.detailsUrl;
+    a.setAttribute('href', conf.detailsUrl);
+    a.className = 'thickbox open-plugin-details-modal';
+    a.setAttribute('data-barbas-details', '1');
+    if (conf.title) a.setAttribute('data-title', conf.title);
+    a.setAttribute('aria-label', conf.label || 'View details');
+    a.textContent = conf.label || 'View details';
+    return a;
+  }
+
+  function applyOrReplace(a, conf) {
+    if (!a || !conf) return a;
+    var href = a.getAttribute('href') || '';
+    var alreadyGood = a.getAttribute('data-barbas-details') === '1'
+      && href.indexOf('plugin=' + conf.slug) !== -1
+      && !hijack.test(href);
+    if (alreadyGood) {
+      if (conf.title) a.setAttribute('data-title', conf.title);
+      return a;
+    }
+
+    // Replace node to drop Undsgn jQuery/native listeners bound to the old <a>.
+    if (needsFix(a, conf) || hijack.test(href)) {
+      var neu = freshAnchor(conf);
+      if (a.parentNode) {
+        a.parentNode.replaceChild(neu, a);
+        return neu;
+      }
+    }
     a.setAttribute('href', conf.detailsUrl);
     try { a.href = conf.detailsUrl; } catch (e) {}
     a.classList.add('thickbox', 'open-plugin-details-modal');
+    a.setAttribute('data-barbas-details', '1');
+    if (conf.title) a.setAttribute('data-title', conf.title);
     a.removeAttribute('target');
     a.removeAttribute('rel');
+    if (detailsText.test((a.textContent || '').trim())) {
+      a.textContent = conf.label || 'View details';
+    }
+    return a;
   }
 
   function fixRow(tr, conf) {
@@ -2729,51 +2820,53 @@ function barbas_update_print_plugin_details_guard_js() {
     for (var i = 0; i < links.length; i++) {
       var a = links[i];
       if (!isDetailsAnchor(a, conf) && !hijack.test(a.getAttribute('href') || '')) continue;
-      applyHref(a, conf);
-      if (detailsText.test((a.textContent || '').trim())) {
-        a.textContent = conf.label || a.textContent || 'View details';
-      }
-      if ((a.getAttribute('href') || '').indexOf('plugin=' + conf.slug) !== -1) hasGood = true;
+      var fixed = applyOrReplace(a, conf);
+      if (fixed && (fixed.getAttribute('href') || '').indexOf('plugin=' + conf.slug) !== -1) hasGood = true;
     }
     if (!hasGood) {
       var cell = tr.querySelector('.plugin-version-author-uri');
       if (!cell) return;
-      var a = document.createElement('a');
-      applyHref(a, conf);
-      a.textContent = conf.label || 'View details';
       cell.appendChild(document.createTextNode(' | '));
-      cell.appendChild(a);
+      cell.appendChild(freshAnchor(conf));
     }
   }
 
   function fixAll() {
     var rows = document.querySelectorAll('tr[data-plugin]');
     for (var i = 0; i < rows.length; i++) {
-      var tr = rows[i];
-      var conf = map[tr.getAttribute('data-plugin') || ''];
-      if (conf) fixRow(tr, conf);
+      var conf = confForRow(rows[i]);
+      if (conf) fixRow(rows[i], conf);
     }
   }
 
   function openDetails(conf) {
     if (!conf || !conf.detailsUrl) return;
     if (typeof window.tb_show === 'function') {
-      window.tb_show(conf.label || conf.slug, conf.detailsUrl, false);
+      // Caption must be the plugin name — using "View details"/"Ver detalhes" as caption
+      // puts that string in the thickbox title bar.
+      window.tb_show(conf.title || conf.slug, conf.detailsUrl, false);
       return;
     }
     window.location.href = conf.detailsUrl;
   }
 
-  document.addEventListener('click', function (e) {
+  function onActivate(e) {
     var a = e.target && e.target.closest ? e.target.closest('a') : null;
     if (!a) return;
     var conf = confFor(a);
     if (!conf || !isDetailsAnchor(a, conf)) return;
+    // Always win over Undsgn capture/bubble handlers.
     e.preventDefault();
-    e.stopImmediatePropagation();
-    applyHref(a, conf);
+    e.stopPropagation();
+    if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+    applyOrReplace(a, conf);
     openDetails(conf);
-  }, true);
+  }
+
+  document.addEventListener('click', onActivate, true);
+  document.addEventListener('mousedown', onActivate, true);
+  document.addEventListener('pointerdown', onActivate, true);
+  document.addEventListener('auxclick', onActivate, true);
 
   function boot() {
     fixAll();
@@ -2783,16 +2876,12 @@ function barbas_update_print_plugin_details_guard_js() {
       var obs = new MutationObserver(function () {
         if (scheduled) return;
         scheduled = true;
-        setTimeout(function () { scheduled = false; fixAll(); }, 20);
+        setTimeout(function () { scheduled = false; fixAll(); }, 16);
       });
-      obs.observe(list, { subtree: true, childList: true, attributes: true, attributeFilter: ['href', 'class'] });
+      obs.observe(list, { subtree: true, childList: true, attributes: true, attributeFilter: ['href', 'class', 'data-slug', 'data-plugin'] });
     }
-    var n = 0;
-    var timer = setInterval(function () {
-      fixAll();
-      n += 1;
-      if (n >= 40) clearInterval(timer);
-    }, 250);
+    // Keep fighting Undsgn for the whole plugins.php lifetime (name match "Uncode").
+    setInterval(fixAll, 400);
   }
 
   if (document.readyState === 'loading') {
@@ -2804,6 +2893,7 @@ function barbas_update_print_plugin_details_guard_js() {
 </script>
     <?php
 }
+
 
 if (did_action('plugins_loaded')) {
     barbas_update_boot_plugin_details_guards();
