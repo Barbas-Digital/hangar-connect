@@ -1,6 +1,6 @@
 # Hangar Connect
 
-![Version](https://img.shields.io/badge/Version-0.2.4-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.2.5-blue.svg)
 ![WordPress](https://img.shields.io/badge/Tested%20up%20to-7.0-green.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)
 ![License](https://img.shields.io/badge/License-GPLv2%20or%20Later-orange.svg)
@@ -32,9 +32,9 @@ Admin UI source strings are English (i18n); `languages/hangar-connect-pt_BR.po` 
 4. **Settings -> Hangar Connect** -> generate a pairing key
 5. Paste the key in Hangar to pair the site
 
-If updating from `barbas-connect`, prefer upload of `hangar-connect.zip` (or wait for the in-plugin folder migration on 0.2.2+).
+If updating from `barbas-connect`, prefer upload of `hangar-connect.zip` (or wait for the in-plugin folder migration on 0.2.5+).
 
-## REST routes (v0.2.2)
+## REST routes (v0.2.5)
 
 | Method | Route | Auth |
 |--------|-------|------|
@@ -70,7 +70,7 @@ hangar-connect/
 
 ## Changelog
 
-### 0.2.2
+### 0.2.5
 
 - Legacy REST alias `barbas-connect/v1` (compatibility with Hangar images still on the old namespace).
 - Migrate plugin directory `barbas-connect` -> `hangar-connect` after updates.

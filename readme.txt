@@ -5,7 +5,7 @@ Tags: hangar, connect, wordPress, remote, api
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.2.4
+Stable tag: 0.2.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,6 +48,11 @@ GET /wp-json/hangar-connect/v1/health -- public discovery (version, site URL, co
 HMAC endpoints expose summarized Activity Reports data (users + productivity report) for Hangar. No raw WSAL admin dump.
 
 == Changelog ==
+
+= 0.2.5 =
+* Fix pt_BR mojibake (broken UTF-8 in .mo from unicode_escape compile).
+* Compact WP Activity Log status inside Site status card.
+* Translate new Activity Log readiness strings.
 
 = 0.2.4 =
 * Native productivity reports from WP Activity Log (no Activity Reports plugin).
