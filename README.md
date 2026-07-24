@@ -1,29 +1,31 @@
-# Barbas Connect
+# Hangar Connect
 
-![Version](https://img.shields.io/badge/Version-0.1.12-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.2.0-blue.svg)
 ![WordPress](https://img.shields.io/badge/Tested%20up%20to-7.0-green.svg)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)
 ![License](https://img.shields.io/badge/License-GPLv2%20or%20Later-orange.svg)
 
-WordPress site agent for **Barbas Central**: pairing keys, own REST API, and Activity Reports bridge for Barbas Central.
+WordPress site agent for **Hangar**: pairing keys, own REST API, and Activity Reports bridge.
 
-Admin UI source strings are English (i18n); languages/barbas-connect-pt_BR.mo provides Portuguese (Brazil).
+Admin UI source strings are English (i18n); `languages/hangar-connect-pt_BR.po` provides Portuguese (Brazil).
+
+**Slug:** `hangar-connect` (immutable). Display name defaults to Hangar Connect; filter `hangar_connect_display_name` for white-label (`{company} Connect`).
 
 ## Features
 
-- **Settings -> Barbas Connect** -- connections list, generate pairing key (copy once), rotate when pending, disconnect / disconnect all.
-- One active Central pairing at a time: New connection card and "Generate new key" are hidden while connected.
-- REST namespace /wp-json/barbas-connect/v1/... (never /wp/v2).
+- **Settings -> Hangar Connect** -- connections list, generate pairing key (copy once), rotate when pending, disconnect / disconnect all.
+- One active Hangar pairing at a time: New connection card and "Generate new key" are hidden while connected.
+- REST namespace `/wp-json/hangar-connect/v1/...` (never `/wp/v2`).
 - Pairing secret encrypted at rest (OpenSSL AES via Barbas Update crypto); distinct from hub license token.
-- GET /health public discovery; POST /pair for Central handshake; HMAC-protected /capabilities and Activity Reports bridge (/activity/users, /activity/report).
-- **Settings -> Barbas Update** -- license tab **Connect** (BARBAS_LICENSE_TOKEN_CONNECT).
+- GET `/health` public discovery; POST `/pair` for Hangar handshake; HMAC-protected `/capabilities` and Activity Reports bridge.
+- **Settings -> Barbas Update** -- license tab **Connect** (`BARBAS_LICENSE_TOKEN_CONNECT`).
 
 ## Installation
 
 1. WordPress -> **Plugins -> Add New -> Upload Plugin**
-2. File: barbas-connect.zip
+2. File: `hangar-connect.zip`
 3. **Activate**
-4. **Settings -> Barbas Connect** -> generate a pairing key
+4. **Settings -> Hangar Connect** -> generate a pairing key
 
 ## Update license (private repository)
 
@@ -36,108 +38,45 @@ Admin UI source strings are English (i18n); languages/barbas-connect-pt_BR.mo pr
 define('BARBAS_LICENSE_TOKEN_CONNECT', 'github_pat_...');
 ```
 
-## REST routes (v0.1.12)
+## REST routes (v0.2.0)
 
 | Method | Route | Auth |
 |--------|-------|------|
-| GET | /barbas-connect/v1/health | Public |
-| POST | /barbas-connect/v1/pair | Public (one-time pairing key) |
-| GET | /barbas-connect/v1/capabilities | HMAC |
-| GET | /barbas-connect/v1/activity/users | HMAC |
-| GET | /barbas-connect/v1/activity/report | HMAC (query: user, from, to, format) |
+| GET | /hangar-connect/v1/health | Public |
+| POST | /hangar-connect/v1/pair | Public (one-time pairing key) |
+| GET | /hangar-connect/v1/capabilities | HMAC |
+| GET | /hangar-connect/v1/activity/users | HMAC |
+| GET | /hangar-connect/v1/activity/report | HMAC (query: user, from, to, format) |
 
-HMAC headers: X-Barbas-Connect-Id, X-Barbas-Connect-Timestamp, X-Barbas-Connect-Nonce, X-Barbas-Connect-Signature.
+POST /pair body: `{ "pairing_key": "bc_..." }` -> `{ ok, connection_id, site_url, site_name }`.
 
-POST /pair body: { "pairing_key": "bc_..." } -> { ok, connection_id, site_url, site_name }.
-POST /pair returns 409 if the site is already paired with Central.
-
-Activity bridge requires **Barbas Activity Reports** active (+ WP Activity Log tables). Responses include `bridge_version` and `ready: true` when live (Connect < 0.1.7 returned a 501 stub).
-
-## Folder structure
+## Structure
 
 ```
-barbas-connect/
-|-- barbas-connect.php
-|-- readme.txt
+hangar-connect/
+|-- hangar-connect.php
 |-- uninstall.php
-|-- assets/
-|   |-- css/
-|   |-- js/
-|   \-- img/
+|-- readme.txt
 |-- includes/
-|   |-- barbas-connect-admin.php
-|   |-- barbas-connect-activity.php
-|   |-- barbas-connect-connections.php
-|   |-- barbas-connect-hmac.php
-|   |-- barbas-connect-rest.php
+|   |-- hangar-connect-admin.php
+|   |-- hangar-connect-activity.php
+|   |-- hangar-connect-connections.php
+|   |-- hangar-connect-hmac.php
+|   |-- hangar-connect-rest.php
 |   |-- barbas-update-*.php
-|   \-- ...
+|-- assets/
 |-- languages/
-|-- lib/
-|   \-- plugin-update-checker/
-\-- scripts/
+\-- lib/plugin-update-checker/
 ```
-
-## Requirements
-
-WordPress 5.8+, PHP 7.4+, OpenSSL for secure pairing key storage. Barbas Activity Reports for productivity bridges.
 
 ## Changelog
 
+### 0.2.0
+
+- Rebrand to Hangar Connect (slug `hangar-connect`, REST `hangar-connect/v1`).
+- Display name filter `hangar_connect_display_name` for future white-label.
+- Release zip: `hangar-connect.zip`.
+
 ### 0.1.12
-- After generate/rotate/disconnect, redirect to a clean admin URL (transient flash for notice + key id). JS also strips legacy `bc_notice` / `bc_id` / `bc_msg` so refresh never re-shows them.
 
-### 0.1.11
-- Remove the Barbas Digital eyebrow label above the Barbas Connect title.
-- Hide "Generate new key" while a connection is Connected (keep Disconnect).
-
-### 0.1.10
-- Hide New connection card when a connection already exists (one Central at a time).
-- Reject create / POST /pair while already paired (409).
-- Format Connections table dates as DD/MM/YYYY HH:MM for pt_BR.
-
-### 0.1.9
-- Harden Activity Reports bridge loader (full AR include order, WSAL table checks, bridge_version).
-- Advertise activity_bridge_ready in /health and /capabilities.
-- Sites on Connect < 0.1.7 still hit the old 501 stub -- update required for Central reports.
-
-### 0.1.8
-- Vertically center Connections table cells (status, dates, actions vs two-line label).
-- Align version pill with the page header title block.
-- Suppress third-party admin notices on the Barbas Connect settings screen.
-
-### 0.1.7
-- Implement Activity Reports bridge: GET /activity/users and GET /activity/report (json/html/csv).
-- Resolve users by email or username for multi-site Central reports.
-
-### 0.1.6
-- Clarify connections-screen description (no third-party worker branding).
-- Fix Installation zip filename encoding (barbas-connect.zip).
-- Align Site URL and Health endpoint value boxes in Site status.
-
-### 0.1.5
-- Rename user-facing Barbas Console references to Barbas Central.
-- Site status card: responsive stacked grid.
-- Tighten New connection form spacing.
-
-### 0.1.4
-- New connection card: drop the Barbas Update license disclaimer; keep a short pairing-key explanation.
-
-### 0.1.3
-- Plugin list name without hyphen (Barbas Connect).
-- Admin footer matches Barbas Update hub branding.
-- Empty pairing label falls back to the WordPress site title.
-- pt_BR translations for admin UI.
-
-### 0.1.2
-- Fix README encoding (corrupted Installation line / replacement characters).
-
-### 0.1.1
-- POST /pair handshake for Barbas Central (match pending bc_... key -> connection_id).
-
-### 0.1.0
-- Initial MVP scaffold: admin connections UI, REST health + HMAC helpers, Activity Reports bridge stubs, Barbas Update hub tab connect.
-
-## Next
-
-Use with Barbas Central SaaS for multi-site jobs and Activity Reports bridges.
+- After generate/rotate/disconnect, redirect to a clean admin URL (transient flash).

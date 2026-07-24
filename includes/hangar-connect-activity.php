@@ -1,6 +1,6 @@
 <?php
 /**
- * Activity Reports bridge for Barbas Central (HMAC-protected REST).
+ * Activity Reports bridge for Hangar (HMAC-protected REST).
  *
  * Real implementation: calls wsalr_known_users() / wsalr_build_report() from
  * Barbas Activity Reports (not a 501 stub).
@@ -13,7 +13,7 @@ defined('ABSPATH') || exit;
  *
  * @return string Absolute path with trailing slash, or empty.
  */
-function barbas_connect_activity_reports_dir() {
+function hangar_connect_activity_reports_dir() {
     if (defined('WSALR_DIR') && is_string(WSALR_DIR) && WSALR_DIR !== '') {
         return trailingslashit(WSALR_DIR);
     }
@@ -38,15 +38,15 @@ function barbas_connect_activity_reports_dir() {
  *
  * @return bool
  */
-function barbas_connect_activity_ensure_loaded() {
-    if (!barbas_connect_activity_reports_available()) {
+function hangar_connect_activity_ensure_loaded() {
+    if (!hangar_connect_activity_reports_available()) {
         return false;
     }
     if (function_exists('wsalr_known_users') && function_exists('wsalr_build_report') && function_exists('wsalr_tables')) {
         return true;
     }
 
-    $dir = barbas_connect_activity_reports_dir();
+    $dir = hangar_connect_activity_reports_dir();
     if ($dir === '') {
         return false;
     }
@@ -75,7 +75,7 @@ function barbas_connect_activity_ensure_loaded() {
  *
  * @return WP_REST_Response
  */
-function barbas_connect_activity_missing_response() {
+function hangar_connect_activity_missing_response() {
     return new WP_REST_Response(
         array(
             'ok'      => false,
@@ -93,7 +93,7 @@ function barbas_connect_activity_missing_response() {
  * @param object $row Known user row from wsalr_known_users().
  * @return array<string, mixed>
  */
-function barbas_connect_activity_enrich_user($row) {
+function hangar_connect_activity_enrich_user($row) {
     $username = isset($row->username) ? (string) $row->username : '';
     $user_id  = isset($row->user_id) ? (int) $row->user_id : 0;
     $events   = isset($row->n) ? (int) $row->n : 0;
@@ -121,7 +121,7 @@ function barbas_connect_activity_enrich_user($row) {
  * @param string $user_param Email or username.
  * @return string Username (or original) for wsalr_build_report.
  */
-function barbas_connect_activity_resolve_username($user_param) {
+function hangar_connect_activity_resolve_username($user_param) {
     $user_param = trim((string) $user_param);
     if ($user_param === '') {
         return '';
@@ -148,17 +148,17 @@ function barbas_connect_activity_resolve_username($user_param) {
  * @param WP_REST_Request $request Request.
  * @return WP_REST_Response
  */
-function barbas_connect_rest_activity_users(WP_REST_Request $request) {
+function hangar_connect_rest_activity_users(WP_REST_Request $request) {
     unset($request);
-    if (!barbas_connect_activity_reports_available()) {
-        return barbas_connect_activity_missing_response();
+    if (!hangar_connect_activity_reports_available()) {
+        return hangar_connect_activity_missing_response();
     }
-    if (!barbas_connect_activity_ensure_loaded()) {
+    if (!hangar_connect_activity_ensure_loaded()) {
         return new WP_REST_Response(
             array(
                 'ok'      => false,
                 'code'    => 'activity_bridge_unavailable',
-                'message' => 'Activity Reports helpers could not be loaded. Update Barbas Connect and Activity Reports.',
+                'message' => 'Activity Reports helpers could not be loaded. Update Hangar Connect and Activity Reports.',
                 'ready'   => false,
             ),
             500
@@ -183,14 +183,14 @@ function barbas_connect_rest_activity_users(WP_REST_Request $request) {
         if (!is_object($row)) {
             continue;
         }
-        $users[] = barbas_connect_activity_enrich_user($row);
+        $users[] = hangar_connect_activity_enrich_user($row);
     }
 
     return new WP_REST_Response(
         array(
             'ok'             => true,
             'ready'          => true,
-            'bridge_version' => BARBAS_CONNECT_VERSION,
+            'bridge_version' => HANGAR_CONNECT_VERSION,
             'site_url'       => home_url('/'),
             'site_name'      => get_bloginfo('name'),
             'users'          => $users,
@@ -208,16 +208,16 @@ function barbas_connect_rest_activity_users(WP_REST_Request $request) {
  * @param WP_REST_Request $request Request.
  * @return WP_REST_Response|WP_Error
  */
-function barbas_connect_rest_activity_report(WP_REST_Request $request) {
-    if (!barbas_connect_activity_reports_available()) {
-        return barbas_connect_activity_missing_response();
+function hangar_connect_rest_activity_report(WP_REST_Request $request) {
+    if (!hangar_connect_activity_reports_available()) {
+        return hangar_connect_activity_missing_response();
     }
-    if (!barbas_connect_activity_ensure_loaded()) {
+    if (!hangar_connect_activity_ensure_loaded()) {
         return new WP_REST_Response(
             array(
                 'ok'      => false,
                 'code'    => 'activity_bridge_unavailable',
-                'message' => 'Activity Reports helpers could not be loaded. Update Barbas Connect and Activity Reports.',
+                'message' => 'Activity Reports helpers could not be loaded. Update Hangar Connect and Activity Reports.',
                 'ready'   => false,
             ),
             500
@@ -252,7 +252,7 @@ function barbas_connect_rest_activity_report(WP_REST_Request $request) {
         );
     }
 
-    $username = barbas_connect_activity_resolve_username($user_param);
+    $username = hangar_connect_activity_resolve_username($user_param);
     $from_ts  = function_exists('wsalr_date_to_ts') ? wsalr_date_to_ts($from) : null;
     $to_ts    = function_exists('wsalr_date_to_ts') ? wsalr_date_to_ts($to, true) : null;
 
@@ -274,7 +274,7 @@ function barbas_connect_rest_activity_report(WP_REST_Request $request) {
             array(
                 'ok'             => true,
                 'ready'          => true,
-                'bridge_version' => BARBAS_CONNECT_VERSION,
+                'bridge_version' => HANGAR_CONNECT_VERSION,
                 'format'         => 'html',
                 'site_url'       => home_url('/'),
                 'site_name'      => get_bloginfo('name'),
@@ -333,7 +333,7 @@ function barbas_connect_rest_activity_report(WP_REST_Request $request) {
             array(
                 'ok'             => true,
                 'ready'          => true,
-                'bridge_version' => BARBAS_CONNECT_VERSION,
+                'bridge_version' => HANGAR_CONNECT_VERSION,
                 'format'         => 'csv',
                 'site_url'       => home_url('/'),
                 'site_name'      => get_bloginfo('name'),
@@ -354,7 +354,7 @@ function barbas_connect_rest_activity_report(WP_REST_Request $request) {
         array(
             'ok'             => true,
             'ready'          => true,
-            'bridge_version' => BARBAS_CONNECT_VERSION,
+            'bridge_version' => HANGAR_CONNECT_VERSION,
             'format'         => 'json',
             'site_url'       => home_url('/'),
             'site_name'      => get_bloginfo('name'),

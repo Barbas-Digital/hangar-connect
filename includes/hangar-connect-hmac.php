@@ -1,6 +1,6 @@
 <?php
 /**
- * HMAC request verification scaffold for Barbas Connect REST.
+ * HMAC request verification scaffold for Hangar Connect REST.
  *
  * Headers:
  * - X-Barbas-Connect-Id: connection id
@@ -15,7 +15,7 @@
 defined('ABSPATH') || exit;
 
 /** Allowed clock skew (seconds). */
-define('BARBAS_CONNECT_HMAC_SKEW', 300);
+define('HANGAR_CONNECT_HMAC_SKEW', 300);
 
 /**
  * Build canonical string for signing.
@@ -27,7 +27,7 @@ define('BARBAS_CONNECT_HMAC_SKEW', 300);
  * @param string $body      Raw body.
  * @return string
  */
-function barbas_connect_hmac_canonical($timestamp, $nonce, $method, $path, $body) {
+function hangar_connect_hmac_canonical($timestamp, $nonce, $method, $path, $body) {
     $body_hash = hash('sha256', is_string($body) ? $body : '');
     return implode(
         "\n",
@@ -48,7 +48,7 @@ function barbas_connect_hmac_canonical($timestamp, $nonce, $method, $path, $body
  * @param string $secret    Pairing secret (plaintext).
  * @return string Hex digest.
  */
-function barbas_connect_hmac_sign($canonical, $secret) {
+function hangar_connect_hmac_sign($canonical, $secret) {
     return hash_hmac('sha256', $canonical, $secret);
 }
 
@@ -57,7 +57,7 @@ function barbas_connect_hmac_sign($canonical, $secret) {
  *
  * @return array{id:string,timestamp:string,nonce:string,signature:string}
  */
-function barbas_connect_hmac_read_headers() {
+function hangar_connect_hmac_read_headers() {
     $get = static function ($name) {
         $key = 'HTTP_' . strtoupper(str_replace('-', '_', $name));
         if (isset($_SERVER[ $key ])) {
@@ -91,7 +91,7 @@ function barbas_connect_hmac_read_headers() {
  * @param WP_REST_Request $request Request.
  * @return string
  */
-function barbas_connect_hmac_request_path(WP_REST_Request $request) {
+function hangar_connect_hmac_request_path(WP_REST_Request $request) {
     $route = $request->get_route();
     $uri   = isset($_SERVER['REQUEST_URI']) ? (string) wp_unslash($_SERVER['REQUEST_URI']) : '';
     if ($uri !== '') {
@@ -112,12 +112,12 @@ function barbas_connect_hmac_request_path(WP_REST_Request $request) {
  * @param string $nonce         Nonce.
  * @return bool True if replay.
  */
-function barbas_connect_hmac_nonce_seen($connection_id, $nonce) {
-    $key = 'barbas_connect_nonce_' . md5($connection_id . '|' . $nonce);
+function hangar_connect_hmac_nonce_seen($connection_id, $nonce) {
+    $key = 'hangar_connect_nonce_' . md5($connection_id . '|' . $nonce);
     if (get_transient($key)) {
         return true;
     }
-    set_transient($key, 1, BARBAS_CONNECT_HMAC_SKEW * 2);
+    set_transient($key, 1, HANGAR_CONNECT_HMAC_SKEW * 2);
     return false;
 }
 
@@ -127,79 +127,79 @@ function barbas_connect_hmac_nonce_seen($connection_id, $nonce) {
  * @param WP_REST_Request $request Request.
  * @return true|WP_Error
  */
-function barbas_connect_hmac_verify_request(WP_REST_Request $request) {
-    $headers = barbas_connect_hmac_read_headers();
+function hangar_connect_hmac_verify_request(WP_REST_Request $request) {
+    $headers = hangar_connect_hmac_read_headers();
 
     if ($headers['id'] === '' || $headers['timestamp'] === '' || $headers['nonce'] === '' || $headers['signature'] === '') {
         return new WP_Error(
-            'barbas_connect_hmac_missing',
-            __('Missing Barbas Connect authentication headers.', 'barbas-connect'),
+            'hangar_connect_hmac_missing',
+            __('Missing Hangar Connect authentication headers.', 'hangar-connect'),
             array('status' => 401)
         );
     }
 
     if (!ctype_digit($headers['timestamp'])) {
         return new WP_Error(
-            'barbas_connect_hmac_timestamp',
-            __('Invalid timestamp.', 'barbas-connect'),
+            'hangar_connect_hmac_timestamp',
+            __('Invalid timestamp.', 'hangar-connect'),
             array('status' => 401)
         );
     }
 
     $ts = (int) $headers['timestamp'];
     $now = time();
-    if (abs($now - $ts) > BARBAS_CONNECT_HMAC_SKEW) {
+    if (abs($now - $ts) > HANGAR_CONNECT_HMAC_SKEW) {
         return new WP_Error(
-            'barbas_connect_hmac_skew',
-            __('Request timestamp outside allowed window.', 'barbas-connect'),
+            'hangar_connect_hmac_skew',
+            __('Request timestamp outside allowed window.', 'hangar-connect'),
             array('status' => 401)
         );
     }
 
     if (strlen($headers['nonce']) < 8 || strlen($headers['nonce']) > 128) {
         return new WP_Error(
-            'barbas_connect_hmac_nonce',
-            __('Invalid nonce.', 'barbas-connect'),
+            'hangar_connect_hmac_nonce',
+            __('Invalid nonce.', 'hangar-connect'),
             array('status' => 401)
         );
     }
 
-    if (barbas_connect_hmac_nonce_seen($headers['id'], $headers['nonce'])) {
+    if (hangar_connect_hmac_nonce_seen($headers['id'], $headers['nonce'])) {
         return new WP_Error(
-            'barbas_connect_hmac_replay',
-            __('Nonce already used.', 'barbas-connect'),
+            'hangar_connect_hmac_replay',
+            __('Nonce already used.', 'hangar-connect'),
             array('status' => 401)
         );
     }
 
-    $secret = barbas_connect_get_connection_secret($headers['id']);
+    $secret = hangar_connect_get_connection_secret($headers['id']);
     if ($secret === '') {
         return new WP_Error(
-            'barbas_connect_hmac_unknown',
-            __('Unknown connection.', 'barbas-connect'),
+            'hangar_connect_hmac_unknown',
+            __('Unknown connection.', 'hangar-connect'),
             array('status' => 401)
         );
     }
 
     $body = $request->get_body();
-    $canonical = barbas_connect_hmac_canonical(
+    $canonical = hangar_connect_hmac_canonical(
         $headers['timestamp'],
         $headers['nonce'],
         $request->get_method(),
-        barbas_connect_hmac_request_path($request),
+        hangar_connect_hmac_request_path($request),
         $body
     );
-    $expected = barbas_connect_hmac_sign($canonical, $secret);
+    $expected = hangar_connect_hmac_sign($canonical, $secret);
 
     if (!hash_equals($expected, strtolower($headers['signature'])) && !hash_equals($expected, $headers['signature'])) {
         return new WP_Error(
-            'barbas_connect_hmac_invalid',
-            __('Invalid signature.', 'barbas-connect'),
+            'hangar_connect_hmac_invalid',
+            __('Invalid signature.', 'hangar-connect'),
             array('status' => 401)
         );
     }
 
-    barbas_connect_touch_connection($headers['id']);
+    hangar_connect_touch_connection($headers['id']);
     return true;
 }
 
@@ -209,6 +209,6 @@ function barbas_connect_hmac_verify_request(WP_REST_Request $request) {
  * @param WP_REST_Request $request Request.
  * @return true|WP_Error
  */
-function barbas_connect_rest_permission_hmac(WP_REST_Request $request) {
-    return barbas_connect_hmac_verify_request($request);
+function hangar_connect_rest_permission_hmac(WP_REST_Request $request) {
+    return hangar_connect_hmac_verify_request($request);
 }

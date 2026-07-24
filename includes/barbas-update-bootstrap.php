@@ -320,6 +320,7 @@ if (!function_exists('barbas_update_filter_plugin_information_changelog')) {
         $slug = isset($args->slug) ? (string) $args->slug : (isset($result->slug) ? (string) $result->slug : '');
         $is_barbas = (strpos($homepage, 'github.com/Barbas-Digital/') !== false)
             || ($slug !== '' && strpos($slug, 'barbas-') === 0)
+            || ($slug !== '' && strpos($slug, 'hangar-') === 0)
             || ($slug === 'abler-api-vagas');
         if (!$is_barbas) {
             return $result;

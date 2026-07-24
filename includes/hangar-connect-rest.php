@@ -1,6 +1,6 @@
 <?php
 /**
- * REST API for Barbas Connect (own namespace only — never /wp/v2).
+ * REST API for Hangar Connect (own namespace only — never /wp/v2).
  */
 
 defined('ABSPATH') || exit;
@@ -8,15 +8,15 @@ defined('ABSPATH') || exit;
 /**
  * Register routes.
  */
-function barbas_connect_register_rest_routes() {
-    $ns = BARBAS_CONNECT_REST_NS;
+function hangar_connect_register_rest_routes() {
+    $ns = HANGAR_CONNECT_REST_NS;
 
     register_rest_route(
         $ns,
         '/health',
         array(
             'methods'             => WP_REST_Server::READABLE,
-            'callback'            => 'barbas_connect_rest_health',
+            'callback'            => 'hangar_connect_rest_health',
             'permission_callback' => '__return_true',
         )
     );
@@ -26,7 +26,7 @@ function barbas_connect_register_rest_routes() {
         '/pair',
         array(
             'methods'             => WP_REST_Server::CREATABLE,
-            'callback'            => 'barbas_connect_rest_pair',
+            'callback'            => 'hangar_connect_rest_pair',
             'permission_callback' => '__return_true',
             'args'                => array(
                 'pairing_key' => array(
@@ -43,8 +43,8 @@ function barbas_connect_register_rest_routes() {
         '/capabilities',
         array(
             'methods'             => WP_REST_Server::READABLE,
-            'callback'            => 'barbas_connect_rest_capabilities',
-            'permission_callback' => 'barbas_connect_rest_permission_hmac',
+            'callback'            => 'hangar_connect_rest_capabilities',
+            'permission_callback' => 'hangar_connect_rest_permission_hmac',
         )
     );
 
@@ -53,8 +53,8 @@ function barbas_connect_register_rest_routes() {
         '/activity/users',
         array(
             'methods'             => WP_REST_Server::READABLE,
-            'callback'            => 'barbas_connect_rest_activity_users',
-            'permission_callback' => 'barbas_connect_rest_permission_hmac',
+            'callback'            => 'hangar_connect_rest_activity_users',
+            'permission_callback' => 'hangar_connect_rest_permission_hmac',
         )
     );
 
@@ -63,8 +63,8 @@ function barbas_connect_register_rest_routes() {
         '/activity/report',
         array(
             'methods'             => WP_REST_Server::READABLE,
-            'callback'            => 'barbas_connect_rest_activity_report',
-            'permission_callback' => 'barbas_connect_rest_permission_hmac',
+            'callback'            => 'hangar_connect_rest_activity_report',
+            'permission_callback' => 'hangar_connect_rest_permission_hmac',
             'args'                => array(
                 'user'   => array(
                     'required'          => true,
@@ -91,24 +91,24 @@ function barbas_connect_register_rest_routes() {
         )
     );
 }
-add_action('rest_api_init', 'barbas_connect_register_rest_routes');
+add_action('rest_api_init', 'hangar_connect_register_rest_routes');
 
 /**
  * Capability map advertised to Central.
  *
  * @return array<string, bool>
  */
-function barbas_connect_capabilities_map() {
-    $ar     = barbas_connect_activity_reports_available();
-    $loaded = $ar && function_exists('barbas_connect_activity_ensure_loaded')
-        ? barbas_connect_activity_ensure_loaded()
+function hangar_connect_capabilities_map() {
+    $ar     = hangar_connect_activity_reports_available();
+    $loaded = $ar && function_exists('hangar_connect_activity_ensure_loaded')
+        ? hangar_connect_activity_ensure_loaded()
         : false;
     return array(
         'activity_reports'       => $ar,
         'activity_users'         => $ar && $loaded,
         'activity_report'        => $ar && $loaded,
         'activity_bridge_ready'  => $ar && $loaded,
-        'activity_bridge_version'=> BARBAS_CONNECT_VERSION,
+        'activity_bridge_version'=> HANGAR_CONNECT_VERSION,
     );
 }
 
@@ -117,8 +117,8 @@ function barbas_connect_capabilities_map() {
  *
  * @return WP_REST_Response
  */
-function barbas_connect_rest_health() {
-    $connections = barbas_connect_get_all_connections();
+function hangar_connect_rest_health() {
+    $connections = hangar_connect_get_all_connections();
     $pending = 0;
     $connected = 0;
     foreach ($connections as $row) {
@@ -132,17 +132,17 @@ function barbas_connect_rest_health() {
     return new WP_REST_Response(
         array(
             'ok'           => true,
-            'plugin'       => 'barbas-connect',
-            'version'      => BARBAS_CONNECT_VERSION,
+            'plugin'       => 'hangar-connect',
+            'version'      => HANGAR_CONNECT_VERSION,
             'site_url'     => home_url('/'),
             'site_name'    => get_bloginfo('name'),
-            'connected'    => barbas_connect_has_active_connection(),
+            'connected'    => hangar_connect_has_active_connection(),
             'connections'  => array(
                 'total'     => count($connections),
                 'pending'   => $pending,
                 'connected' => $connected,
             ),
-            'capabilities' => barbas_connect_capabilities_map(),
+            'capabilities' => hangar_connect_capabilities_map(),
         ),
         200
     );
@@ -157,7 +157,7 @@ function barbas_connect_rest_health() {
  * @param WP_REST_Request $request Request.
  * @return WP_REST_Response|WP_Error
  */
-function barbas_connect_rest_pair(WP_REST_Request $request) {
+function hangar_connect_rest_pair(WP_REST_Request $request) {
     $key = (string) $request->get_param('pairing_key');
     if ($key === '' && $request->get_json_params()) {
         $json = $request->get_json_params();
@@ -166,7 +166,7 @@ function barbas_connect_rest_pair(WP_REST_Request $request) {
         }
     }
 
-    $result = barbas_connect_complete_pairing($key);
+    $result = hangar_connect_complete_pairing($key);
     if (is_wp_error($result)) {
         return $result;
     }
@@ -188,16 +188,16 @@ function barbas_connect_rest_pair(WP_REST_Request $request) {
  * @param WP_REST_Request $request Request.
  * @return WP_REST_Response
  */
-function barbas_connect_rest_capabilities(WP_REST_Request $request) {
+function hangar_connect_rest_capabilities(WP_REST_Request $request) {
     unset($request);
     return new WP_REST_Response(
         array(
             'ok'           => true,
-            'capabilities' => barbas_connect_capabilities_map(),
-            'version'      => BARBAS_CONNECT_VERSION,
+            'capabilities' => hangar_connect_capabilities_map(),
+            'version'      => HANGAR_CONNECT_VERSION,
         ),
         200
     );
 }
 
-// Activity users + report callbacks live in barbas-connect-activity.php.
+// Activity users + report callbacks live in hangar-connect-activity.php.

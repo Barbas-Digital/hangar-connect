@@ -1,6 +1,6 @@
 <?php
 /**
- * Connection storage for Barbas Connect pairing keys.
+ * Connection storage for Hangar Connect pairing keys.
  *
  * Pairing secrets are encrypted at rest (hub crypto when available).
  * Plaintext is never logged. Hub license tokens are unrelated.
@@ -9,7 +9,7 @@
 defined('ABSPATH') || exit;
 
 /** Option key (autoload=false). */
-define('BARBAS_CONNECT_CONNECTIONS_OPTION', 'barbas_connect_connections');
+define('HANGAR_CONNECT_CONNECTIONS_OPTION', 'hangar_connect_connections');
 
 /**
  * Transient prefix for one-time plaintext reveal after generate/rotate.
@@ -17,15 +17,15 @@ define('BARBAS_CONNECT_CONNECTIONS_OPTION', 'barbas_connect_connections');
  * @param string $connection_id Connection id.
  * @return string
  */
-function barbas_connect_reveal_transient_key($connection_id) {
-    return 'barbas_connect_reveal_' . sanitize_key($connection_id);
+function hangar_connect_reveal_transient_key($connection_id) {
+    return 'hangar_connect_reveal_' . sanitize_key($connection_id);
 }
 
 /**
  * @return array<int, array<string, mixed>>
  */
-function barbas_connect_get_all_connections() {
-    $raw = get_option(BARBAS_CONNECT_CONNECTIONS_OPTION, array());
+function hangar_connect_get_all_connections() {
+    $raw = get_option(HANGAR_CONNECT_CONNECTIONS_OPTION, array());
     if (!is_array($raw)) {
         return array();
     }
@@ -35,7 +35,7 @@ function barbas_connect_get_all_connections() {
         if (!is_array($row) || empty($row['id'])) {
             continue;
         }
-        $out[] = barbas_connect_normalize_connection($row);
+        $out[] = hangar_connect_normalize_connection($row);
     }
 
     return $out;
@@ -45,7 +45,7 @@ function barbas_connect_get_all_connections() {
  * @param array<string, mixed> $row Raw row.
  * @return array<string, mixed>
  */
-function barbas_connect_normalize_connection($row) {
+function hangar_connect_normalize_connection($row) {
     return array(
         'id'           => (string) $row['id'],
         'label'        => isset($row['label']) ? (string) $row['label'] : '',
@@ -63,30 +63,30 @@ function barbas_connect_normalize_connection($row) {
  * @param array<int, array<string, mixed>> $connections Rows.
  * @return bool
  */
-function barbas_connect_save_all_connections($connections) {
+function hangar_connect_save_all_connections($connections) {
     $clean = array();
     foreach ((array) $connections as $row) {
         if (!is_array($row) || empty($row['id'])) {
             continue;
         }
-        $clean[] = barbas_connect_normalize_connection($row);
+        $clean[] = hangar_connect_normalize_connection($row);
     }
 
-    $existing = get_option(BARBAS_CONNECT_CONNECTIONS_OPTION, null);
+    $existing = get_option(HANGAR_CONNECT_CONNECTIONS_OPTION, null);
     if (null === $existing) {
-        return add_option(BARBAS_CONNECT_CONNECTIONS_OPTION, $clean, '', false);
+        return add_option(HANGAR_CONNECT_CONNECTIONS_OPTION, $clean, '', false);
     }
 
-    return update_option(BARBAS_CONNECT_CONNECTIONS_OPTION, $clean, false);
+    return update_option(HANGAR_CONNECT_CONNECTIONS_OPTION, $clean, false);
 }
 
 /**
  * @param string $connection_id Connection id.
  * @return array<string, mixed>|null
  */
-function barbas_connect_get_connection($connection_id) {
+function hangar_connect_get_connection($connection_id) {
     $connection_id = sanitize_key($connection_id);
-    foreach (barbas_connect_get_all_connections() as $row) {
+    foreach (hangar_connect_get_all_connections() as $row) {
         if ($row['id'] === $connection_id) {
             return $row;
         }
@@ -100,7 +100,7 @@ function barbas_connect_get_connection($connection_id) {
  * @param string $plaintext Pairing secret.
  * @return string Encrypted or empty on failure.
  */
-function barbas_connect_encrypt_secret($plaintext) {
+function hangar_connect_encrypt_secret($plaintext) {
     $plaintext = is_string($plaintext) ? trim($plaintext) : '';
     if ($plaintext === '') {
         return '';
@@ -123,7 +123,7 @@ function barbas_connect_encrypt_secret($plaintext) {
  * @param string $stored Encrypted payload.
  * @return string
  */
-function barbas_connect_decrypt_secret($stored) {
+function hangar_connect_decrypt_secret($stored) {
     if (!is_string($stored) || $stored === '') {
         return '';
     }
@@ -140,7 +140,7 @@ function barbas_connect_decrypt_secret($stored) {
  *
  * @return string
  */
-function barbas_connect_generate_pairing_key() {
+function hangar_connect_generate_pairing_key() {
     try {
         $bytes = random_bytes(32);
     } catch (Exception $e) {
@@ -157,20 +157,20 @@ function barbas_connect_generate_pairing_key() {
  * @param string $label Optional label.
  * @return array{connection:array<string,mixed>,pairing_key:string}|WP_Error
  */
-function barbas_connect_create_connection($label = '') {
-    if (!empty(barbas_connect_get_all_connections())) {
+function hangar_connect_create_connection($label = '') {
+    if (!empty(hangar_connect_get_all_connections())) {
         return new WP_Error(
-            'barbas_connect_already_connected',
-            __('This site already has a connection. Disconnect it before pairing with another Central.', 'barbas-connect')
+            'hangar_connect_already_connected',
+            __('This site already has a connection. Disconnect it before pairing with another Central.', 'hangar-connect')
         );
     }
 
-    $plaintext = barbas_connect_generate_pairing_key();
-    $encrypted = barbas_connect_encrypt_secret($plaintext);
+    $plaintext = hangar_connect_generate_pairing_key();
+    $encrypted = hangar_connect_encrypt_secret($plaintext);
     if ($encrypted === '') {
         return new WP_Error(
-            'barbas_connect_encrypt_failed',
-            __('Could not store the pairing key securely (OpenSSL required).', 'barbas-connect')
+            'hangar_connect_encrypt_failed',
+            __('Could not store the pairing key securely (OpenSSL required).', 'hangar-connect')
         );
     }
 
@@ -190,16 +190,16 @@ function barbas_connect_create_connection($label = '') {
         'secret'       => $encrypted,
     );
 
-    $all = barbas_connect_get_all_connections();
+    $all = hangar_connect_get_all_connections();
     $all[] = $row;
-    if (!barbas_connect_save_all_connections($all)) {
+    if (!hangar_connect_save_all_connections($all)) {
         return new WP_Error(
-            'barbas_connect_save_failed',
-            __('Could not save the connection.', 'barbas-connect')
+            'hangar_connect_save_failed',
+            __('Could not save the connection.', 'hangar-connect')
         );
     }
 
-    set_transient(barbas_connect_reveal_transient_key($id), $plaintext, 10 * MINUTE_IN_SECONDS);
+    set_transient(hangar_connect_reveal_transient_key($id), $plaintext, 10 * MINUTE_IN_SECONDS);
 
     return array(
         'connection'  => $row,
@@ -213,17 +213,17 @@ function barbas_connect_create_connection($label = '') {
  * @param string $connection_id Connection id.
  * @return array{connection:array<string,mixed>,pairing_key:string}|WP_Error
  */
-function barbas_connect_rotate_connection($connection_id) {
+function hangar_connect_rotate_connection($connection_id) {
     $connection_id = sanitize_key($connection_id);
-    $all = barbas_connect_get_all_connections();
+    $all = hangar_connect_get_all_connections();
     $found = false;
     $updated = null;
-    $plaintext = barbas_connect_generate_pairing_key();
-    $encrypted = barbas_connect_encrypt_secret($plaintext);
+    $plaintext = hangar_connect_generate_pairing_key();
+    $encrypted = hangar_connect_encrypt_secret($plaintext);
     if ($encrypted === '') {
         return new WP_Error(
-            'barbas_connect_encrypt_failed',
-            __('Could not store the pairing key securely (OpenSSL required).', 'barbas-connect')
+            'hangar_connect_encrypt_failed',
+            __('Could not store the pairing key securely (OpenSSL required).', 'hangar-connect')
         );
     }
 
@@ -241,19 +241,19 @@ function barbas_connect_rotate_connection($connection_id) {
 
     if (!$found || $updated === null) {
         return new WP_Error(
-            'barbas_connect_not_found',
-            __('Connection not found.', 'barbas-connect')
+            'hangar_connect_not_found',
+            __('Connection not found.', 'hangar-connect')
         );
     }
 
-    if (!barbas_connect_save_all_connections($all)) {
+    if (!hangar_connect_save_all_connections($all)) {
         return new WP_Error(
-            'barbas_connect_save_failed',
-            __('Could not save the connection.', 'barbas-connect')
+            'hangar_connect_save_failed',
+            __('Could not save the connection.', 'hangar-connect')
         );
     }
 
-    set_transient(barbas_connect_reveal_transient_key($connection_id), $plaintext, 10 * MINUTE_IN_SECONDS);
+    set_transient(hangar_connect_reveal_transient_key($connection_id), $plaintext, 10 * MINUTE_IN_SECONDS);
 
     return array(
         'connection'  => $updated,
@@ -265,15 +265,15 @@ function barbas_connect_rotate_connection($connection_id) {
  * @param string $connection_id Connection id.
  * @return true|WP_Error
  */
-function barbas_connect_delete_connection($connection_id) {
+function hangar_connect_delete_connection($connection_id) {
     $connection_id = sanitize_key($connection_id);
-    $all = barbas_connect_get_all_connections();
+    $all = hangar_connect_get_all_connections();
     $next = array();
     $found = false;
     foreach ($all as $row) {
         if ($row['id'] === $connection_id) {
             $found = true;
-            delete_transient(barbas_connect_reveal_transient_key($connection_id));
+            delete_transient(hangar_connect_reveal_transient_key($connection_id));
             continue;
         }
         $next[] = $row;
@@ -281,12 +281,12 @@ function barbas_connect_delete_connection($connection_id) {
 
     if (!$found) {
         return new WP_Error(
-            'barbas_connect_not_found',
-            __('Connection not found.', 'barbas-connect')
+            'hangar_connect_not_found',
+            __('Connection not found.', 'hangar-connect')
         );
     }
 
-    barbas_connect_save_all_connections($next);
+    hangar_connect_save_all_connections($next);
     return true;
 }
 
@@ -295,12 +295,12 @@ function barbas_connect_delete_connection($connection_id) {
  *
  * @return int Number removed.
  */
-function barbas_connect_delete_all_connections() {
-    $all = barbas_connect_get_all_connections();
+function hangar_connect_delete_all_connections() {
+    $all = hangar_connect_get_all_connections();
     foreach ($all as $row) {
-        delete_transient(barbas_connect_reveal_transient_key($row['id']));
+        delete_transient(hangar_connect_reveal_transient_key($row['id']));
     }
-    barbas_connect_save_all_connections(array());
+    hangar_connect_save_all_connections(array());
     return count($all);
 }
 
@@ -310,8 +310,8 @@ function barbas_connect_delete_all_connections() {
  * @param string $connection_id Connection id.
  * @return string Empty if not available.
  */
-function barbas_connect_peek_revealed_key($connection_id) {
-    $key = get_transient(barbas_connect_reveal_transient_key($connection_id));
+function hangar_connect_peek_revealed_key($connection_id) {
+    $key = get_transient(hangar_connect_reveal_transient_key($connection_id));
     return is_string($key) ? $key : '';
 }
 
@@ -320,8 +320,8 @@ function barbas_connect_peek_revealed_key($connection_id) {
  *
  * @param string $connection_id Connection id.
  */
-function barbas_connect_clear_revealed_key($connection_id) {
-    delete_transient(barbas_connect_reveal_transient_key($connection_id));
+function hangar_connect_clear_revealed_key($connection_id) {
+    delete_transient(hangar_connect_reveal_transient_key($connection_id));
 }
 
 /**
@@ -330,7 +330,7 @@ function barbas_connect_clear_revealed_key($connection_id) {
  * @param array<string, mixed> $row Connection row.
  * @return array<string, mixed>
  */
-function barbas_connect_public_connection_summary($row) {
+function hangar_connect_public_connection_summary($row) {
     return array(
         'id'           => $row['id'],
         'label'        => $row['label'],
@@ -346,8 +346,8 @@ function barbas_connect_public_connection_summary($row) {
  *
  * @return bool
  */
-function barbas_connect_has_active_connection() {
-    foreach (barbas_connect_get_all_connections() as $row) {
+function hangar_connect_has_active_connection() {
+    foreach (hangar_connect_get_all_connections() as $row) {
         if (($row['status'] ?? '') === 'connected') {
             return true;
         }
@@ -363,12 +363,12 @@ function barbas_connect_has_active_connection() {
  * @param string $connection_id Connection id.
  * @return string
  */
-function barbas_connect_get_connection_secret($connection_id) {
-    $row = barbas_connect_get_connection($connection_id);
+function hangar_connect_get_connection_secret($connection_id) {
+    $row = hangar_connect_get_connection($connection_id);
     if ($row === null) {
         return '';
     }
-    return barbas_connect_decrypt_secret($row['secret']);
+    return hangar_connect_decrypt_secret($row['secret']);
 }
 
 /**
@@ -377,24 +377,24 @@ function barbas_connect_get_connection_secret($connection_id) {
  * @param string $pairing_key Plaintext key (bc_...).
  * @return array<string,mixed>|WP_Error Public connection row on success.
  */
-function barbas_connect_complete_pairing($pairing_key) {
+function hangar_connect_complete_pairing($pairing_key) {
     $pairing_key = is_string($pairing_key) ? trim($pairing_key) : '';
     if ($pairing_key === '' || strpos($pairing_key, 'bc_') !== 0) {
         return new WP_Error(
-            'barbas_connect_pair_invalid',
-            __('Invalid pairing key.', 'barbas-connect'),
+            'hangar_connect_pair_invalid',
+            __('Invalid pairing key.', 'hangar-connect'),
             array('status' => 400)
         );
     }
 
-    $all = barbas_connect_get_all_connections();
+    $all = hangar_connect_get_all_connections();
 
     // One Central at a time: reject pairing a second connection while one is active.
     // Rotate sets status back to pending, so re-pair of the same slot still works.
-    if (barbas_connect_has_active_connection()) {
+    if (hangar_connect_has_active_connection()) {
         return new WP_Error(
-            'barbas_connect_already_paired',
-            __('This site is already paired with Barbas Central. Disconnect before pairing again.', 'barbas-connect'),
+            'hangar_connect_already_paired',
+            __('This site is already paired with Hangar. Disconnect before pairing again.', 'hangar-connect'),
             array('status' => 409)
         );
     }
@@ -404,7 +404,7 @@ function barbas_connect_complete_pairing($pairing_key) {
         if (($row['status'] ?? '') === 'connected') {
             continue;
         }
-        $secret = barbas_connect_decrypt_secret($row['secret']);
+        $secret = hangar_connect_decrypt_secret($row['secret']);
         if ($secret !== '' && hash_equals($secret, $pairing_key)) {
             $matched_id = $row['id'];
             break;
@@ -413,25 +413,25 @@ function barbas_connect_complete_pairing($pairing_key) {
 
     if ($matched_id === '') {
         return new WP_Error(
-            'barbas_connect_pair_not_found',
-            __('No pending connection matches this pairing key.', 'barbas-connect'),
+            'hangar_connect_pair_not_found',
+            __('No pending connection matches this pairing key.', 'hangar-connect'),
             array('status' => 404)
         );
     }
 
-    barbas_connect_touch_connection($matched_id);
-    barbas_connect_clear_revealed_key($matched_id);
+    hangar_connect_touch_connection($matched_id);
+    hangar_connect_clear_revealed_key($matched_id);
 
-    $updated = barbas_connect_get_connection($matched_id);
+    $updated = hangar_connect_get_connection($matched_id);
     if ($updated === null) {
         return new WP_Error(
-            'barbas_connect_pair_failed',
-            __('Pairing failed.', 'barbas-connect'),
+            'hangar_connect_pair_failed',
+            __('Pairing failed.', 'hangar-connect'),
             array('status' => 500)
         );
     }
 
-    return barbas_connect_public_connection_summary($updated);
+    return hangar_connect_public_connection_summary($updated);
 }
 
 /**
@@ -440,9 +440,9 @@ function barbas_connect_complete_pairing($pairing_key) {
  * @param string $connection_id Connection id.
  * @return void
  */
-function barbas_connect_touch_connection($connection_id) {
+function hangar_connect_touch_connection($connection_id) {
     $connection_id = sanitize_key($connection_id);
-    $all = barbas_connect_get_all_connections();
+    $all = hangar_connect_get_all_connections();
     $changed = false;
     foreach ($all as $i => $row) {
         if ($row['id'] !== $connection_id) {
@@ -457,7 +457,7 @@ function barbas_connect_touch_connection($connection_id) {
         break;
     }
     if ($changed) {
-        barbas_connect_save_all_connections($all);
+        hangar_connect_save_all_connections($all);
     }
 }
 
@@ -466,7 +466,7 @@ function barbas_connect_touch_connection($connection_id) {
  *
  * @return bool
  */
-function barbas_connect_activity_reports_available() {
+function hangar_connect_activity_reports_available() {
     if (defined('BARBAS_ACTIVITY_REPORTS_VERSION') || defined('WSALR_VERSION')) {
         return true;
     }

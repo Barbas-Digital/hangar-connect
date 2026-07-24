@@ -1,17 +1,17 @@
-/* Barbas Connect — Melapress / Barbas suite admin */
+/* Hangar Connect — Melapress / Barbas suite admin */
 
-.barbas-connect-wrap {
+.hangar-connect-wrap {
 	margin: 12px 0 28px;
 	max-width: 880px;
 	box-sizing: border-box;
 }
 
-.barbas-connect-app {
+.hangar-connect-app {
 	font-size: 14px;
 	color: #1d2a1a;
 }
 
-.barbas-connect-header {
+.hangar-connect-header {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
@@ -20,7 +20,7 @@
 	margin-bottom: 20px;
 }
 
-.barbas-connect-header h1 {
+.hangar-connect-header h1 {
 	margin: 0 0 8px;
 	font-size: 28px;
 	font-weight: 600;
@@ -28,14 +28,14 @@
 	line-height: 1.2;
 }
 
-.barbas-connect-lead {
+.hangar-connect-lead {
 	margin: 0;
 	max-width: 42rem;
 	color: #4a5c42;
 	line-height: 1.5;
 }
 
-.barbas-connect-pill {
+.hangar-connect-pill {
 	display: inline-block;
 	padding: 4px 10px;
 	border-radius: 999px;
@@ -45,11 +45,11 @@
 	font-weight: 600;
 }
 
-.barbas-connect-notice {
+.hangar-connect-notice {
 	margin: 0 0 16px !important;
 }
 
-.barbas-connect-card {
+.hangar-connect-card {
 	background: #fff;
 	border: 1px solid #c3cfc0;
 	border-radius: 8px;
@@ -58,24 +58,24 @@
 	box-shadow: 0 1px 3px rgba(56, 74, 47, 0.08);
 }
 
-.barbas-connect-card h2 {
+.hangar-connect-card h2 {
 	margin: 0 0 10px;
 	font-size: 16px;
 	font-weight: 600;
 	color: #384a2f;
 }
 
-.barbas-connect-card p {
+.hangar-connect-card p {
 	margin: 0 0 12px;
 	color: #4a5c42;
 }
 
-.barbas-connect-card--reveal {
+.hangar-connect-card--reveal {
 	border-color: #009344;
 	box-shadow: 0 0 0 1px rgba(0, 147, 68, 0.18), 0 2px 8px rgba(56, 74, 47, 0.1);
 }
 
-.barbas-connect-card__head {
+.hangar-connect-card__head {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -84,11 +84,11 @@
 	margin-bottom: 8px;
 }
 
-.barbas-connect-card__head h2 {
+.hangar-connect-card__head h2 {
 	margin: 0;
 }
 
-.barbas-connect-status-grid {
+.hangar-connect-status-grid {
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: 12px 16px;
@@ -96,18 +96,18 @@
 }
 
 @media (min-width: 782px) {
-	.barbas-connect-status-grid {
+	.hangar-connect-status-grid {
 		grid-template-columns: 1fr 1fr;
 	}
 
 	/* Site URL + Health endpoint: full width so long URLs align */
-	.barbas-connect-status-grid > div:nth-child(1),
-	.barbas-connect-status-grid > div:nth-child(2) {
+	.hangar-connect-status-grid > div:nth-child(1),
+	.hangar-connect-status-grid > div:nth-child(2) {
 		grid-column: 1 / -1;
 	}
 }
 
-.barbas-connect-status-grid dt {
+.hangar-connect-status-grid dt {
 	margin: 0 0 4px;
 	font-size: 11px;
 	font-weight: 700;
@@ -116,15 +116,15 @@
 	color: #6b7a63;
 }
 
-.barbas-connect-status-grid dd {
+.hangar-connect-status-grid dd {
 	margin: 0;
 	padding: 0;
 	word-break: break-word;
 }
 
 /* Same box for Site URL and Health endpoint (no extra indent on long URLs). */
-.barbas-connect-status-grid dd code,
-.barbas-connect-status-value {
+.hangar-connect-status-grid dd code,
+.hangar-connect-status-value {
 	display: block;
 	box-sizing: border-box;
 	width: 100%;
@@ -141,14 +141,14 @@
 	user-select: all;
 }
 
-.barbas-connect-mono,
-.barbas-connect-key {
+.hangar-connect-mono,
+.hangar-connect-key {
 	font-family: Consolas, Monaco, monospace;
 	font-size: 12px;
 	user-select: all;
 }
 
-.barbas-connect-key-row {
+.hangar-connect-key-row {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
@@ -156,7 +156,7 @@
 	margin: 12px 0;
 }
 
-.barbas-connect-key {
+.hangar-connect-key {
 	display: block;
 	flex: 1 1 240px;
 	padding: 10px 12px;
@@ -166,54 +166,54 @@
 	word-break: break-all;
 }
 
-.barbas-connect-form {
+.hangar-connect-form {
 	margin: 0;
 }
 
-.barbas-connect-form > p:last-child {
+.hangar-connect-form > p:last-child {
 	margin-bottom: 0;
 }
 
-.barbas-connect-form input.regular-text {
+.hangar-connect-form input.regular-text {
 	width: 100%;
 	max-width: 28rem;
 	box-sizing: border-box;
 }
 
-.barbas-connect-field {
+.hangar-connect-field {
 	margin: 0 0 12px;
 }
 
-.barbas-connect-field label {
+.hangar-connect-field label {
 	display: block;
 	margin-bottom: 6px;
 	font-weight: 600;
 	color: #384a2f;
 }
 
-.barbas-connect-table {
+.hangar-connect-table {
 	border: 1px solid #c3cfc0 !important;
 	border-radius: 6px;
 	overflow: hidden;
 }
 
-.barbas-connect-table th,
-.barbas-connect-table td {
+.hangar-connect-table th,
+.hangar-connect-table td {
 	vertical-align: middle;
 }
 
-.barbas-connect-table th {
+.hangar-connect-table th {
 	font-weight: 600;
 	color: #384a2f;
 }
 
-.barbas-connect-muted {
+.hangar-connect-muted {
 	margin-top: 4px;
 	font-size: 11px;
 	color: #6b7a63;
 }
 
-.barbas-connect-status {
+.hangar-connect-status {
 	display: inline-block;
 	padding: 2px 8px;
 	border-radius: 999px;
@@ -223,38 +223,38 @@
 	text-transform: uppercase;
 }
 
-.barbas-connect-status--pending {
+.hangar-connect-status--pending {
 	background: rgba(180, 120, 20, 0.12);
 	color: #8a5a00;
 }
 
-.barbas-connect-status--connected {
+.hangar-connect-status--connected {
 	background: rgba(0, 147, 68, 0.12);
 	color: #00813c;
 }
 
 /* Keep table-cell display so vertical-align: middle works vs multi-line Label. */
-.barbas-connect-table td.barbas-connect-actions {
+.hangar-connect-table td.hangar-connect-actions {
 	vertical-align: middle;
 }
 
-.barbas-connect-actions .barbas-connect-inline-form {
+.hangar-connect-actions .hangar-connect-inline-form {
 	display: inline-flex;
 	align-items: center;
 	margin: 0 8px 0 0;
 	vertical-align: middle;
 }
 
-.barbas-connect-actions .barbas-connect-inline-form:last-child {
+.hangar-connect-actions .hangar-connect-inline-form:last-child {
 	margin-right: 0;
 }
 
-.barbas-connect-inline-form {
+.hangar-connect-inline-form {
 	display: inline;
 	margin: 0;
 }
 
-.barbas-connect-empty {
+.hangar-connect-empty {
 	margin: 8px 0 0 !important;
 	color: #6b7a63;
 }
@@ -262,23 +262,23 @@
 /* Brand footer: reuse .barbas-update-footer from hub CSS */
 
 @media (max-width: 782px) {
-	.barbas-connect-table thead {
+	.hangar-connect-table thead {
 		display: none;
 	}
 
-	.barbas-connect-table tr {
+	.hangar-connect-table tr {
 		display: block;
 		padding: 12px;
 		border-bottom: 1px solid #c3cfc0;
 	}
 
-	.barbas-connect-table td {
+	.hangar-connect-table td {
 		display: block;
 		padding: 4px 0 !important;
 		border: 0 !important;
 	}
 
-	.barbas-connect-table td::before {
+	.hangar-connect-table td::before {
 		content: attr(data-label);
 		display: block;
 		font-size: 11px;

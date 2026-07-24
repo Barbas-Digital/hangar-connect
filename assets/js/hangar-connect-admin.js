@@ -53,7 +53,7 @@
 	}
 
 	document.addEventListener('click', function (event) {
-		var btn = event.target.closest('.barbas-connect-copy');
+		var btn = event.target.closest('.hangar-connect-copy');
 		if (!btn) {
 			return;
 		}

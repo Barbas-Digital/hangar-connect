@@ -3,7 +3,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-SLUG="barbas-connect"
+SLUG="hangar-connect"
 OUT_DIR="${1:-$ROOT}"
 STAGING="$(mktemp -d)"
 TARGET="$STAGING/$SLUG"

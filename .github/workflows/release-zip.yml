@@ -41,7 +41,7 @@ jobs:
       - name: Validate zip root folder
         run: |
           set -euo pipefail
-          SLUG='barbas-connect'
+          SLUG='hangar-connect'
           echo "=== unzip -l (head) ==="
           unzip -l "$SLUG.zip" | head -n 15
           FIRST="$(unzip -Z1 "$SLUG.zip" | head -n 1)"
@@ -54,7 +54,7 @@ jobs:
       - name: Publish GitHub Release with asset
         uses: softprops/action-gh-release@v2.5.1
         with:
-          files: barbas-connect.zip
+          files: hangar-connect.zip
           fail_on_unmatched_files: true
           generate_release_notes: true
           make_latest: true

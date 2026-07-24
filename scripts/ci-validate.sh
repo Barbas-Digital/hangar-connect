@@ -3,7 +3,14 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-SLUG="${1:-$(basename "$ROOT")}"
+# Plugin slug may differ from the git folder name (repo still barbas-connect; product slug hangar-connect).
+if [[ -n "${1:-}" ]]; then
+  SLUG="$1"
+elif [[ -f "$ROOT/hangar-connect.php" ]]; then
+  SLUG="hangar-connect"
+else
+  SLUG="$(basename "$ROOT")"
+fi
 cd "$ROOT"
 
 echo "== CI validate: $SLUG =="

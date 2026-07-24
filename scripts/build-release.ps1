@@ -5,7 +5,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $Root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
-$Slug = 'barbas-connect'
+$Slug = 'hangar-connect'
 $Staging = Join-Path $env:TEMP "$Slug-build"
 $Target = Join-Path $Staging $Slug
 $ZipPath = Join-Path $OutDir "$Slug.zip"
