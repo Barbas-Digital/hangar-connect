@@ -297,7 +297,7 @@ function hangar_connect_status_label($status) {
         case 'connected':
             return __('Connected', 'hangar-connect');
         case 'pending':
-            return __('Pending pairing', 'hangar-connect');
+            return __('Pending', 'hangar-connect');
         default:
             return __('Unknown', 'hangar-connect');
     }
@@ -335,7 +335,10 @@ function hangar_connect_render_admin_page() {
     echo '<header class="hangar-connect-header">';
     echo '<div class="hangar-connect-header__brand">';
     echo '<h1 class="hangar-connect-title-sr">' . esc_html__('Hangar Connect', 'hangar-connect') . '</h1>';
+    echo '<div class="hangar-connect-header__lockup">';
     echo '<img class="hangar-connect-logo" src="' . esc_url(HANGAR_CONNECT_URL . 'assets/img/hangar-connect-light.svg') . '" alt="' . esc_attr__('Hangar Connect', 'hangar-connect') . '" width="280" height="44" decoding="async" />';
+    echo '<span class="hangar-connect-pill">' . esc_html(sprintf(/* translators: %s: version */ __('v%s', 'hangar-connect'), HANGAR_CONNECT_VERSION)) . '</span>';
+    echo '</div>';
     echo '<p class="hangar-connect-lead">';
     echo esc_html__('Connect this site to Hangar.', 'hangar-connect');
     echo '<br />';
@@ -343,7 +346,6 @@ function hangar_connect_render_admin_page() {
         'Generate a pairing key, paste it in Hangar, then manage or revoke connections here.',
         'hangar-connect'
     );
-    echo ' <span class="hangar-connect-pill">' . esc_html(sprintf(/* translators: %s: version */ __('v%s', 'hangar-connect'), HANGAR_CONNECT_VERSION)) . '</span>';
     echo '</p>';
     echo '</div>';
     echo '</header>';
@@ -498,7 +500,6 @@ function hangar_connect_render_admin_page() {
         echo '<table class="widefat striped hangar-connect-table">';
         echo '<thead><tr>';
         echo '<th>' . esc_html__('Label', 'hangar-connect') . '</th>';
-        echo '<th>' . esc_html__('Status', 'hangar-connect') . '</th>';
         echo '<th>' . esc_html__('Created', 'hangar-connect') . '</th>';
         echo '<th>' . esc_html__('Last seen', 'hangar-connect') . '</th>';
         echo '<th>' . esc_html__('Actions', 'hangar-connect') . '</th>';
@@ -510,11 +511,9 @@ function hangar_connect_render_admin_page() {
             echo '<td data-label="' . esc_attr__('Label', 'hangar-connect') . '">';
             echo '<span class="hangar-connect-label-row">';
             echo '<span class="hangar-connect-label-text">' . esc_html($row['label'] !== '' ? $row['label'] : __('(no label)', 'hangar-connect')) . '</span>';
-            echo '<code class="hangar-connect-conn-id" title="' . esc_attr__('Connection ID', 'hangar-connect') . '">' . esc_html($row['id']) . '</code>';
-            echo '</span>';
-            echo '</td>';
-            echo '<td data-label="' . esc_attr__('Status', 'hangar-connect') . '">';
             echo '<span class="hangar-connect-status hangar-connect-status--' . esc_attr($status) . '">' . esc_html(hangar_connect_status_label($status)) . '</span>';
+            echo '</span>';
+            echo '<code class="hangar-connect-conn-id" title="' . esc_attr__('Connection ID', 'hangar-connect') . '">' . esc_html($row['id']) . '</code>';
             echo '</td>';
             echo '<td data-label="' . esc_attr__('Created', 'hangar-connect') . '">' . esc_html(hangar_connect_format_time($row['created_at'])) . '</td>';
             echo '<td data-label="' . esc_attr__('Last seen', 'hangar-connect') . '">' . esc_html(hangar_connect_format_time($row['last_seen_at'])) . '</td>';

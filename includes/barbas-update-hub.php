@@ -26,7 +26,7 @@ if (!defined('BARBAS_UPDATE_PLUGIN_FILE')) {
 define('BARBAS_UPDATE_HUB_LOADED', true);
 
 if (!defined('BARBAS_UPDATE_HUB_VERSION')) {
-    define('BARBAS_UPDATE_HUB_VERSION', '2.2.25');
+    define('BARBAS_UPDATE_HUB_VERSION', '2.2.26');
 }
 
 if (!defined('BARBAS_UPDATE_INLINE_TABS_MAX')) {
@@ -2719,6 +2719,22 @@ function barbas_update_print_plugin_details_guard_js() {
         return;
     }
     ?>
+<style id="barbas-update-tb-notitle">
+/* Hide redundant thickbox title — plugin-information already shows the plugin name. */
+#TB_window.barbas-tb-notitle #TB_title {
+	display: none !important;
+	height: 0 !important;
+	min-height: 0 !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	border: 0 !important;
+	overflow: hidden !important;
+	visibility: hidden !important;
+}
+#TB_window.barbas-tb-notitle #TB_ajaxContent {
+	padding-top: 12px;
+}
+</style>
 <script id="barbas-update-plugin-details-guard">
 (function () {
   if (window.__barbasDetailsGuardBooted) return;
@@ -2775,7 +2791,8 @@ function barbas_update_print_plugin_details_guard_js() {
     a.setAttribute('href', conf.detailsUrl);
     a.className = 'thickbox open-plugin-details-modal';
     a.setAttribute('data-barbas-details', '1');
-    if (conf.title) a.setAttribute('data-title', conf.title);
+    a.removeAttribute('title');
+    a.removeAttribute('data-title');
     a.setAttribute('aria-label', conf.label || 'View details');
     a.textContent = conf.label || 'View details';
     return a;
@@ -2788,7 +2805,8 @@ function barbas_update_print_plugin_details_guard_js() {
       && href.indexOf('plugin=' + conf.slug) !== -1
       && !hijack.test(href);
     if (alreadyGood) {
-      if (conf.title) a.setAttribute('data-title', conf.title);
+      a.removeAttribute('title');
+      a.removeAttribute('data-title');
       return a;
     }
 
@@ -2804,7 +2822,8 @@ function barbas_update_print_plugin_details_guard_js() {
     try { a.href = conf.detailsUrl; } catch (e) {}
     a.classList.add('thickbox', 'open-plugin-details-modal');
     a.setAttribute('data-barbas-details', '1');
-    if (conf.title) a.setAttribute('data-title', conf.title);
+    a.removeAttribute('title');
+    a.removeAttribute('data-title');
     a.removeAttribute('target');
     a.removeAttribute('rel');
     if (detailsText.test((a.textContent || '').trim())) {
@@ -2842,9 +2861,13 @@ function barbas_update_print_plugin_details_guard_js() {
   function openDetails(conf) {
     if (!conf || !conf.detailsUrl) return;
     if (typeof window.tb_show === 'function') {
-      // Caption must be the plugin name — using "View details"/"Ver detalhes" as caption
-      // puts that string in the thickbox title bar.
-      window.tb_show(conf.title || conf.slug, conf.detailsUrl, false);
+      // Empty caption — plugin-information iframe already has its own H1.
+      // Avoid duplicating the name in #TB_title (WordPress thickbox chrome).
+      window.tb_show('', conf.detailsUrl, false);
+      window.setTimeout(function () {
+        var win = document.getElementById('TB_window');
+        if (win) win.classList.add('barbas-tb-notitle');
+      }, 0);
       return;
     }
     window.location.href = conf.detailsUrl;
