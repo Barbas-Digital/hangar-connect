@@ -336,13 +336,15 @@ function hangar_connect_render_admin_page() {
     echo '<div class="hangar-connect-header__brand">';
     echo '<h1 class="hangar-connect-title-sr">' . esc_html__('Hangar Connect', 'hangar-connect') . '</h1>';
     echo '<img class="hangar-connect-logo" src="' . esc_url(HANGAR_CONNECT_URL . 'assets/img/hangar-connect-light.svg') . '" alt="' . esc_attr__('Hangar Connect', 'hangar-connect') . '" width="280" height="44" decoding="async" />';
-    echo '<p class="hangar-connect-lead">' . esc_html__(
-        'Connect this site to Hangar. Generate a pairing key, paste it in Hangar, then manage or revoke connections here.',
+    echo '<p class="hangar-connect-lead">';
+    echo esc_html__('Connect this site to Hangar.', 'hangar-connect');
+    echo '<br />';
+    echo esc_html__(
+        'Generate a pairing key, paste it in Hangar, then manage or revoke connections here.',
         'hangar-connect'
-    ) . '</p>';
-    echo '</div>';
-    echo '<div class="hangar-connect-header__meta">';
-    echo '<span class="hangar-connect-pill">' . esc_html(sprintf(/* translators: %s: version */ __('v%s', 'hangar-connect'), HANGAR_CONNECT_VERSION)) . '</span>';
+    );
+    echo ' <span class="hangar-connect-pill">' . esc_html(sprintf(/* translators: %s: version */ __('v%s', 'hangar-connect'), HANGAR_CONNECT_VERSION)) . '</span>';
+    echo '</p>';
     echo '</div>';
     echo '</header>';
 
@@ -417,17 +419,8 @@ function hangar_connect_render_admin_page() {
     echo '</dl>';
 
     echo '<div class="hangar-connect-wsal' . ($wsal_ok ? ' is-ok' : ' is-warn') . '">';
-    echo '<div class="hangar-connect-wsal__row">';
+    echo '<div class="hangar-connect-wsal__body">';
     echo '<span class="hangar-connect-wsal__label">' . esc_html__('WP Activity Log', 'hangar-connect') . '</span>';
-    if ($wsal_ok) {
-        $badge = __('Active', 'hangar-connect');
-    } elseif ($wsal_plugin_active) {
-        $badge = __('Setup needed', 'hangar-connect');
-    } else {
-        $badge = __('Inactive', 'hangar-connect');
-    }
-    echo '<span class="hangar-connect-wsal__badge">' . esc_html($badge) . '</span>';
-    echo '</div>';
     if ($wsal_ok) {
         echo '<p class="hangar-connect-wsal__msg">' . esc_html__(
             'Active for productivity reports.',
@@ -452,6 +445,15 @@ function hangar_connect_render_admin_page() {
         $install_url = self_admin_url('plugin-install.php?s=wp-activity-log&tab=search&type=term');
         echo '<p class="hangar-connect-wsal__action"><a href="' . esc_url($install_url) . '">' . esc_html__('Find WP Activity Log', 'hangar-connect') . '</a></p>';
     }
+    echo '</div>';
+    if ($wsal_ok) {
+        $badge = __('Active', 'hangar-connect');
+    } elseif ($wsal_plugin_active) {
+        $badge = __('Setup needed', 'hangar-connect');
+    } else {
+        $badge = __('Inactive', 'hangar-connect');
+    }
+    echo '<span class="hangar-connect-wsal__badge">' . esc_html($badge) . '</span>';
     echo '</div>';
     echo '</section>';
 
@@ -506,8 +508,10 @@ function hangar_connect_render_admin_page() {
             $status = $row['status'];
             echo '<tr>';
             echo '<td data-label="' . esc_attr__('Label', 'hangar-connect') . '">';
-            echo esc_html($row['label'] !== '' ? $row['label'] : __('(no label)', 'hangar-connect'));
-            echo '<div class="hangar-connect-muted"><code>' . esc_html($row['id']) . '</code></div>';
+            echo '<span class="hangar-connect-label-row">';
+            echo '<span class="hangar-connect-label-text">' . esc_html($row['label'] !== '' ? $row['label'] : __('(no label)', 'hangar-connect')) . '</span>';
+            echo '<code class="hangar-connect-conn-id" title="' . esc_attr__('Connection ID', 'hangar-connect') . '">' . esc_html($row['id']) . '</code>';
+            echo '</span>';
             echo '</td>';
             echo '<td data-label="' . esc_attr__('Status', 'hangar-connect') . '">';
             echo '<span class="hangar-connect-status hangar-connect-status--' . esc_attr($status) . '">' . esc_html(hangar_connect_status_label($status)) . '</span>';

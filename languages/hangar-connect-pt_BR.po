@@ -55,12 +55,18 @@ msgstr "Pareamento pendente"
 msgid "Unknown"
 msgstr "Desconhecido"
 
+msgid "Connect this site to Hangar."
+msgstr "Conecte este site ao Hangar."
+
 msgid ""
-"Connect this site to Hangar. Generate a pairing key, paste it in Hangar, "
-"then manage or revoke connections here."
+"Generate a pairing key, paste it in Hangar, then manage or revoke "
+"connections here."
 msgstr ""
-"Conecte este site ao Hangar. Gere uma chave de pareamento, cole no Hangar e "
-"gerencie ou revogue as conexões aqui."
+"Gere uma chave de pareamento, cole no Hangar e gerencie ou revogue as "
+"conexões aqui."
+
+msgid "Connection ID"
+msgstr "ID da conexão"
 
 msgid "v%s"
 msgstr "v%s"

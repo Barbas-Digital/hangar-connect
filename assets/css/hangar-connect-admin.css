@@ -17,14 +17,15 @@
 	--hc-font: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 	--hc-mono: "JetBrains Mono", Consolas, Monaco, ui-monospace, monospace;
 
-	margin: 0 0 28px;
+	margin: 0 0 28px 0;
 	max-width: 880px;
 	box-sizing: border-box;
 }
 
-/* Tighten WP admin chrome above our branded header */
+/* Tighten WP admin chrome; keep content flush left with admin content column */
 body.settings_page_hangar-connect #wpbody-content > .wrap.hangar-connect-wrap {
 	margin-top: 0;
+	margin-left: 0;
 }
 
 body.settings_page_hangar-connect #wpbody-content {
@@ -35,22 +36,22 @@ body.settings_page_hangar-connect #wpbody-content {
 	font-family: var(--hc-font);
 	font-size: 14px;
 	color: var(--hc-text);
+	text-align: left;
 }
 
 .hangar-connect-header {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 12px 24px;
+	display: block;
 	margin: 0 0 16px;
+	text-align: left;
 }
 
 .hangar-connect-header__brand {
 	display: flex;
 	flex-direction: column;
+	align-items: flex-start;
 	gap: 10px;
 	min-width: 0;
+	max-width: 42rem;
 }
 
 .hangar-connect-logo {
@@ -58,6 +59,7 @@ body.settings_page_hangar-connect #wpbody-content {
 	height: 36px;
 	width: auto;
 	max-width: min(100%, 280px);
+	margin: 0;
 }
 
 .hangar-connect-title-sr {
@@ -81,12 +83,15 @@ body.settings_page_hangar-connect #wpbody-content {
 
 .hangar-connect-pill {
 	display: inline-block;
-	padding: 4px 10px;
+	margin-left: 6px;
+	padding: 2px 8px;
 	border-radius: 999px;
 	background: var(--hc-accent-soft);
 	color: var(--hc-accent-hover);
-	font-size: 12px;
+	font-size: 11px;
 	font-weight: 600;
+	vertical-align: middle;
+	white-space: nowrap;
 }
 
 .hangar-connect-notice {
@@ -166,6 +171,10 @@ body.settings_page_hangar-connect #wpbody-content {
 }
 
 .hangar-connect-wsal {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px 16px;
 	margin-top: 14px;
 	padding: 10px 12px;
 	border-radius: 6px;
@@ -183,6 +192,11 @@ body.settings_page_hangar-connect #wpbody-content {
 	background: var(--hc-warn-soft);
 }
 
+.hangar-connect-wsal__body {
+	min-width: 0;
+	flex: 1 1 auto;
+}
+
 .hangar-connect-wsal__row {
 	display: flex;
 	align-items: center;
@@ -192,19 +206,25 @@ body.settings_page_hangar-connect #wpbody-content {
 }
 
 .hangar-connect-wsal__label {
+	display: block;
 	font-size: 13px;
 	font-weight: 600;
 	color: var(--hc-text);
 }
 
 .hangar-connect-wsal__badge {
-	display: inline-block;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	align-self: center;
 	padding: 2px 8px;
 	border-radius: 999px;
 	font-size: 11px;
 	font-weight: 700;
 	letter-spacing: 0.02em;
 	text-transform: uppercase;
+	line-height: 1.2;
 	background: #fff;
 	color: var(--hc-muted);
 	border: 1px solid var(--hc-border);
@@ -223,7 +243,7 @@ body.settings_page_hangar-connect #wpbody-content {
 }
 
 .hangar-connect-wsal__msg {
-	margin: 6px 0 0 !important;
+	margin: 4px 0 0 !important;
 	font-size: 13px;
 	line-height: 1.4;
 	color: var(--hc-muted);
@@ -347,6 +367,31 @@ body.settings_page_hangar-connect #wpbody-content {
 	margin-top: 4px;
 	font-size: 11px;
 	color: var(--hc-muted);
+}
+
+.hangar-connect-label-row {
+	display: inline-flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.hangar-connect-label-text {
+	font-weight: 600;
+	color: var(--hc-text);
+}
+
+.hangar-connect-conn-id {
+	display: inline-block;
+	padding: 1px 6px;
+	border-radius: 4px;
+	background: var(--hc-surface);
+	border: 1px solid var(--hc-border);
+	font-family: var(--hc-mono);
+	font-size: 11px;
+	font-weight: 400;
+	color: var(--hc-muted);
+	line-height: 1.35;
 }
 
 .hangar-connect-status {
