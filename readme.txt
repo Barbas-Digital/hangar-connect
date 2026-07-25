@@ -5,7 +5,7 @@ Tags: hangar, connect, wordPress, remote, api
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.2.16
+Stable tag: 0.2.17
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,6 +48,9 @@ GET /wp-json/hangar-connect/v1/health -- public discovery (version, site URL, co
 HMAC endpoints expose summarized productivity data from WP Activity Log (users + Logbook) for Hangar. No raw WSAL admin dump.
 
 == Changelog ==
+
+= 0.2.17 =
+* Barbas Update hub 2.2.27: keep thickbox close (X); hide only duplicate title text.
 
 = 0.2.16 =
 * Header: version badge beside logo (single line).

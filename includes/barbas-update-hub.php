@@ -26,7 +26,7 @@ if (!defined('BARBAS_UPDATE_PLUGIN_FILE')) {
 define('BARBAS_UPDATE_HUB_LOADED', true);
 
 if (!defined('BARBAS_UPDATE_HUB_VERSION')) {
-    define('BARBAS_UPDATE_HUB_VERSION', '2.2.26');
+    define('BARBAS_UPDATE_HUB_VERSION', '2.2.27');
 }
 
 if (!defined('BARBAS_UPDATE_INLINE_TABS_MAX')) {
@@ -2720,19 +2720,36 @@ function barbas_update_print_plugin_details_guard_js() {
     }
     ?>
 <style id="barbas-update-tb-notitle">
-/* Hide redundant thickbox title — plugin-information already shows the plugin name. */
-#TB_window.barbas-tb-notitle #TB_title {
+/* Keep thickbox close (X); hide only the duplicate caption text. */
+#TB_window.barbas-tb-notitle #TB_ajaxWindowTitle {
 	display: none !important;
+	width: 0 !important;
 	height: 0 !important;
-	min-height: 0 !important;
-	padding: 0 !important;
-	margin: 0 !important;
-	border: 0 !important;
 	overflow: hidden !important;
 	visibility: hidden !important;
 }
-#TB_window.barbas-tb-notitle #TB_ajaxContent {
-	padding-top: 12px;
+#TB_window.barbas-tb-notitle #TB_title {
+	height: 30px !important;
+	min-height: 30px !important;
+	background: #fcfcfc !important;
+	border-bottom: 1px solid #dfdfdf !important;
+	position: relative !important;
+}
+#TB_window.barbas-tb-notitle #TB_closeAjaxWindow {
+	display: block !important;
+	position: absolute !important;
+	top: 0 !important;
+	right: 0 !important;
+	float: none !important;
+	width: auto !important;
+	height: 30px !important;
+	margin: 0 !important;
+	padding: 0 8px 0 0 !important;
+	visibility: visible !important;
+}
+#TB_window.barbas-tb-notitle #TB_closeWindowButton {
+	display: inline-block !important;
+	visibility: visible !important;
 }
 </style>
 <script id="barbas-update-plugin-details-guard">
