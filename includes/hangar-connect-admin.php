@@ -500,6 +500,7 @@ function hangar_connect_render_admin_page() {
         echo '<table class="widefat striped hangar-connect-table">';
         echo '<thead><tr>';
         echo '<th>' . esc_html__('Label', 'hangar-connect') . '</th>';
+        echo '<th class="hangar-connect-col-status">' . esc_html__('Status', 'hangar-connect') . '</th>';
         echo '<th>' . esc_html__('Created', 'hangar-connect') . '</th>';
         echo '<th>' . esc_html__('Last seen', 'hangar-connect') . '</th>';
         echo '<th>' . esc_html__('Actions', 'hangar-connect') . '</th>';
@@ -510,17 +511,16 @@ function hangar_connect_render_admin_page() {
             echo '<tr>';
             echo '<td data-label="' . esc_attr__('Label', 'hangar-connect') . '">';
             echo '<div class="hangar-connect-label-block">';
-            echo '<div class="hangar-connect-label-row">';
             echo '<span class="hangar-connect-label-text">' . esc_html($row['label'] !== '' ? $row['label'] : __('(no label)', 'hangar-connect')) . '</span>';
-            echo '<span class="hangar-connect-status hangar-connect-status--' . esc_attr($status) . '">' . esc_html(hangar_connect_status_label($status)) . '</span>';
-            echo '</div>';
             echo '<code class="hangar-connect-conn-id" title="' . esc_attr__('Connection ID', 'hangar-connect') . '">' . esc_html($row['id']) . '</code>';
             echo '</div>';
+            echo '</td>';
+            echo '<td class="hangar-connect-col-status" data-label="' . esc_attr__('Status', 'hangar-connect') . '">';
+            echo '<span class="hangar-connect-status hangar-connect-status--' . esc_attr($status) . '">' . esc_html(hangar_connect_status_label($status)) . '</span>';
             echo '</td>';
             echo '<td data-label="' . esc_attr__('Created', 'hangar-connect') . '">' . esc_html(hangar_connect_format_time($row['created_at'])) . '</td>';
             echo '<td data-label="' . esc_attr__('Last seen', 'hangar-connect') . '">' . esc_html(hangar_connect_format_time($row['last_seen_at'])) . '</td>';
             echo '<td class="hangar-connect-actions" data-label="' . esc_attr__('Actions', 'hangar-connect') . '">';
-
             // Hide rotate while connected — one site = one Hangar; regenerating confuses the paired link.
             if ($status !== 'connected') {
                 echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="hangar-connect-inline-form">';

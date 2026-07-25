@@ -386,19 +386,9 @@ body.settings_page_hangar-connect #wpbody-content {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 8px;
+	gap: 6px;
 	min-width: 0;
 	max-width: 100%;
-}
-
-.hangar-connect-label-row {
-	display: flex;
-	align-items: center;
-	flex-wrap: nowrap;
-	gap: 12px;
-	min-width: 0;
-	max-width: 100%;
-	width: 100%;
 }
 
 .hangar-connect-label-text {
@@ -425,11 +415,16 @@ body.settings_page_hangar-connect #wpbody-content {
 	white-space: nowrap;
 }
 
+.hangar-connect-table th.hangar-connect-col-status,
+.hangar-connect-table td.hangar-connect-col-status {
+	text-align: center;
+	white-space: nowrap;
+}
+
 .hangar-connect-status {
 	display: inline-flex;
 	align-items: center;
-	flex: 0 0 auto;
-	margin-left: auto;
+	justify-content: center;
 	padding: 3px 10px;
 	border-radius: 999px;
 	font-size: 10px;
@@ -557,6 +552,11 @@ body.settings_page_hangar-connect #wpbody-content {
 		display: block;
 		padding: 4px 0 !important;
 		border: 0 !important;
+	}
+
+	.hangar-connect-table th.hangar-connect-col-status,
+	.hangar-connect-table td.hangar-connect-col-status {
+		text-align: left;
 	}
 
 	.hangar-connect-table td::before {
