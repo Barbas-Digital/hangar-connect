@@ -509,11 +509,13 @@ function hangar_connect_render_admin_page() {
             $status = $row['status'];
             echo '<tr>';
             echo '<td data-label="' . esc_attr__('Label', 'hangar-connect') . '">';
-            echo '<span class="hangar-connect-label-row">';
+            echo '<div class="hangar-connect-label-block">';
+            echo '<div class="hangar-connect-label-row">';
             echo '<span class="hangar-connect-label-text">' . esc_html($row['label'] !== '' ? $row['label'] : __('(no label)', 'hangar-connect')) . '</span>';
             echo '<span class="hangar-connect-status hangar-connect-status--' . esc_attr($status) . '">' . esc_html(hangar_connect_status_label($status)) . '</span>';
-            echo '</span>';
+            echo '</div>';
             echo '<code class="hangar-connect-conn-id" title="' . esc_attr__('Connection ID', 'hangar-connect') . '">' . esc_html($row['id']) . '</code>';
+            echo '</div>';
             echo '</td>';
             echo '<td data-label="' . esc_attr__('Created', 'hangar-connect') . '">' . esc_html(hangar_connect_format_time($row['created_at'])) . '</td>';
             echo '<td data-label="' . esc_attr__('Last seen', 'hangar-connect') . '">' . esc_html(hangar_connect_format_time($row['last_seen_at'])) . '</td>';
