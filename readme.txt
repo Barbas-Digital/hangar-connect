@@ -5,7 +5,7 @@ Tags: hangar, connect, wordPress, remote, api
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.2.19
+Stable tag: 0.2.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,6 +48,10 @@ GET /wp-json/hangar-connect/v1/health -- public discovery (version, site URL, co
 HMAC endpoints expose summarized productivity data from WP Activity Log (users + Logbook) for Hangar. No raw WSAL admin dump.
 
 == Changelog ==
+
+= 0.2.20 =
+* Fix pt_BR admin UI staying in English on WordPress 6.7+ (load local .mo on init).
+* Barbas Update hub 2.2.28 (hub candidate only; Connect remains free / no license tab).
 
 = 0.2.19 =
 * Connections table: restore Status column; badge centered in that column.

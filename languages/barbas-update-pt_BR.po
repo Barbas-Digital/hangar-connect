@@ -2,123 +2,159 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Barbas Update 1.0\n"
+"Project-Id-Version: barbas-update\n"
 "Report-Msgid-Bugs-To: https://www.barbas.digital\n"
+"PO-Revision-Date: 2026-08-04 19:37+0000\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: barbas-update\n"
 
+#: includes/barbas-update-hub.php
 msgid "Barbas Digital"
 msgstr "Barbas Digital"
 
+#: includes/barbas-update-hub.php
 msgid "The brand behind the most impactful websites on the Internet."
 msgstr "A grife dos sites mais impactantes da Internet."
 
+#: includes/barbas-update-hub.php
 msgid "Please enter a license key."
 msgstr "Informe uma chave de licença."
 
+#: includes/barbas-update-hub.php
 msgid "Invalid or expired license key."
 msgstr "Chave inválida ou expirada."
 
+#: includes/barbas-update-hub.php
 msgid "GitHub returned status %d while validating the user."
 msgstr "GitHub respondeu com código %d ao validar o usuário."
 
+#: includes/barbas-update-hub.php
 msgid "no access or repository not found"
 msgstr "sem acesso ou repositório não encontrado"
 
+#: includes/barbas-update-hub.php
 msgid "License authenticated but this plugin repository is not accessible."
 msgstr "Token autenticado, mas sem acesso ao repositório deste plugin."
 
+#: includes/barbas-update-hub.php
 msgid ""
 "License authenticated but one or more plugin repositories are not "
 "accessible."
 msgstr ""
 "Token autenticado, mas sem acesso a um ou mais repositórios dos plugins."
 
+#: includes/barbas-update-hub.php
 msgid "Valid license (account: %s)."
 msgstr "Licença válida (conta: %s)."
 
+#: includes/barbas-update-hub.php
 msgid "Valid license."
 msgstr "Licença válida."
 
+#: includes/barbas-update-hub.php
 msgid "Barbas Update"
 msgstr "Barbas Update"
 
+#: includes/barbas-update-hub.php
 msgid "Barbas Update: configure the update license for each installed plugin."
 msgstr "Barbas Update: configure a licença de cada plugin instalado."
 
+#: includes/barbas-update-hub.php
 msgid "Configure"
 msgstr "Configurar"
 
+#: includes/barbas-update-hub.php
 msgid "You do not have permission to do this."
 msgstr "Sem permissão."
 
+#: includes/barbas-update-hub.php
 msgid "Invalid tab."
 msgstr "Aba inválida."
 
 msgid "License is defined in wp-config.php."
 msgstr "Licença definida em wp-config.php."
 
+#: includes/barbas-update-hub.php
 msgid "License removed."
 msgstr "Licença removida."
 
+#: includes/barbas-update-hub.php
 msgid "License kept."
 msgstr "Licença mantida."
 
+#: includes/barbas-update-hub.php
 msgid "License saved."
 msgstr "Licença salva."
 
+#: includes/barbas-update-hub.php
 msgid "Validating license…"
 msgstr "Validando licença…"
 
+#: includes/barbas-update-hub.php
 msgid "Saving…"
 msgstr "Salvando…"
 
+#: includes/barbas-update-hub.php
 msgid "Removing…"
 msgstr "Removendo…"
 
+#: includes/barbas-update-hub.php
 msgid "Remove the license for this plugin?"
 msgstr "Remover a licença deste plugin?"
 
+#: includes/barbas-update-hub.php
 msgid "Request failed. Please try again."
 msgstr "Falha na requisição. Tente novamente."
 
+#: includes/barbas-update-hub.php
 msgid "License active"
 msgstr "Licença ativa"
 
+#: includes/barbas-update-hub.php
 msgid "No license"
 msgstr "Sem licença"
 
+#: includes/barbas-update-hub.php
 msgid "Leave blank and save to keep the current license."
 msgstr "Deixe em branco e salve para manter a licença atual."
 
+#: includes/barbas-update-hub.php
 msgid "Current license:"
 msgstr "Licença atual:"
 
+#: includes/barbas-update-hub.php
 msgid "License is defined in wp-config.php. The field below is ignored."
 msgstr "Licença definida em wp-config.php. O campo abaixo é ignorado."
 
+#: includes/barbas-update-hub.php
 msgid "License key to receive updates for this plugin."
 msgstr "Chave de licença para receber atualizações deste plugin."
 
+#: includes/barbas-update-hub.php
 msgid "License key"
 msgstr "Chave de licença"
 
+#: includes/barbas-update-hub.php
 msgid "Paste your license key"
 msgstr "Cole sua chave de licença"
 
+#: includes/barbas-update-hub.php
 msgid "Leave blank and save to keep."
 msgstr "Deixe em branco e salve para manter."
 
+#: includes/barbas-update-hub.php
 msgid "Save"
 msgstr "Salvar"
 
+#: includes/barbas-update-hub.php
 msgid "Remove"
 msgstr "Remover"
 
+#: includes/barbas-update-hub.php
 msgid "Validate license"
 msgstr "Validar licença"
 
@@ -129,6 +165,7 @@ msgstr ""
 "Gerencie as licenças de atualização dos seus plugins Barbas. Cada aba "
 "corresponde a um plugin ativo."
 
+#: includes/barbas-update-hub.php
 msgid ""
 "Manage update licenses for your Barbas plugins. Use the suite tab for one "
 "key, or configure each plugin."
@@ -136,12 +173,15 @@ msgstr ""
 "Gerencie as licenças de atualização dos seus plugins Barbas. Use a aba suite"
 " para uma chave, ou configure cada plugin."
 
+#: includes/barbas-update-hub.php
 msgid "A suite license covers all active Barbas plugins on this site."
 msgstr "Uma licença suite cobre todos os plugins Barbas ativos neste site."
 
+#: includes/barbas-update-hub.php
 msgid "Suite license"
 msgstr "Licença suite"
 
+#: includes/barbas-update-hub.php
 msgid "One license key for all active Barbas plugins on this site."
 msgstr "Uma chave de licença para todos os plugins Barbas ativos neste site."
 
@@ -158,27 +198,35 @@ msgstr "Licenciado via suite"
 msgid "Awaiting suite license"
 msgstr "Aguardando licença suite"
 
+#: includes/barbas-update-hub.php
 msgid "No Barbas plugin with a license panel is active."
 msgstr "Nenhum plugin Barbas com painel de licença está ativo no momento."
 
+#: includes/barbas-update-hub.php
 msgid "Barbas plugins"
 msgstr "Plugins Barbas"
 
+#: includes/barbas-update-hub.php
 msgid "Loading plugin panel…"
 msgstr "Carregando painel do plugin…"
 
+#: includes/barbas-update-hub.php
 msgid "Search plugins…"
 msgstr "Buscar plugins…"
 
+#: includes/barbas-update-hub.php
 msgid "Showing %1$d of %2$d plugins"
 msgstr "Exibindo %1$d de %2$d plugins"
 
+#: includes/barbas-update-hub.php
 msgid "No plugins match your search."
 msgstr "Nenhum plugin corresponde à busca."
 
+#: includes/barbas-update-hub.php
 msgid "Plugins"
 msgstr "Plugins"
 
+#: includes/barbas-update-hub.php
 msgid ""
 "Manage update licenses for your Barbas plugins. Search and select a plugin "
 "below."
@@ -186,6 +234,7 @@ msgstr ""
 "Gerencie as licenças de atualização dos seus plugins Barbas. Busque e "
 "selecione um plugin abaixo."
 
+#: includes/barbas-update-hub.php
 msgid ""
 "License is active from wp-config.php. Enter a key below to override it for "
 "this site."
@@ -193,12 +242,15 @@ msgstr ""
 "Licença ativa via wp-config.php. Informe uma chave abaixo para sobrescrever "
 "neste site."
 
+#: includes/barbas-update-hub.php
 msgid "Dashboard license overrides wp-config.php for this plugin."
 msgstr "A licença do painel sobrescreve o wp-config.php neste plugin."
 
+#: includes/barbas-update-hub.php
 msgid "License removed from the dashboard and wp-config.php."
 msgstr "Licença removida do painel e do wp-config.php."
 
+#: includes/barbas-update-hub.php
 msgid ""
 "Remove the license for this plugin? This will also delete it from wp-"
 "config.php if present."
@@ -206,6 +258,7 @@ msgstr ""
 "Remover a licença deste plugin? Isso também apagará a entrada no wp-"
 "config.php, se existir."
 
+#: includes/barbas-update-hub.php
 msgid ""
 "Token format looks invalid. Paste either a fine-grained token (github_pat_…)"
 " or a classic token (ghp_…), not both prefixes."
@@ -213,6 +266,7 @@ msgstr ""
 "Formato de token inválido. Use token fine-grained (github_pat_…) ou clássico"
 " (ghp_…), sem misturar os prefixos."
 
+#: includes/barbas-update-hub.php
 msgid ""
 "Token format looks invalid. Remove the extra prefix and keep only one GitHub"
 " token."
@@ -220,30 +274,39 @@ msgstr ""
 "Formato de token inválido. Remova o prefixo extra e use apenas um token "
 "GitHub."
 
+#: includes/barbas-update-hub.php
 msgid "Check for updates"
 msgstr "Verificar atualizações agora"
 
+#: includes/barbas-update-hub.php
 msgid "Checking for updates…"
 msgstr "Buscando atualizações…"
 
+#: includes/barbas-update-hub.php
 msgid "Update check complete. All checked plugins are up to date."
 msgstr "Busca concluída. Todos os plugins verificados estão atualizados."
 
+#: includes/barbas-update-hub.php
 msgid "Update check complete. Updates available: %s."
 msgstr "Busca concluída. Atualizações disponíveis: %s."
 
+#: includes/barbas-update-hub.php
 msgid "Could not check: %s."
 msgstr "Não foi possível verificar: %s."
 
+#: includes/barbas-update-hub.php
 msgid "Could not check for updates. Configure a license first."
 msgstr "Não foi possível buscar atualizações. Configure uma licença primeiro."
 
+#: includes/barbas-update-hub.php
 msgid "Could not check for updates for one or more plugins."
 msgstr "Não foi possível verificar atualizações em um ou mais plugins."
 
+#: includes/barbas-update-hub.php
 msgid "Barbas plugins on this site"
 msgstr "Plugins Barbas neste site"
 
+#: includes/barbas-update-hub.php
 msgid ""
 "Active Barbas plugins covered by the suite license. Versions and updates "
 "appear below."
@@ -251,6 +314,7 @@ msgstr ""
 "Plugins Barbas ativos cobertos pela licença suite. Versões e atualizações "
 "aparecem abaixo."
 
+#: includes/barbas-update-hub.php
 msgid ""
 "Active Barbas plugins on this site. Configure a license per plugin (or "
 "suite) to check and install updates."
@@ -258,42 +322,55 @@ msgstr ""
 "Plugins Barbas ativos neste site. Configure uma licença por plugin (ou "
 "suite) para buscar e instalar atualizações."
 
+#: includes/barbas-update-hub.php
 msgid "Up to date"
 msgstr "Atualizado"
 
+#: includes/barbas-update-hub.php
 msgid "Update available (%s)"
 msgstr "Atualização disponível (%s)"
 
+#: includes/barbas-update-hub.php
 msgid "Licensed via suite"
 msgstr "Licenciado via suite"
 
+#: includes/barbas-update-hub.php
 msgid "v%s"
 msgstr "v%s"
 
+#: includes/barbas-update-hub.php
 msgid "Update"
 msgstr "Atualizar"
 
+#: includes/barbas-update-hub.php
 msgid "Updating…"
 msgstr "Atualizando…"
 
+#: includes/barbas-update-hub.php
 msgid "Plugin updated."
 msgstr "Plugin atualizado."
 
+#: includes/barbas-update-hub.php
 msgid "Could not update the plugin."
 msgstr "Não foi possível atualizar o plugin."
 
+#: includes/barbas-update-hub.php
 msgid "Invalid plugin."
 msgstr "Plugin inválido."
 
+#: includes/barbas-update-hub.php
 msgid "No update is available for this plugin."
 msgstr "Nenhuma atualização disponível para este plugin."
 
+#: includes/barbas-update-hub.php
 msgid "Plugin files updated, but reactivation failed: %s"
 msgstr "Arquivos do plugin atualizados, mas a reativação falhou: %s"
 
+#: includes/barbas-update-hub.php
 msgid "Update check complete. Updates available:"
 msgstr "Busca concluída. Atualizações disponíveis:"
 
+#: includes/barbas-update-bootstrap.php
 msgid ""
 "Showing the latest %1$d releases. <a href=\"%2$s\" target=\"_blank\" "
 "rel=\"noopener noreferrer\">View the full changelog on GitHub</a>."
@@ -301,12 +378,15 @@ msgstr ""
 "Exibindo as %1$d versões mais recentes. <a href=\"%2$s\" target=\"_blank\" "
 "rel=\"noopener noreferrer\">Ver o changelog completo no GitHub</a>."
 
+#: includes/barbas-update-bootstrap.php
 msgid "Showing the latest %d releases."
 msgstr "Exibindo as %d versões mais recentes."
 
+#: includes/barbas-update-hub.php
 msgid "GitHub Status"
 msgstr "Status do GitHub"
 
+#: includes/barbas-update-hub.php
 msgid ""
 "GitHub may be experiencing an outage. Check the status page and try again "
 "later."
@@ -314,6 +394,7 @@ msgstr ""
 "O GitHub pode estar com indisponibilidade. Consulte a página de status e "
 "tente novamente mais tarde."
 
+#: includes/barbas-update-hub.php
 msgid ""
 "Could not reach GitHub (%s). If GitHub is down, check the status page and "
 "try again later."
@@ -321,6 +402,7 @@ msgstr ""
 "Não foi possível contactar o GitHub (%s). Se o GitHub estiver fora, consulte"
 " a página de status e tente mais tarde."
 
+#: includes/barbas-update-hub.php
 msgid ""
 "GitHub denied access (HTTP 403). The token may lack permission, or the API "
 "rate limit was exceeded. Try again later."
@@ -328,12 +410,14 @@ msgstr ""
 "O GitHub negou o acesso (HTTP 403). O token pode não ter permissão, ou o "
 "limite da API foi excedido. Tente novamente mais tarde."
 
+#: includes/barbas-update-hub.php
 msgid ""
 "GitHub rate limit reached (HTTP 429). Wait a few minutes and try again."
 msgstr ""
 "Limite de requisições do GitHub atingido (HTTP 429). Aguarde alguns minutos "
 "e tente novamente."
 
+#: includes/barbas-update-hub.php
 msgid ""
 "GitHub is temporarily unavailable (HTTP %d). This is usually a GitHub "
 "outage, not a problem with your license."
@@ -341,5 +425,14 @@ msgstr ""
 "O GitHub está temporariamente indisponível (HTTP %d). Em geral é uma falha "
 "do GitHub, não um problema na sua licença."
 
+#: includes/barbas-update-hub.php
 msgid "GitHub returned HTTP %d."
 msgstr "O GitHub respondeu com HTTP %d."
+
+#: includes/barbas-update-hub.php
+msgid ""
+"Could not save the license securely. OpenSSL (AES-256) is required on this "
+"server."
+msgstr ""
+"Não foi possível salvar a licença com segurança. OpenSSL (AES-256) é "
+"necessário neste servidor."

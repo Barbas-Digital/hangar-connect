@@ -3,7 +3,7 @@
 Plugin Name: Hangar Connect
 Plugin URI: https://github.com/Barbas-Digital/hangar-connect
 Description: Site agent for Hangar: secure REST API, pairing keys, and productivity reports via WP Activity Log.
-Version: 0.2.19
+Version: 0.2.20
 Requires at least: 5.8
 Requires PHP: 7.4
 Author: Guilherme Souza
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 define('HANGAR_CONNECT_PLUGIN_FILE', __FILE__);
-define('HANGAR_CONNECT_VERSION', '0.2.19');
+define('HANGAR_CONNECT_VERSION', '0.2.20');
 define('HANGAR_CONNECT_DIR', plugin_dir_path(__FILE__));
 define('HANGAR_CONNECT_URL', plugin_dir_url(__FILE__));
 define('HANGAR_CONNECT_REST_NS', 'hangar-connect/v1');
@@ -74,9 +74,9 @@ if (!function_exists('hangar_connect_missing_files_notice')) {
         if (!current_user_can('manage_options')) {
             return;
         }
-        echo '<div class="notice notice-error"><p><strong>Hangar Connect:</strong> ';
+        echo '<div class="notice notice-error"><p><strong>' . esc_html__('Hangar Connect:', 'hangar-connect') . '</strong> ';
         echo esc_html__(
-            'Missing files in includes/ or lib/. Delete the plugin folder and install via Plugins -> Add New â†’ Upload Plugin (hangar-connect.zip).',
+            'Missing files in includes/ or lib/. Delete the plugin folder and install via Plugins -> Add New -> Upload Plugin (hangar-connect.zip).',
             'hangar-connect'
         );
         echo '</p></div>';
@@ -89,16 +89,29 @@ if (!is_readable($hangar_connect_base . 'includes/hangar-connect-rest.php')) {
 
 /**
  * Load plugin textdomain.
+ *
+ * Explicit load_textdomain is required: WP 6.7+ JIT mainly resolves wp.org packages.
+ * Hangar Connect is private/public GitHub, not wordpress.org language packs.
  */
 function hangar_connect_load_textdomain() {
-    load_plugin_textdomain(
-        'hangar-connect',
-        false,
-        dirname(plugin_basename(HANGAR_CONNECT_PLUGIN_FILE)) . '/languages'
-    );
+    static $loaded_locale = null;
+    $domain = 'hangar-connect';
+    $locale = function_exists('determine_locale') ? determine_locale() : get_locale();
+    if ($loaded_locale === $locale) {
+        return;
+    }
+
+    $rel = dirname(plugin_basename(HANGAR_CONNECT_PLUGIN_FILE)) . '/languages';
+    load_plugin_textdomain($domain, false, $rel);
+
+    $mofile = plugin_dir_path(HANGAR_CONNECT_PLUGIN_FILE) . 'languages/' . $domain . '-' . $locale . '.mo';
+    if (is_readable($mofile)) {
+        load_textdomain($domain, $mofile);
+    }
+
+    $loaded_locale = $locale;
 }
 add_action('init', 'hangar_connect_load_textdomain', 0);
-add_action('plugins_loaded', 'hangar_connect_load_textdomain', 0);
 
 /**
  * Activation: ensure option shape exists (autoload false).

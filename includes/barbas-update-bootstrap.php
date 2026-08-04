@@ -85,17 +85,33 @@ if (!function_exists('barbas_update_pick_newest_hub_candidate')) {
 }
 
 if (!function_exists('barbas_update_load_textdomain')) {
+    /**
+     * Load barbas-update .mo from the hub host plugin (private, not on wp.org).
+     * Prefer calling on init; safe to call again when locale changes.
+     *
+     * @param string $host_plugin_file Main plugin file path.
+     */
     function barbas_update_load_textdomain($host_plugin_file) {
-        static $loaded = false;
-        if ($loaded || !is_string($host_plugin_file) || $host_plugin_file === '') {
+        if (!is_string($host_plugin_file) || $host_plugin_file === '') {
             return;
         }
-        $loaded = true;
-        load_plugin_textdomain(
-            'barbas-update',
-            false,
-            dirname(plugin_basename($host_plugin_file)) . '/languages/'
-        );
+
+        static $loaded_locale = null;
+        $domain = 'barbas-update';
+        $locale = function_exists('determine_locale') ? determine_locale() : get_locale();
+        if ($loaded_locale === $locale) {
+            return;
+        }
+
+        $rel = dirname(plugin_basename($host_plugin_file)) . '/languages';
+        load_plugin_textdomain($domain, false, $rel);
+
+        $mofile = plugin_dir_path($host_plugin_file) . 'languages/' . $domain . '-' . $locale . '.mo';
+        if (is_readable($mofile)) {
+            load_textdomain($domain, $mofile);
+        }
+
+        $loaded_locale = $locale;
     }
 }
 

@@ -26,7 +26,29 @@ if (!defined('BARBAS_UPDATE_PLUGIN_FILE')) {
 define('BARBAS_UPDATE_HUB_LOADED', true);
 
 if (!defined('BARBAS_UPDATE_HUB_VERSION')) {
-    define('BARBAS_UPDATE_HUB_VERSION', '2.2.27');
+    define('BARBAS_UPDATE_HUB_VERSION', '2.2.28');
+}
+
+/**
+ * Ensure hub UI strings load on init (WP 6.7+ / private plugin .mo path).
+ * Self-contained: bootstrap helpers may come from an older copy (function_exists).
+ */
+if (!function_exists('barbas_update_ensure_textdomain_on_init')) {
+    function barbas_update_ensure_textdomain_on_init() {
+        if (!defined('BARBAS_UPDATE_PLUGIN_FILE')) {
+            return;
+        }
+        $host = BARBAS_UPDATE_PLUGIN_FILE;
+        $domain = 'barbas-update';
+        $locale = function_exists('determine_locale') ? determine_locale() : get_locale();
+        $rel = dirname(plugin_basename($host)) . '/languages';
+        load_plugin_textdomain($domain, false, $rel);
+        $mofile = plugin_dir_path($host) . 'languages/' . $domain . '-' . $locale . '.mo';
+        if (is_readable($mofile)) {
+            load_textdomain($domain, $mofile);
+        }
+    }
+    add_action('init', 'barbas_update_ensure_textdomain_on_init', 0);
 }
 
 if (!defined('BARBAS_UPDATE_INLINE_TABS_MAX')) {
